@@ -91,21 +91,7 @@
         .user-area {
             display: flex;
             align-items: center;
-            gap: 18px;
-        }
-
-        .logout {
-            background: #3b2a21;
-            color: white;
-            padding: 8px 18px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-size: 13px;
-            transition: .2s;
-        }
-
-        .logout:hover {
-            background: #5a3c2e;
+            gap: 15px;
         }
 
         /* ===== CONTENT ===== */
@@ -143,7 +129,6 @@
             color: white;
             padding: 14px;
             font-size: 13px;
-            letter-spacing: .5px;
         }
 
         td {
@@ -154,57 +139,6 @@
 
         tr:hover {
             background: #faf7f2;
-        }
-
-        /* ===== BADGE ===== */
-
-        .badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: white;
-        }
-
-        .pending {
-            background: #d98c2b;
-        }
-
-        .lunas {
-            background: #3b8b5c;
-        }
-
-        .batal {
-            background: #b33939;
-        }
-
-        /* ===== FORM ===== */
-
-        input,
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 14px;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: #3b2a21;
-            outline: none;
-        }
-
-        button {
-            background: #3b2a21;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background: #5a3c2e;
         }
 
         /* ===== FOOTER ===== */
@@ -249,8 +183,42 @@
             <h3><?= $title ?? '' ?></h3>
 
             <div class="user-area">
-                <span><i class="fa fa-user"></i> <?= session('username') ?></span>
-                <a href="<?= base_url('admin/logout') ?>" class="logout">Logout</a>
+
+                <div style="text-align:right;">
+                    <strong><?= session('nama') ?? session('username') ?></strong><br>
+                    <small><?= session('role') ?></small>
+                </div>
+
+                <div style="position:relative;">
+
+                    <img
+                        src="<?= session('foto') ? base_url('uploads/' . session('foto')) : 'https://ui-avatars.com/api/?name=' . (session('nama') ?? session('username')) ?>"
+                        style="width:40px; height:40px; border-radius:50%; cursor:pointer;"
+                        onclick="toggleDropdown()">
+
+                    <div id="dropdownProfile" style="
+                        display:none;
+                        position:absolute;
+                        right:0;
+                        top:50px;
+                        background:white;
+                        border-radius:10px;
+                        box-shadow:0 5px 15px rgba(0,0,0,0.1);
+                        overflow:hidden;
+                    ">
+
+                        <a href="<?= base_url('admin/profile') ?>" style="display:block; padding:10px; text-decoration:none; color:#333;">
+                            <i class="fa fa-user"></i> Profile
+                        </a>
+
+                        <a href="<?= base_url('admin/logout') ?>" style="display:block; padding:10px; color:red; text-decoration:none;">
+                            <i class="fa fa-sign-out-alt"></i> Logout
+                        </a>
+
+                    </div>
+
+                </div>
+
             </div>
         </div>
 
@@ -265,6 +233,14 @@
         </div>
 
     </div>
+
+    <!-- SCRIPT DROPDOWN -->
+    <script>
+        function toggleDropdown() {
+            let x = document.getElementById("dropdownProfile");
+            x.style.display = x.style.display === "block" ? "none" : "block";
+        }
+    </script>
 
 </body>
 

@@ -3,10 +3,8 @@
 
 <head>
 
-    <!-- FAVICON -->
     <link rel="icon" href="<?= base_url('uploads/favicon.jpeg') ?>">
-
-    <title>Login Admin - Teras Caffe</title>
+    <title>Register Admin - Teras Caffe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- FONT -->
@@ -34,41 +32,40 @@
 
             background-size: cover;
             background-position: center;
+
+            transition: opacity 0.35s ease;
         }
 
-        /* BOX */
-        .login-box {
-            width: 360px;
+        /* ANIMASI MASUK (lebih smooth) */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .box {
+            width: 380px;
             padding: 40px;
             border-radius: 20px;
 
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(14px);
 
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
             text-align: center;
 
-            animation: fadeInUp 0.8s ease;
+            animation: fadeUp 0.7s ease;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px) scale(0.98);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        /* TITLE */
-        .title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #3b2a21;
+        h2 {
             margin-bottom: 5px;
+            color: #3b2a21;
         }
 
         .subtitle {
@@ -77,7 +74,6 @@
             margin-bottom: 25px;
         }
 
-        /* ERROR */
         .error {
             background: #ffe8e8;
             color: #b30000;
@@ -88,6 +84,15 @@
             animation: fadeShake 0.4s ease;
         }
 
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+        }
+
         @keyframes fadeShake {
             0% {
                 opacity: 0;
@@ -96,11 +101,11 @@
 
             50% {
                 opacity: 1;
-                transform: translateX(5px);
+                transform: translateX(4px);
             }
 
             75% {
-                transform: translateX(-5px);
+                transform: translateX(-4px);
             }
 
             100% {
@@ -108,13 +113,12 @@
             }
         }
 
-        /* INPUT */
-        .input-group {
+        .input {
             margin-bottom: 18px;
             text-align: left;
         }
 
-        .input-group label {
+        .input label {
             font-size: 13px;
             color: #444;
         }
@@ -129,7 +133,7 @@
             left: 12px;
             top: 12px;
             color: #aaa;
-            transition: 0.3s;
+            transition: 0.25s;
         }
 
         .toggle-password {
@@ -139,27 +143,27 @@
             cursor: pointer;
         }
 
-        input {
+        .input input {
             width: 100%;
             padding: 11px 38px;
             border-radius: 10px;
             border: 1px solid #ddd;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
             font-size: 14px;
         }
 
-        input:focus {
+        /* FIX: hapus scale biar nggak “loncat” */
+        .input input:focus {
             border-color: #6f4e37;
             box-shadow: 0 0 8px rgba(111, 78, 55, 0.3);
             outline: none;
         }
 
-        input:focus+i,
-        .input-wrapper:hover i {
+        .input-wrapper:hover i,
+        .input input:focus+i {
             color: #6f4e37;
         }
 
-        /* BUTTON */
         button {
             width: 100%;
             padding: 12px;
@@ -170,9 +174,9 @@
             cursor: pointer;
             transition: all 0.25s ease;
             font-weight: 500;
-            letter-spacing: 0.5px;
         }
 
+        /* FIX: hover lebih soft */
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
@@ -204,7 +208,6 @@
             }
         }
 
-        /* LINK */
         .link {
             margin-top: 15px;
             font-size: 13px;
@@ -220,28 +223,16 @@
         .link a:hover {
             text-decoration: underline;
         }
-
-        /* FOOTER */
-        .footer {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #aaa;
-        }
     </style>
 
 </head>
 
 <body>
 
-    <div class="login-box">
+    <div class="box">
 
-        <div class="title">
-            <i class="fa fa-mug-hot"></i> TERAS CAFFE
-        </div>
-
-        <div class="subtitle">
-            Admin Login Panel
-        </div>
+        <h2><i class="fa fa-user-plus"></i> Register</h2>
+        <div class="subtitle">Buat akun admin baru</div>
 
         <?php if (session()->getFlashdata('error')): ?>
             <div class="error">
@@ -249,11 +240,11 @@
             </div>
         <?php endif; ?>
 
-        <form id="loginForm" action="<?= base_url('admin/loginProcess') ?>" method="post" autocomplete="off">
+        <form id="registerForm" method="post" action="<?= base_url('admin/registerProcess') ?>" autocomplete="off">
 
             <?= csrf_field() ?>
 
-            <div class="input-group">
+            <div class="input">
                 <label>Username</label>
                 <div class="input-wrapper">
                     <i class="fa fa-user"></i>
@@ -261,7 +252,7 @@
                 </div>
             </div>
 
-            <div class="input-group">
+            <div class="input">
                 <label>Password</label>
                 <div class="input-wrapper">
                     <i class="fa fa-lock"></i>
@@ -270,19 +261,15 @@
                 </div>
             </div>
 
-            <button id="btnLogin" type="submit">
-                <i class="fa fa-sign-in-alt"></i> Login
+            <button id="btnRegister" type="submit">
+                <i class="fa fa-user-plus"></i> Register
             </button>
-
-            <div class="link">
-                Belum punya akun?
-                <a href="<?= base_url('admin/register') ?>">Register</a>
-            </div>
 
         </form>
 
-        <div class="footer">
-            Teras Caffe © <?= date('Y') ?>
+        <div class="link">
+            Sudah punya akun?
+            <a href="<?= base_url('admin/login') ?>">Login</a>
         </div>
 
     </div>
@@ -302,10 +289,27 @@
         }
 
         // loading button
-        document.getElementById("loginForm").addEventListener("submit", function() {
-            const btn = document.getElementById("btnLogin");
+        document.getElementById("registerForm").addEventListener("submit", function() {
+            const btn = document.getElementById("btnRegister");
             btn.classList.add("loading");
             btn.innerHTML = 'Loading <span class="spinner"></span>';
+        });
+
+        // smooth pindah halaman (lebih halus)
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const target = this.getAttribute('href');
+
+                if (target && !target.includes('#')) {
+                    e.preventDefault();
+
+                    document.body.style.opacity = 0;
+
+                    setTimeout(() => {
+                        window.location.href = target;
+                    }, 250);
+                }
+            });
         });
     </script>
 

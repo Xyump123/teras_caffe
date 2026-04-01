@@ -1,6 +1,7 @@
 <?php
 $id_transaksi = $id_transaksi ?? '';
 $metode = strtolower($metode ?? '');
+$tipe = strtolower($tipe ?? '');
 $meja = $meja ?? '';
 $detail = $detail ?? [];
 $total = $total ?? 0;
@@ -10,9 +11,7 @@ $total = $total ?? 0;
 
 <head>
 
-    <!-- FAVICON -->
     <link rel="icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
-    <link rel="shortcut icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
 
     <title>Struk Pesanan</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,14 +46,19 @@ $total = $total ?? 0;
             font-size: 28px;
             font-weight: bold;
             color: #4b2e2e;
-            letter-spacing: 1px;
         }
 
         .subtitle {
             text-align: center;
             font-size: 14px;
             color: #777;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         .status {
@@ -89,7 +93,6 @@ $total = $total ?? 0;
 
         td {
             padding: 8px 0;
-            vertical-align: top;
         }
 
         .menu-nama {
@@ -104,7 +107,6 @@ $total = $total ?? 0;
         .opsi {
             font-size: 12px;
             color: #666;
-            margin-top: 2px;
         }
 
         .total-box {
@@ -126,7 +128,6 @@ $total = $total ?? 0;
         .qr-box img {
             width: 200px;
             max-width: 100%;
-            margin-top: 10px;
         }
 
         .info-bayar {
@@ -134,7 +135,6 @@ $total = $total ?? 0;
             text-align: center;
             margin-top: 10px;
             color: #555;
-            line-height: 1.5;
         }
 
         .btn-bayar {
@@ -148,13 +148,11 @@ $total = $total ?? 0;
             font-size: 16px;
             border: none;
             cursor: pointer;
-            transition: 0.3s;
             font-weight: 600;
         }
 
         .btn-bayar:hover {
             background: #4b2e2e;
-            transform: scale(1.02);
         }
 
         .footer {
@@ -162,32 +160,6 @@ $total = $total ?? 0;
             margin-top: 20px;
             font-size: 13px;
             color: #777;
-        }
-
-        @media(max-width:480px) {
-
-            .struk {
-                padding: 22px;
-                border-radius: 15px;
-            }
-
-            .logo {
-                font-size: 24px;
-            }
-
-            table {
-                font-size: 14px;
-            }
-
-            .total-box {
-                font-size: 18px;
-            }
-
-            .btn-bayar {
-                font-size: 15px;
-                padding: 13px;
-            }
-
         }
     </style>
 
@@ -199,6 +171,11 @@ $total = $total ?? 0;
 
         <div class="logo">TERAS CAFFE ☕</div>
         <div class="subtitle">Struk Pembayaran</div>
+
+        <div class="info">
+            No Transaksi : <b>#<?= esc($id_transaksi) ?></b><br>
+            Meja : <b><?= esc($meja) ?></b>
+        </div>
 
         <?php if ($metode == 'qris'): ?>
 
@@ -218,33 +195,29 @@ $total = $total ?? 0;
 
         <table>
 
-            <?php if (!empty($detail)): ?>
+            <?php foreach ($detail as $k): ?>
 
-                <?php foreach ($detail as $k): ?>
+                <tr>
 
-                    <tr>
+                    <td class="menu-nama">
 
-                        <td class="menu-nama">
+                        <?= esc($k['nama_menu']) ?> x<?= esc($k['qty']) ?>
 
-                            <?= esc($k['nama_menu'] ?? '') ?> x<?= esc($k['qty'] ?? 0) ?>
+                        <?php if (!empty($k['level_pedas'])): ?>
+                            <div class="opsi">
+                                Level Pedas : <?= esc($k['level_pedas']) ?>
+                            </div>
+                        <?php endif; ?>
 
-                            <?php if (!empty($k['level_pedas'])): ?>
-                                <div class="opsi">
-                                    Level : <?= esc($k['level_pedas']) ?>
-                                </div>
-                            <?php endif; ?>
+                    </td>
 
-                        </td>
+                    <td class="menu-harga">
+                        Rp <?= number_format($k['subtotal'], 0, ',', '.') ?>
+                    </td>
 
-                        <td class="menu-harga">
-                            Rp <?= number_format($k['subtotal'] ?? 0, 0, ',', '.') ?>
-                        </td>
+                </tr>
 
-                    </tr>
-
-                <?php endforeach; ?>
-
-            <?php endif; ?>
+            <?php endforeach; ?>
 
         </table>
 
@@ -259,11 +232,10 @@ $total = $total ?? 0;
 
             <div class="qr-box">
 
-                <img src="<?= base_url('uploads/QR Pembayaran.png') ?>" alt="QRIS">
+                <img src="<?= base_url('uploads/QR Pembayaran.png') ?>">
 
                 <div class="info-bayar">
-                    Scan QR untuk membayar<br>
-                    Setelah bayar klik tombol di bawah
+                    Scan QR untuk membayar
                 </div>
 
             </div>
@@ -286,7 +258,7 @@ $total = $total ?? 0;
 
             <div class="info-bayar">
                 Silakan bayar di kasir<br>
-                Sebutkan nomor meja: <b><?= esc($meja) ?></b>
+                Sebutkan nomor meja : <b><?= esc($meja) ?></b>
             </div>
 
             <form action="<?= base_url('menu/bayar') ?>" method="post">

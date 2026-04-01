@@ -28,10 +28,14 @@ if ($status == 'pending') {
     $text  = '#004085';
 } else {
 
-    $label = 'LUNAS';
+    $label = 'PEMBAYARAN SELESAI';
     $warna = '#d4edda';
     $text  = '#155724';
 }
+
+$tipe = strtoupper($transaksi['tipe_pembayaran'] ?? '-');
+$metode = strtoupper($transaksi['metode_pembayaran'] ?? '-');
+
 ?>
 
 <!DOCTYPE html>
@@ -39,10 +43,7 @@ if ($status == 'pending') {
 
 <head>
 
-    <!-- FAVICON -->
     <link rel="icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
-    <link rel="shortcut icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
-
     <title>Status Pembayaran</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -91,7 +92,7 @@ if ($status == 'pending') {
 
         .info {
             font-size: 14px;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         .info b {
@@ -189,16 +190,21 @@ if ($status == 'pending') {
         </div>
 
         <div class="info">
-            No Transaksi: <b><?= esc($transaksi['id'] ?? '') ?></b>
+            No Transaksi : <b>#<?= esc($transaksi['id'] ?? '') ?></b>
         </div>
 
         <div class="info">
-            No Meja: <b><?= esc($transaksi['meja'] ?? '') ?></b>
+            No Meja : <b><?= esc($transaksi['meja'] ?? '') ?></b>
         </div>
 
         <div class="info">
-            Metode Pembayaran:
-            <b><?= esc(strtoupper($transaksi['metode_pembayaran'] ?? '')) ?></b>
+            Tipe Pembayaran :
+            <b><?= esc($tipe) ?></b>
+        </div>
+
+        <div class="info">
+            Metode Pembayaran :
+            <b><?= esc($metode) ?></b>
         </div>
 
         <div class="divider"></div>
@@ -217,7 +223,7 @@ if ($status == 'pending') {
 
                             <?php if (!empty($d['level_pedas'])): ?>
                                 <div class="opsi">
-                                    Level : <?= esc($d['level_pedas']) ?>
+                                    Level Pedas : <?= esc($d['level_pedas']) ?>
                                 </div>
                             <?php endif; ?>
 

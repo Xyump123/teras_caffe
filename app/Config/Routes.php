@@ -55,7 +55,12 @@ $routes->get('menu/sukses/(:num)', 'Menu::sukses/$1');
 */
 $routes->get('admin/login', 'Admin::login');
 $routes->post('admin/loginProcess', 'Admin::loginProcess');
+$routes->get('admin/profile', 'Admin::profile');
+$routes->get('admin/edit-profile', 'Admin::editProfile');
+$routes->post('admin/update-profile', 'Admin::updateProfile');
 $routes->get('admin/logout', 'Admin::logout');
+$routes->get('admin/register', 'Admin::register');
+$routes->post('admin/registerProcess', 'Admin::registerProcess');
 
 
 /*

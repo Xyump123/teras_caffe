@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 13 Mar 2026 pada 16.01
--- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
+-- Generation Time: Mar 13, 2026 at 05:16 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `detail_transaksi`
+-- Table structure for table `detail_transaksi`
 --
 
 CREATE TABLE `detail_transaksi` (
@@ -39,7 +39,7 @@ CREATE TABLE `detail_transaksi` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `detail_transaksi`
+-- Dumping data for table `detail_transaksi`
 --
 
 INSERT INTO `detail_transaksi` (`id`, `id_transaksi`, `id_menu`, `nama_menu`, `harga`, `qty`, `subtotal`, `level_pedas`) VALUES
@@ -72,12 +72,18 @@ INSERT INTO `detail_transaksi` (`id`, `id_transaksi`, `id_menu`, `nama_menu`, `h
 (72, 59, 7, 'Chicken Katsu', 12000, 1, 12000, '4'),
 (73, 60, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
 (74, 61, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
-(75, 62, 7, 'Chicken Katsu', 12000, 1, 12000, '5');
+(75, 62, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
+(76, 63, 8, 'Fire Wings', 13000, 1, 13000, '5'),
+(77, 63, 9, 'Ceker Saus Korea', 16000, 1, 16000, NULL),
+(78, 64, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
+(79, 65, 7, 'Chicken Katsu', 12000, 1, 12000, '2'),
+(80, 66, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
+(81, 67, 7, 'Chicken Katsu', 12000, 1, 12000, '5');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `keranjang`
+-- Table structure for table `keranjang`
 --
 
 CREATE TABLE `keranjang` (
@@ -92,18 +98,17 @@ CREATE TABLE `keranjang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `keranjang`
+-- Dumping data for table `keranjang`
 --
 
 INSERT INTO `keranjang` (`id`, `id_menu`, `nama_menu`, `harga`, `qty`, `meja`, `created_at`, `level_pedas`) VALUES
-(90, 1, 'Mie Gacoan Level 1', 12000, 4, 0, '2026-03-03 21:00:09', NULL),
-(94, 7, 'Chicken Katsu', 12000, 7, 0, '2026-03-09 09:58:08', NULL),
+(94, 7, 'Chicken Katsu', 12000, 8, 0, '2026-03-09 09:58:08', NULL),
 (109, 40, 'Jus Mangga', 10000, 1, 0, '2026-03-10 07:46:38', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `menu`
+-- Table structure for table `menu`
 --
 
 CREATE TABLE `menu` (
@@ -118,13 +123,13 @@ CREATE TABLE `menu` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `menu`
+-- Dumping data for table `menu`
 --
 
 INSERT INTO `menu` (`id`, `nama_menu`, `harga`, `stok`, `kategori`, `gambar`, `created_at`, `ada_level`) VALUES
-(7, 'Chicken Katsu', 12000, 26, 'Makanan', '1773138148_1ae21ef378157d3b2f34.jpg', '2026-03-09 06:44:33', 1),
-(8, 'Fire Wings', 13000, 29, 'Makanan', '1773138122_bb6b8e19d4a1bb94cd74.jpg', '2026-03-09 06:45:52', 1),
-(9, 'Ceker Saus Korea', 16000, 30, 'Makanan', '1773138448_67dfe1b7a6054cbefb81.jpg', '2026-03-09 06:46:25', 0),
+(7, 'Chicken Katsu', 12000, 22, 'Makanan', '1773138148_1ae21ef378157d3b2f34.jpg', '2026-03-09 06:44:33', 1),
+(8, 'Fire Wings', 13000, 28, 'Makanan', '1773138122_bb6b8e19d4a1bb94cd74.jpg', '2026-03-09 06:45:52', 1),
+(9, 'Ceker Saus Korea', 16000, 29, 'Makanan', '1773138448_67dfe1b7a6054cbefb81.jpg', '2026-03-09 06:46:25', 0),
 (10, 'Nasi Katsu', 17000, 30, 'Makanan', '1773138504_c52b02985901a8f52f0d.jpg', '2026-03-09 06:46:45', 1),
 (11, 'Nasi Fire Wings', 18000, 30, 'Makanan', '1773138474_a990063b29b393dc89fa.jpg', '2026-03-09 06:47:04', 1),
 (12, 'Nasi Ayam Lada Hitam', 20000, 30, 'Makanan', '1773138532_fdcf2ae2d32bb48110a9.jpg', '2026-03-09 06:47:33', 0),
@@ -188,12 +193,13 @@ INSERT INTO `menu` (`id`, `nama_menu`, `harga`, `stok`, `kategori`, `gambar`, `c
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `transaksi`
+-- Table structure for table `transaksi`
 --
 
 CREATE TABLE `transaksi` (
   `id` int(11) NOT NULL,
   `meja` int(11) DEFAULT NULL,
+  `tipe_pembayaran` varchar(20) DEFAULT NULL,
   `total` int(11) DEFAULT NULL,
   `metode_pembayaran` varchar(20) DEFAULT NULL,
   `created_at` datetime DEFAULT current_timestamp(),
@@ -201,42 +207,47 @@ CREATE TABLE `transaksi` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `transaksi`
+-- Dumping data for table `transaksi`
 --
 
-INSERT INTO `transaksi` (`id`, `meja`, `total`, `metode_pembayaran`, `created_at`, `status`) VALUES
-(36, 1, 12000, 'cash', '2026-03-03 13:44:54', 'lunas'),
-(37, 1, 12000, 'qris', '2026-03-03 13:56:39', 'lunas'),
-(38, 1, 12000, 'cash', '2026-03-03 15:37:48', 'lunas'),
-(39, 1, 12000, 'qris', '2026-03-04 17:04:28', 'lunas'),
-(40, 1, 12000, 'cash', '2026-03-04 17:13:53', 'lunas'),
-(41, 1, 12, 'cash', '2026-03-08 23:43:04', 'lunas'),
-(42, 1, 12000, 'cash', '2026-03-09 16:59:20', 'lunas'),
-(43, 1, 12000, 'cash', '2026-03-09 17:47:41', 'lunas'),
-(44, 1, 12000, 'cash', '2026-03-09 17:52:42', 'lunas'),
-(45, 1, 22000, 'cash', '2026-03-09 18:59:21', 'lunas'),
-(46, 1, 32000, 'cash', '2026-03-09 19:21:11', 'lunas'),
-(47, 1, 30000, 'cash', '2026-03-09 19:38:23', 'lunas'),
-(48, 1, 34000, 'cash', '2026-03-09 19:53:44', 'lunas'),
-(49, 1, 22000, 'qris', '2026-03-09 19:54:43', 'lunas'),
-(50, 1, 22000, 'cash', '2026-03-10 14:47:42', 'lunas'),
-(51, 1, 24000, 'cash', '2026-03-10 16:41:45', 'lunas'),
-(52, 1, 12000, 'qris', '2026-03-10 17:05:18', 'lunas'),
-(53, 1, 39000, 'cash', '2026-03-10 18:55:18', 'lunas'),
-(54, 1, 12000, 'cash', '2026-03-10 18:56:37', 'lunas'),
-(55, 1, 12000, 'qris', '2026-03-10 19:07:33', 'lunas'),
-(56, 1, 12000, 'qris', '2026-03-10 19:09:02', 'lunas'),
-(57, 1, 12000, 'qris', '2026-03-12 23:15:59', 'lunas'),
-(58, 1, 13000, 'cash', '2026-03-12 23:16:37', 'lunas'),
-(59, 1, 12000, 'qris', '2026-03-12 23:36:44', 'lunas'),
-(60, 1, 12000, 'cash', '2026-03-12 23:47:30', 'lunas'),
-(61, 1, 12000, 'qris', '2026-03-13 21:56:53', 'lunas'),
-(62, 1, 12000, 'qris', '2026-03-13 21:57:23', 'lunas');
+INSERT INTO `transaksi` (`id`, `meja`, `tipe_pembayaran`, `total`, `metode_pembayaran`, `created_at`, `status`) VALUES
+(36, 1, NULL, 12000, 'cash', '2026-03-03 13:44:54', 'lunas'),
+(37, 1, NULL, 12000, 'qris', '2026-03-03 13:56:39', 'lunas'),
+(38, 1, NULL, 12000, 'cash', '2026-03-03 15:37:48', 'lunas'),
+(39, 1, NULL, 12000, 'qris', '2026-03-04 17:04:28', 'lunas'),
+(40, 1, NULL, 12000, 'cash', '2026-03-04 17:13:53', 'lunas'),
+(41, 1, NULL, 12, 'cash', '2026-03-08 23:43:04', 'lunas'),
+(42, 1, NULL, 12000, 'cash', '2026-03-09 16:59:20', 'lunas'),
+(43, 1, NULL, 12000, 'cash', '2026-03-09 17:47:41', 'lunas'),
+(44, 1, NULL, 12000, 'cash', '2026-03-09 17:52:42', 'lunas'),
+(45, 1, NULL, 22000, 'cash', '2026-03-09 18:59:21', 'lunas'),
+(46, 1, NULL, 32000, 'cash', '2026-03-09 19:21:11', 'lunas'),
+(47, 1, NULL, 30000, 'cash', '2026-03-09 19:38:23', 'lunas'),
+(48, 1, NULL, 34000, 'cash', '2026-03-09 19:53:44', 'lunas'),
+(49, 1, NULL, 22000, 'qris', '2026-03-09 19:54:43', 'lunas'),
+(50, 1, NULL, 22000, 'cash', '2026-03-10 14:47:42', 'lunas'),
+(51, 1, NULL, 24000, 'cash', '2026-03-10 16:41:45', 'lunas'),
+(52, 1, NULL, 12000, 'qris', '2026-03-10 17:05:18', 'lunas'),
+(53, 1, NULL, 39000, 'cash', '2026-03-10 18:55:18', 'lunas'),
+(54, 1, NULL, 12000, 'cash', '2026-03-10 18:56:37', 'lunas'),
+(55, 1, NULL, 12000, 'qris', '2026-03-10 19:07:33', 'lunas'),
+(56, 1, NULL, 12000, 'qris', '2026-03-10 19:09:02', 'lunas'),
+(57, 1, NULL, 12000, 'qris', '2026-03-12 23:15:59', 'lunas'),
+(58, 1, NULL, 13000, 'cash', '2026-03-12 23:16:37', 'lunas'),
+(59, 1, NULL, 12000, 'qris', '2026-03-12 23:36:44', 'lunas'),
+(60, 1, NULL, 12000, 'cash', '2026-03-12 23:47:30', 'lunas'),
+(61, 1, NULL, 12000, 'qris', '2026-03-13 21:56:53', 'lunas'),
+(62, 1, NULL, 12000, 'qris', '2026-03-13 21:57:23', 'lunas'),
+(63, 1, NULL, 29000, 'qris', '2026-03-13 22:38:05', 'lunas'),
+(64, 1, NULL, 12000, 'cash', '2026-03-13 22:50:41', 'lunas'),
+(65, 1, 'meja', 12000, 'qris', '2026-03-13 22:57:19', 'lunas'),
+(66, 1, 'kasir', 12000, 'cash', '2026-03-13 23:04:41', 'lunas'),
+(67, 1, 'kasir', 12000, 'cash', '2026-03-13 23:05:54', 'lunas');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -250,7 +261,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `nama`, `bio`) VALUES
@@ -261,7 +272,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `nama`,
 --
 
 --
--- Indeks untuk tabel `detail_transaksi`
+-- Indexes for table `detail_transaksi`
 --
 ALTER TABLE `detail_transaksi`
   ADD PRIMARY KEY (`id`),
@@ -269,74 +280,81 @@ ALTER TABLE `detail_transaksi`
   ADD KEY `fk_menu` (`id_menu`);
 
 --
--- Indeks untuk tabel `keranjang`
+-- Indexes for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_keranjang_menu` (`id_menu`);
 
 --
--- Indeks untuk tabel `menu`
+-- Indexes for table `menu`
 --
 ALTER TABLE `menu`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `transaksi`
+-- Indexes for table `transaksi`
 --
 ALTER TABLE `transaksi`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indeks untuk tabel `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `detail_transaksi`
+-- AUTO_INCREMENT for table `detail_transaksi`
 --
 ALTER TABLE `detail_transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
 
 --
--- AUTO_INCREMENT untuk tabel `keranjang`
+-- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=129;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
 
 --
--- AUTO_INCREMENT untuk tabel `menu`
+-- AUTO_INCREMENT for table `menu`
 --
 ALTER TABLE `menu`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
--- AUTO_INCREMENT untuk tabel `transaksi`
+-- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
--- AUTO_INCREMENT untuk tabel `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `detail_transaksi`
+-- Constraints for table `detail_transaksi`
 --
 ALTER TABLE `detail_transaksi`
   ADD CONSTRAINT `detail_transaksi_ibfk_1` FOREIGN KEY (`id_transaksi`) REFERENCES `transaksi` (`id`),
   ADD CONSTRAINT `fk_menu` FOREIGN KEY (`id_menu`) REFERENCES `menu` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_transaksi` FOREIGN KEY (`id_transaksi`) REFERENCES `transaksi` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `keranjang`
+--
+ALTER TABLE `keranjang`
+  ADD CONSTRAINT `fk_keranjang_menu` FOREIGN KEY (`id_menu`) REFERENCES `menu` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

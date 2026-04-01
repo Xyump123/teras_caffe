@@ -26,6 +26,7 @@
 
     th {
         background: #000000;
+        color: white;
         padding: 12px;
         text-align: left;
     }
@@ -42,11 +43,23 @@
         font-weight: bold;
     }
 
+    /* STATUS */
     .badge.pending {
         background: #fff3cd;
         color: #856404;
     }
 
+    .badge.menunggu_konfirmasi {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .badge.lunas {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    /* METODE */
     .badge.qris {
         background: #cce5ff;
         color: #004085;
@@ -77,21 +90,34 @@
 
 <div class="card">
 
-    <a href="<?= base_url('admin/menu') ?>"></i> Kembali</a>
-    <h3>Edit Menu</h3>
+    <a href="<?= base_url('admin/transaksi') ?>">← Kembali</a>
 
     <h3>Detail Transaksi</h3>
 
     <table class="info-table">
 
         <tr>
-            <td width="150"><b>ID Transaksi</b></td>
-            <td>: <?= $transaksi['id'] ?></td>
+            <td width="180"><b>ID Transaksi</b></td>
+            <td>: <?= esc($transaksi['id']) ?></td>
         </tr>
 
         <tr>
-            <td><b>Meja</b></td>
-            <td>: <?= $transaksi['meja'] ?></td>
+            <td><b>No Meja</b></td>
+            <td>: <?= esc($transaksi['meja']) ?></td>
+        </tr>
+
+        <tr>
+            <td><b>Tipe Pembayaran</b></td>
+            <td>: <?= strtoupper(esc($transaksi['tipe_pembayaran'] ?? '-')) ?></td>
+        </tr>
+
+        <tr>
+            <td><b>Metode Pembayaran</b></td>
+            <td>
+                <span class="badge <?= strtolower($transaksi['metode_pembayaran']) ?>">
+                    <?= strtoupper(esc($transaksi['metode_pembayaran'])) ?>
+                </span>
+            </td>
         </tr>
 
         <tr>
@@ -126,34 +152,45 @@
             <th width="150">Subtotal</th>
         </tr>
 
-        <?php foreach ($detail as $d): ?>
+        <?php if (!empty($detail)): ?>
+
+            <?php foreach ($detail as $d): ?>
+
+                <tr>
+
+                    <td class="menu-name">
+
+                        <?= esc($d['nama_menu']) ?>
+
+                        <?php if (isset($d['level_pedas']) && $d['level_pedas'] != ''): ?>
+                            <div class="menu-option">
+                                Level Pedas : <?= esc($d['level_pedas']) ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </td>
+
+                    <td><?= esc($d['qty']) ?></td>
+
+                    <td>
+                        Rp <?= number_format($d['harga'], 0, ',', '.') ?>
+                    </td>
+
+                    <td>
+                        Rp <?= number_format($d['subtotal'], 0, ',', '.') ?>
+                    </td>
+
+                </tr>
+
+            <?php endforeach; ?>
+
+        <?php else: ?>
 
             <tr>
-
-                <td class="menu-name">
-                    <?= $d['nama_menu'] ?>
-
-                    <?php if (isset($d['level_pedas']) && $d['level_pedas'] != ''): ?>
-                        <div class="menu-option">
-                            Level Pedas : <?= $d['level_pedas'] ?>
-                        </div>
-                    <?php endif; ?>
-
-                </td>
-
-                <td><?= $d['qty'] ?></td>
-
-                <td>
-                    Rp <?= number_format($d['harga'], 0, ',', '.') ?>
-                </td>
-
-                <td>
-                    Rp <?= number_format($d['subtotal'], 0, ',', '.') ?>
-                </td>
-
+                <td colspan="4">Tidak ada data menu</td>
             </tr>
 
-        <?php endforeach; ?>
+        <?php endif; ?>
 
     </table>
 

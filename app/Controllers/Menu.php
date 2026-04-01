@@ -15,9 +15,9 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
+    ==============================
     MENU LIST
-    ======================================
+    ==============================
     */
     public function index()
     {
@@ -31,9 +31,9 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
+    ==============================
     TAMBAH KE KERANJANG
-    ======================================
+    ==============================
     */
     public function tambah()
     {
@@ -54,7 +54,6 @@ class Menu extends BaseController
                 ->with('error', 'Stok habis');
         }
 
-        // CEK ITEM DI KERANJANG
         $cek = $keranjangModel
             ->where('id_menu', $id_menu)
             ->where('meja', $meja)
@@ -85,9 +84,9 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
+    ==============================
     TAMPIL KERANJANG
-    ======================================
+    ==============================
     */
     public function keranjang()
     {
@@ -114,9 +113,9 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
+    ==============================
     TAMBAH QTY
-    ======================================
+    ==============================
     */
     public function tambahQty($id, $meja)
     {
@@ -144,9 +143,9 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
+    ==============================
     KURANG QTY
-    ======================================
+    ==============================
     */
     public function kurangQty($id, $meja)
     {
@@ -174,9 +173,9 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
-    HAPUS ITEM KERANJANG
-    ======================================
+    ==============================
+    HAPUS ITEM
+    ==============================
     */
     public function hapusItem($id, $meja)
     {
@@ -191,16 +190,17 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
+    ==============================
     STRUK PEMESANAN
-    ======================================
+    ==============================
     */
     public function struk()
     {
         $meja   = $this->request->getPost('meja');
         $metode = strtolower($this->request->getPost('metode_bayar'));
+        $tipe   = strtolower($this->request->getPost('tipe_pembayaran'));
 
-        if (!$metode) {
+        if (!$metode || !$tipe) {
             return redirect()->to('/menu/keranjang?meja=' . $meja);
         }
 
@@ -219,17 +219,16 @@ class Menu extends BaseController
             $total += $k['harga'] * $k['qty'];
         }
 
-        // INSERT TRANSAKSI
         $this->db->table('transaksi')->insert([
             'meja'               => $meja,
             'total'              => $total,
+            'tipe_pembayaran'    => $tipe,
             'metode_pembayaran'  => $metode,
             'status'             => 'pending'
         ]);
 
         $id_transaksi = $this->db->insertID();
 
-        // INSERT DETAIL TRANSAKSI
         foreach ($keranjang as $k) {
 
             $level = $this->request->getPost('level_' . $k['id']);
@@ -250,7 +249,6 @@ class Menu extends BaseController
             ->get()
             ->getResultArray();
 
-        // HAPUS KERANJANG
         $this->db->table('keranjang')
             ->where('meja', $meja)
             ->delete();
@@ -260,14 +258,15 @@ class Menu extends BaseController
             'total'        => $total,
             'meja'         => $meja,
             'id_transaksi' => $id_transaksi,
-            'metode'       => $metode
+            'metode'       => $metode,
+            'tipe'         => $tipe
         ]);
     }
 
     /*
-    ======================================
+    ==============================
     PROSES BAYAR
-    ======================================
+    ==============================
     */
     public function bayar()
     {
@@ -283,9 +282,9 @@ class Menu extends BaseController
     }
 
     /*
-    ======================================
+    ==============================
     HALAMAN SUKSES
-    ======================================
+    ==============================
     */
     public function sukses($id)
     {
