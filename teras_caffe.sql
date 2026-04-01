@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 13, 2026 at 05:16 PM
+-- Generation Time: Apr 01, 2026 at 01:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -78,7 +78,12 @@ INSERT INTO `detail_transaksi` (`id`, `id_transaksi`, `id_menu`, `nama_menu`, `h
 (78, 64, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
 (79, 65, 7, 'Chicken Katsu', 12000, 1, 12000, '2'),
 (80, 66, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
-(81, 67, 7, 'Chicken Katsu', 12000, 1, 12000, '5');
+(81, 67, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
+(82, 68, 7, 'Chicken Katsu', 12000, 1, 12000, '5'),
+(83, 69, 7, 'Chicken Katsu', 12000, 1, 12000, '1'),
+(84, 70, 7, 'Chicken Katsu', 12000, 1, 12000, '1'),
+(85, 71, 7, 'Chicken Katsu', 12000, 1, 12000, '1'),
+(86, 72, 7, 'Chicken Katsu', 12000, 1, 12000, '3');
 
 -- --------------------------------------------------------
 
@@ -102,7 +107,7 @@ CREATE TABLE `keranjang` (
 --
 
 INSERT INTO `keranjang` (`id`, `id_menu`, `nama_menu`, `harga`, `qty`, `meja`, `created_at`, `level_pedas`) VALUES
-(94, 7, 'Chicken Katsu', 12000, 8, 0, '2026-03-09 09:58:08', NULL),
+(94, 7, 'Chicken Katsu', 12000, 10, 0, '2026-03-09 09:58:08', NULL),
 (109, 40, 'Jus Mangga', 10000, 1, 0, '2026-03-10 07:46:38', NULL);
 
 -- --------------------------------------------------------
@@ -127,7 +132,7 @@ CREATE TABLE `menu` (
 --
 
 INSERT INTO `menu` (`id`, `nama_menu`, `harga`, `stok`, `kategori`, `gambar`, `created_at`, `ada_level`) VALUES
-(7, 'Chicken Katsu', 12000, 22, 'Makanan', '1773138148_1ae21ef378157d3b2f34.jpg', '2026-03-09 06:44:33', 1),
+(7, 'Chicken Katsu', 12000, 19, 'Makanan', '1773138148_1ae21ef378157d3b2f34.jpg', '2026-03-09 06:44:33', 1),
 (8, 'Fire Wings', 13000, 28, 'Makanan', '1773138122_bb6b8e19d4a1bb94cd74.jpg', '2026-03-09 06:45:52', 1),
 (9, 'Ceker Saus Korea', 16000, 29, 'Makanan', '1773138448_67dfe1b7a6054cbefb81.jpg', '2026-03-09 06:46:25', 0),
 (10, 'Nasi Katsu', 17000, 30, 'Makanan', '1773138504_c52b02985901a8f52f0d.jpg', '2026-03-09 06:46:45', 1),
@@ -242,7 +247,12 @@ INSERT INTO `transaksi` (`id`, `meja`, `tipe_pembayaran`, `total`, `metode_pemba
 (64, 1, NULL, 12000, 'cash', '2026-03-13 22:50:41', 'lunas'),
 (65, 1, 'meja', 12000, 'qris', '2026-03-13 22:57:19', 'lunas'),
 (66, 1, 'kasir', 12000, 'cash', '2026-03-13 23:04:41', 'lunas'),
-(67, 1, 'kasir', 12000, 'cash', '2026-03-13 23:05:54', 'lunas');
+(67, 1, 'kasir', 12000, 'cash', '2026-03-13 23:05:54', 'lunas'),
+(68, 1, 'meja', 12000, 'qris', '2026-03-13 23:18:37', 'lunas'),
+(69, 1, 'kasir', 12000, 'qris', '2026-03-25 14:52:49', 'lunas'),
+(70, 1, 'meja', 12000, 'qris', '2026-03-25 14:53:36', 'pending'),
+(71, 1, 'kasir', 12000, 'cash', '2026-03-25 14:54:02', 'pending'),
+(72, 1, 'meja', 12000, 'qris', '2026-04-01 18:38:35', 'menunggu_konfirmasi');
 
 -- --------------------------------------------------------
 
@@ -257,15 +267,18 @@ CREATE TABLE `users` (
   `role` varchar(50) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `nama` varchar(100) DEFAULT NULL,
-  `bio` text DEFAULT NULL
+  `bio` text DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `foto` varchar(255) DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `nama`, `bio`) VALUES
-(1, 'Fauzanfr123', 'Fauzanfr123', 'admin', '2026-03-03 01:22:31', NULL, NULL);
+INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `nama`, `bio`, `email`, `foto`, `updated_at`) VALUES
+(4, 'childe', '$2y$10$UutuZobZUTXhAmIUyhkIuuCwkS3cgCF/Wzqpkr2CF61VX/lxtz.Mm', 'admin', '2026-03-30 12:03:22', 'Childe', 'I Like Money', 'www.fauzanfr@gmail.com', '1774872464_c24a7ac2ab1874375be6.jpeg', '2026-03-30 12:07:44');
 
 --
 -- Indexes for dumped tables
@@ -312,13 +325,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `detail_transaksi`
 --
 ALTER TABLE `detail_transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
 -- AUTO_INCREMENT for table `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=135;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
 
 --
 -- AUTO_INCREMENT for table `menu`
@@ -330,13 +343,13 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT for table `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=73;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
