@@ -274,11 +274,6 @@
                 <i class="fa fa-sign-in-alt"></i> Login
             </button>
 
-            <div class="link">
-                Belum punya akun?
-                <a href="<?= base_url('admin/register') ?>">Register</a>
-            </div>
-
         </form>
 
         <div class="footer">
