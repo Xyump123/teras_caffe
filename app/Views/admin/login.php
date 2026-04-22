@@ -273,6 +273,10 @@
             <button id="btnLogin" type="submit">
                 <i class="fa fa-sign-in-alt"></i> Login
             </button>
+<<<<<<< HEAD
+=======
+
+>>>>>>> e9f1942ae234a1fd2fd67a15ae606484ee415c16
         </form>
 
         <div class="footer">
