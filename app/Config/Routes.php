@@ -6,110 +6,37 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-/*
-|--------------------------------------------------------------------------
-| DEFAULT ROUTE
-|--------------------------------------------------------------------------
-*/
-$routes->get('/', 'Home::index');
+// DEFAULT ROUTE (LANDING PAGE)
+$routes->get('/', 'Menu\MenuPelanggan::landing');
 
+// MENU PELANGGAN
+$routes->get('menu', 'Menu\MenuPelanggan::index');
+$routes->post('menu/tambah', 'Menu\Keranjang::tambah');
+$routes->get('menu/keranjang', 'Menu\Keranjang::lihat');
+$routes->get('menu/keranjang/tambah/(:num)/(:num)', 'Menu\Keranjang::tambahQty/$1/$2');
+$routes->get('menu/keranjang/kurang/(:num)/(:num)', 'Menu\Keranjang::kurangQty/$1/$2');
+$routes->get('menu/keranjang/hapus/(:num)/(:num)', 'Menu\Keranjang::hapusItem/$1/$2');
+$routes->post('menu/struk', 'Menu\Checkout::struk');
+$routes->post('menu/bayar', 'Menu\Checkout::bayar');
+$routes->get('menu/sukses/(:num)', 'Menu\Checkout::sukses/$1');
 
-/*
-|--------------------------------------------------------------------------
-| MENU PELANGGAN
-|--------------------------------------------------------------------------
-*/
-$routes->get('menu', 'Menu::index');
-$routes->post('menu/tambah', 'Menu::tambah');
-
-
-/*
-|--------------------------------------------------------------------------
-| KERANJANG
-|--------------------------------------------------------------------------
-*/
-$routes->get('menu/keranjang', 'Menu::keranjang');
-
-$routes->get('menu/keranjang/tambah/(:num)/(:num)', 'Menu::tambahQty/$1/$2');
-$routes->get('menu/keranjang/kurang/(:num)/(:num)', 'Menu::kurangQty/$1/$2');
-$routes->get('menu/keranjang/hapus/(:num)/(:num)', 'Menu::hapusItem/$1/$2');
-
-
-/*
-|--------------------------------------------------------------------------
-| CHECKOUT / PEMBAYARAN
-|--------------------------------------------------------------------------
-*/
-$routes->post('menu/struk', 'Menu::struk');
-
-$routes->get('menu/pembayaran/(:num)', 'Menu::pembayaran/$1');
-$routes->post('menu/bayar', 'Menu::bayar');
-
-$routes->get('menu/sukses/(:num)', 'Menu::sukses/$1');
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN AUTH
-|--------------------------------------------------------------------------
-*/
-$routes->get('admin/login', 'Admin::login');
-$routes->post('admin/loginProcess', 'Admin::loginProcess');
-$routes->get('admin/profile', 'Admin::profile');
-$routes->get('admin/edit-profile', 'Admin::editProfile');
-$routes->post('admin/update-profile', 'Admin::updateProfile');
-$routes->get('admin/logout', 'Admin::logout');
-$routes->get('admin/register', 'Admin::register');
-$routes->post('admin/registerProcess', 'Admin::registerProcess');
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN DASHBOARD
-|--------------------------------------------------------------------------
-*/
-$routes->get('admin/dashboard', 'Admin::dashboard');
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN TRANSAKSI
-|--------------------------------------------------------------------------
-*/
-$routes->get('admin/transaksi', 'Admin::transaksi');
-$routes->get('admin/detail/(:num)', 'Admin::detail/$1');
-$routes->get('admin/konfirmasi/(:num)', 'Admin::konfirmasi/$1');
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN MANAJEMEN MENU
-|--------------------------------------------------------------------------
-*/
-$routes->get('admin/menu', 'Admin::menu');
-
-$routes->get('admin/menu/tambah', 'Admin::tambahMenu');
-$routes->post('admin/menu/simpan', 'Admin::simpanMenu');
-
-$routes->get('admin/menu/edit/(:num)', 'Admin::editMenu/$1');
-$routes->post('admin/menu/update/(:num)', 'Admin::updateMenu/$1');
-
-$routes->get('admin/menu/hapus/(:num)', 'Admin::hapusMenu/$1');
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN LAPORAN
-|--------------------------------------------------------------------------
-*/
-$routes->get('admin/laporan', 'Admin::laporan');
-$routes->post('admin/laporan', 'Admin::laporan');
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN PROFILE
-|--------------------------------------------------------------------------
-*/
-$routes->get('admin/profile', 'Admin::profile');
-$routes->post('admin/updateProfile', 'Admin::updateProfile');
+// ADMIN
+$routes->get('admin/login', 'Admin\Auth::login');
+$routes->post('admin/loginProcess', 'Admin\Auth::loginProcess');
+$routes->get('admin/logout', 'Admin\Auth::logout');
+$routes->get('admin', 'Admin\Dashboard::index');
+$routes->get('admin/dashboard', 'Admin\Dashboard::index');
+$routes->get('admin/transaksi', 'Admin\Transaksi::index');
+$routes->get('admin/detail/(:num)', 'Admin\Transaksi::detail/$1');
+$routes->get('admin/konfirmasi/(:num)', 'Admin\Transaksi::konfirmasi/$1');
+$routes->get('admin/menu', 'Admin\MenuManager::index');
+$routes->get('admin/menu/tambah', 'Admin\MenuManager::tambah');
+$routes->post('admin/menu/simpan', 'Admin\MenuManager::simpan');
+$routes->get('admin/menu/edit/(:num)', 'Admin\MenuManager::edit/$1');
+$routes->post('admin/menu/update/(:num)', 'Admin\MenuManager::update/$1');
+$routes->get('admin/menu/hapus/(:num)', 'Admin\MenuManager::hapus/$1');
+$routes->get('admin/laporan', 'Admin\Laporan::index');
+$routes->post('admin/laporan', 'Admin\Laporan::index');
+$routes->get('admin/profile', 'Admin\Profile::index');
+$routes->get('admin/edit-profile', 'Admin\Profile::edit');
+$routes->post('admin/update-profile', 'Admin\Profile::update');

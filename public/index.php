@@ -1,5 +1,15 @@
 <?php
 
+/*
+ *---------------------------------------------------------------
+ * AUTO CREATE UPLOADS FOLDER (UNIVERSAL UNTUK SEMUA HOSTING)
+ *---------------------------------------------------------------
+ */
+$uploadPath = __DIR__ . '/uploads/';
+if (!is_dir($uploadPath)) {
+    mkdir($uploadPath, 0777, true);
+}
+
 use CodeIgniter\Boot;
 use Config\Paths;
 
