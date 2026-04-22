@@ -6,9 +6,9 @@ Aplikasi pemesanan menu berbasis web yang memudahkan pelanggan dalam melakukan p
 
 ## ✨ Fitur Utama
 
-- 🔐 Login & Register Admin
+- 🔐 Login
 - 📊 Dashboard Admin
-- 🍽️ Manajemen Menu
+- 🍽️ Manajemen Menu 
 - 🧾 Transaksi Pemesanan
 - 🖨️ Cetak Struk
 

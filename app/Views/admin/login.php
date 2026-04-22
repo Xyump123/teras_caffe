@@ -273,9 +273,7 @@
             <button id="btnLogin" type="submit">
                 <i class="fa fa-sign-in-alt"></i> Login
             </button>
-
         </form>
-
         <div class="footer">
             Teras Caffe © <?= date('Y') ?>
         </div>
