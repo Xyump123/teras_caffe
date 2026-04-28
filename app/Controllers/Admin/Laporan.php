@@ -29,12 +29,17 @@ class Laporan extends BaseController
         $tanggal = $this->request->getPost('tanggal');
         $bulan   = $this->request->getPost('bulan');
         $tahun   = $this->request->getPost('tahun');
+        
+        // Simpan parameter filter untuk pagination
+        $queryParams = [];
 
         if ($tanggal) {
             $transaksi = $this->db->table('transaksi')
                 ->where('DATE(created_at)', $tanggal)
+                ->orderBy('created_at', 'DESC')
                 ->get()
                 ->getResultArray();
+            $queryParams['tanggal'] = $tanggal;
         } elseif ($bulan) {
             $bulanAngka = date('m', strtotime($bulan));
             $tahunAngka = date('Y', strtotime($bulan));
@@ -42,13 +47,17 @@ class Laporan extends BaseController
             $transaksi = $this->db->table('transaksi')
                 ->where('MONTH(created_at)', $bulanAngka)
                 ->where('YEAR(created_at)', $tahunAngka)
+                ->orderBy('created_at', 'DESC')
                 ->get()
                 ->getResultArray();
+            $queryParams['bulan'] = $bulan;
         } elseif ($tahun) {
             $transaksi = $this->db->table('transaksi')
                 ->where('YEAR(created_at)', $tahun)
+                ->orderBy('created_at', 'DESC')
                 ->get()
                 ->getResultArray();
+            $queryParams['tahun'] = $tahun;
         } else {
             $transaksi = $this->db->table('transaksi')
                 ->orderBy('created_at', 'DESC')
@@ -56,18 +65,43 @@ class Laporan extends BaseController
                 ->getResultArray();
         }
 
+        // Data untuk grafik
         $label = [];
-        $total = [];
-
+        $chartTotal = [];
         foreach ($transaksi as $t) {
             $label[] = date('d-m', strtotime($t['created_at']));
-            $total[] = $t['total'];
+            $chartTotal[] = $t['total'];
         }
+
+        // Total statistik
+        $totalTransaksi = count($transaksi);
+        $totalPendapatan = array_sum(array_column($transaksi, 'total'));
+
+        // ==================== PAGINATION ====================
+        $perPage = 10;
+        $page = $this->request->getGet('page') ?? 1;
+        $halamanAktif = (int)$page;
+        $mulai = ($halamanAktif - 1) * $perPage;
+        $totalHalaman = ceil($totalTransaksi / $perPage);
+        
+        // Ambil data per halaman
+        $transaksiPerPage = array_slice($transaksi, $mulai, $perPage);
 
         $data = [
             'transaksi' => $transaksi,
-            'label'     => $label,
-            'total'     => $total
+            'transaksiPerPage' => $transaksiPerPage,
+            'totalTransaksi' => $totalTransaksi,
+            'totalPendapatan' => $totalPendapatan,
+            'label' => $label,
+            'total' => $chartTotal,
+            'tanggal' => $tanggal,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'perPage' => $perPage,
+            'halamanAktif' => $halamanAktif,
+            'totalHalaman' => $totalHalaman,
+            'mulai' => $mulai,
+            'queryParams' => $queryParams
         ];
 
         return view('admin/laporan', $data);
