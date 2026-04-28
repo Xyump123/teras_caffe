@@ -210,7 +210,6 @@
                             <td class="col-tanggal"><?= date('d-m-Y H:i', strtotime($t['created_at'])) ?></td>
                             <td class="col-aksi action">
                                 <a href="<?= base_url('admin/transaksi/detail/' . $t['id']) ?>" class="btn-detail">🔍 Detail</a>
-                                <a href="<?= base_url('admin/transaksi/edit/' . $t['id']) ?>" class="btn-edit">✏️ Edit</a>
                                 <a href="<?= base_url('admin/transaksi/hapus/' . $t['id']) ?>" 
                                    class="btn-hapus"
                                    onclick="return confirm('Yakin ingin menghapus transaksi ini?')">🗑 Hapus</a>
