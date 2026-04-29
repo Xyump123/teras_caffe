@@ -32,8 +32,9 @@
         gap: 10px;
     }
 
+    /* TOMBOL TAMBAH WARNA COKLAT */
     .btn-tambah {
-        background: #1e3a5f;
+        background: #8B6914; /* Warna coklat keemasan */
         color: white;
         padding: 8px 16px;
         border-radius: 6px;
@@ -47,7 +48,7 @@
     }
 
     .btn-tambah:hover {
-        background: #0f2b4a;
+        background: #6B4F12; /* Coklat lebih gelap saat hover */
         transform: translateY(-2px);
     }
 
@@ -165,7 +166,7 @@
 
 <div class="card">
     <div class="header">
-        <h3>📋 Daftar Transaksi</h3>
+        <h3>Daftar Transaksi</h3>
         <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">
             + Tambah Transaksi Manual
         </a>
@@ -209,14 +210,14 @@
                             </td>
                             <td class="col-tanggal"><?= date('d-m-Y H:i', strtotime($t['created_at'])) ?></td>
                             <td class="col-aksi action">
-                                <a href="<?= base_url('admin/transaksi/detail/' . $t['id']) ?>" class="btn-detail">🔍 Detail</a>
+                                <a href="<?= base_url('admin/transaksi/detail/' . $t['id']) ?>" class="btn-detail">Detail</a>
                                 <a href="<?= base_url('admin/transaksi/hapus/' . $t['id']) ?>" 
                                    class="btn-hapus"
-                                   onclick="return confirm('Yakin ingin menghapus transaksi ini?')">🗑 Hapus</a>
+                                   onclick="return confirm('Yakin ingin menghapus transaksi ini?')">Hapus</a>
                                 <?php if ($t['status'] != 'lunas'): ?>
                                     <a href="<?= base_url('admin/transaksi/konfirmasi/' . $t['id']) ?>"
                                        class="btn-konfirmasi"
-                                       onclick="return confirm('Konfirmasi pembayaran dan kurangi stok?')">✅ Konfirmasi</a>
+                                       onclick="return confirm('Konfirmasi pembayaran dan kurangi stok?')">Konfirmasi</a>
                                 <?php endif; ?>
                             </td>
                         </tr>

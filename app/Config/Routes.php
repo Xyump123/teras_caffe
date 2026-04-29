@@ -79,9 +79,14 @@ $routes->get('admin/menu/hapus/(:num)', 'Admin\MenuManager::hapus/$1');
 $routes->get('admin/laporan', 'Admin\Laporan::index');
 $routes->post('admin/laporan', 'Admin\Laporan::index');
 
-//------------------------------------------------------------------------------
-// PROFIL
-//------------------------------------------------------------------------------
+
+// // ==================== PROFIL ====================
 $routes->get('admin/profile', 'Admin\Profile::index');
 $routes->get('admin/edit-profile', 'Admin\Profile::edit');
 $routes->post('admin/update-profile', 'Admin\Profile::update');
+
+// ==================== ADMIN QR CODE GENERATOR ====================
+$routes->get('admin/qr-generator', 'Admin\QrGenerator::index');
+$routes->post('admin/qr-generator/generate', 'Admin\QrGenerator::generate');
+$routes->post('admin/qr-generator/bulk', 'Admin\QrGenerator::bulkGenerate');
+$routes->get('admin/qr-generator/download/(:num)', 'Admin\QrGenerator::download/$1');

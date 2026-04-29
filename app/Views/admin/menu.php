@@ -19,25 +19,32 @@
         font-weight: 600;
         color: #333;
     }
+    
+    /* TOMBOL TAMBAH WARNA COKLAT */
     .btn-tambah {
-        background: #4b2e2e;
+        background: #8B6914; /* Coklat keemasan */
         color: #fff;
         padding: 10px 18px;
         border-radius: 10px;
         text-decoration: none;
         font-size: 14px;
         transition: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
     .btn-tambah:hover {
-        background: #6a3f3f;
+        background: #6B4F12; /* Coklat lebih gelap */
+        transform: translateY(-2px);
     }
+    
     table {
         width: 100%;
         border-collapse: collapse;
         font-size: 14px;
     }
     thead {
-        background: #f5f5f5;
+        background: #000; /* Hitam seperti tabel transaksi */
     }
     th, td {
         padding: 12px 10px;
@@ -57,26 +64,41 @@
     img {
         border-radius: 8px;
     }
+    
+    /* TOMBOL AKSI WARNA COKLAT SEMUA */
     .aksi a {
         text-decoration: none;
-        padding: 6px 10px;
+        padding: 6px 12px;
         border-radius: 6px;
-        font-size: 13px;
+        font-size: 12px;
         margin: 0 3px;
+        display: inline-block;
+        transition: all 0.3s ease;
     }
+    
+    /* Tombol Edit warna coklat */
     .edit {
-        background: #3498db;
+        background: #8B6914; /* Coklat keemasan */
         color: white;
     }
     .edit:hover {
-        background: #2980b9;
+        background: #6B4F12;
+        transform: translateY(-2px);
     }
+    
+    /* Tombol Hapus warna coklat kemerahan */
     .hapus {
-        background: #e74c3c;
+        background: #8B3A3A; /* Coklat kemerahan */
         color: white;
     }
     .hapus:hover {
-        background: #c0392b;
+        background: #6B2C2C;
+        transform: translateY(-2px);
+    }
+    
+    /* Tambahan untuk efek hover pada baris */
+    .aksi a:active {
+        transform: translateY(0);
     }
 </style>
 
@@ -87,7 +109,6 @@
             + Tambah Menu
         </a>
     </div>
-
     <table>
         <thead>
             <tr>

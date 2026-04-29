@@ -4,36 +4,43 @@
 <style>
     .card {
         background: #fff;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        padding: 30px;
     }
 
     .header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 2px solid #8B6914;
     }
 
     .header h3 {
         margin: 0;
         color: #333;
+        font-size: 24px;
+        font-weight: 600;
     }
 
     .btn-back {
         background: #6c757d;
         color: white;
-        padding: 6px 12px;
-        border-radius: 5px;
+        padding: 8px 16px;
+        border-radius: 10px;
         text-decoration: none;
         font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .btn-back:hover {
         background: #5a6268;
+        transform: translateX(-3px);
     }
 
     .form-group {
@@ -45,21 +52,43 @@
         margin-bottom: 8px;
         font-weight: 600;
         color: #333;
+        font-size: 14px;
+    }
+
+    .form-group label span {
+        color: #e74c3c;
+        margin-left: 4px;
     }
 
     .form-control {
         width: 100%;
-        padding: 10px;
+        padding: 12px 15px;
         border: 1px solid #ddd;
-        border-radius: 5px;
+        border-radius: 10px;
         font-size: 14px;
         box-sizing: border-box;
+        transition: all 0.3s ease;
     }
 
     .form-control:focus {
         outline: none;
-        border-color: #80bdff;
-        box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        border-color: #8B6914;
+        box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.1);
+    }
+
+    .hint {
+        font-size: 12px;
+        color: #888;
+        margin-top: 5px;
+    }
+
+    h4 {
+        margin: 25px 0 15px 0;
+        color: #333;
+        font-size: 18px;
+        font-weight: 600;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
     }
 
     .table {
@@ -71,55 +100,71 @@
     .table th,
     .table td {
         border: 1px solid #ddd;
-        padding: 10px;
+        padding: 12px;
         vertical-align: top;
     }
 
     .table th {
         background: #f5f5f5;
         font-weight: 600;
+        color: #333;
     }
 
     .btn-add {
-        background: #28a745;
+        background: #8B6914;
         color: white;
-        padding: 8px 16px;
+        padding: 10px 20px;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
         cursor: pointer;
         font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
         margin-bottom: 20px;
     }
 
     .btn-add:hover {
-        background: #218838;
+        background: #6B4F12;
+        transform: translateY(-2px);
     }
 
     .btn-remove {
         background: #dc3545;
         color: white;
-        padding: 5px 10px;
+        padding: 6px 12px;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
         font-size: 12px;
+        transition: all 0.3s ease;
     }
 
     .btn-remove:hover {
         background: #c82333;
+        transform: translateY(-1px);
     }
 
     .total-box {
-        background: #e9ecef;
-        padding: 15px 20px;
+        background: #f8f9fa;
+        padding: 20px;
         margin: 20px 0;
         text-align: right;
-        border-radius: 5px;
+        border-radius: 12px;
+        border-left: 4px solid #8B6914;
     }
 
     .total-box h4 {
         margin: 0;
         color: #333;
+        font-size: 20px;
+        border: none;
+        padding: 0;
+    }
+
+    .total-box h4 span {
+        color: #8B6914;
+        font-size: 24px;
+        font-weight: 700;
     }
 
     .form-actions {
@@ -130,37 +175,44 @@
     }
 
     .btn-simpan {
-        background: #007bff;
+        background: #8B6914;
         color: white;
-        padding: 10px 20px;
+        padding: 12px 24px;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
         cursor: pointer;
         font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
     }
 
     .btn-simpan:hover {
-        background: #0069d9;
+        background: #6B4F12;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(139, 105, 20, 0.3);
     }
 
     .btn-batal {
         background: #6c757d;
         color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
+        padding: 12px 24px;
+        border-radius: 10px;
         text-decoration: none;
         font-size: 14px;
+        font-weight: 600;
         text-align: center;
+        transition: all 0.3s ease;
     }
 
     .btn-batal:hover {
         background: #5a6268;
+        transform: translateY(-2px);
     }
 </style>
 
 <div class="card">
     <div class="header">
-        <h3>➕ Tambah Transaksi Manual</h3>
+        <h3>Tambah Transaksi</h3>
         <a href="<?= base_url('admin/transaksi') ?>" class="btn-back">← Kembali</a>
     </div>
 
@@ -168,12 +220,13 @@
         <?= csrf_field() ?>
 
         <div class="form-group">
-            <label>Nomor Meja</label>
+            <label>Nomor Meja <span>*</span></label>
             <input type="number" name="meja" class="form-control" placeholder="Masukkan nomor meja" required>
+            <div class="hint">Contoh: 1, 2, 3, dst.</div>
         </div>
 
         <div class="form-group">
-            <label>Metode Pembayaran</label>
+            <label>Metode Pembayaran <span>*</span></label>
             <select name="metode_pembayaran" class="form-control" required>
                 <option value="cash">💵 Cash (Tunai)</option>
                 <option value="qris">📱 QRIS (Digital)</option>
@@ -181,14 +234,15 @@
         </div>
 
         <div class="form-group">
-            <label>Status Pembayaran</label>
+            <label>Status Pembayaran <span>*</span></label>
             <select name="status" class="form-control" required>
-                <option value="pending">⏳ Pending (Belum Bayar)</option>
                 <option value="lunas">✅ Lunas (Sudah Bayar)</option>
+                <option value="menunggu_konfirmasi">⏳ Menunggu Konfirmasi</option>
             </select>
+            <div class="hint">Pilih "Menunggu Konfirmasi" jika pembayaran akan dilakukan kemudian</div>
         </div>
 
-        <h4>📝 Daftar Pesanan</h4>
+        <h4>Daftar Pesanan</h4>
         <div style="overflow-x: auto;">
             <table class="table" id="tabelItem">
                 <thead>
@@ -206,7 +260,7 @@
                                 <option value="">-- Pilih Menu --</option>
                                 <?php foreach ($menu as $m): ?>
                                     <option value="<?= $m['id'] ?>" data-harga="<?= $m['harga'] ?>" data-stok="<?= $m['stok'] ?>">
-                                        <?= $m['nama_menu'] ?> (Stok: <?= $m['stok'] ?>) - Rp <?= number_format($m['harga'], 0, ',', '.') ?>
+                                        <?= esc($m['nama_menu']) ?> (Stok: <?= $m['stok'] ?>) - Rp <?= number_format($m['harga'], 0, ',', '.') ?>
                                     </option>
                                 <?php endforeach; ?>
                             </select>
@@ -230,14 +284,14 @@
             </table>
         </div>
 
-        <button type="button" id="tambahItem" class="btn-add">+ Tambah Item</button>
+        <button type="button" id="tambahItem" class="btn-add">Tambah Item</button>
 
         <div class="total-box">
-            <h4>💰 Total: Rp <span id="totalDisplay">0</span></h4>
+            <h4>Total: <span id="totalDisplay">0</span></h4>
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn-simpan">💾 Simpan Transaksi</button>
+            <button type="submit" class="btn-simpan">Simpan Transaksi</button>
             <a href="<?= base_url('admin/transaksi') ?>" class="btn-batal">Batal</a>
         </div>
     </form>
@@ -251,7 +305,7 @@
         document.querySelectorAll('.item-row').forEach(row => {
             const select = row.querySelector('.menu-select');
             const selectedOption = select.options[select.selectedIndex];
-            const harga = selectedOption ? (parseInt(selectedOption.dataset.harga) || 0) : 0;
+            const harga = selectedOption && selectedOption.dataset.harga ? (parseInt(selectedOption.dataset.harga) || 0) : 0;
             const qty = parseInt(row.querySelector('.qty').value) || 0;
             total += harga * qty;
         });

@@ -174,6 +174,11 @@
         <a href="<?= base_url('admin/laporan') ?>">
             <i class="fa fa-file-invoice-dollar"></i> Laporan
         </a>
+
+        <!-- Tambahkan di sidebar -->
+        <a href="<?= base_url('admin/qr-generator') ?>">
+              <i class="fa fa-qrcode"></i> QR Generator
+        </a>
     </div>
 
     <!-- MAIN -->

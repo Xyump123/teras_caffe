@@ -1,37 +1,248 @@
 <?= $this->extend('admin/layout') ?>
 <?= $this->section('content') ?>
 
+<style>
+    .card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #8B6914;
+    }
+
+    .header h3 {
+        margin: 0;
+        color: #333;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .btn-back {
+        background: #6c757d;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-back:hover {
+        background: #5a6268;
+        transform: translateX(-3px);
+    }
+
+    .info-table {
+        width: 100%;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        border-collapse: collapse;
+        overflow: hidden;
+    }
+
+    .info-table tr {
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .info-table tr:last-child {
+        border-bottom: none;
+    }
+
+    .info-table td {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+
+    .info-table td:first-child {
+        font-weight: 700;
+        color: #555;
+        width: 180px;
+        background: #f1f3f5;
+    }
+
+    .info-table td:last-child {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .badge-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge-lunas {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-menunggu_konfirmasi {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-pending {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    h4 {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin: 25px 0 15px 0;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .order-table th {
+        background: #1a1a1a;
+        color: white;
+        padding: 12px 15px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .order-table td {
+        padding: 12px 15px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+    .order-table tbody tr:hover {
+        background: #fafafa;
+    }
+
+    .total-box {
+        background: #f8f9fa;
+        padding: 20px;
+        margin-top: 25px;
+        text-align: right;
+        border-radius: 12px;
+        border-left: 4px solid #8B6914;
+    }
+
+    .total-box h3 {
+        margin: 0;
+        color: #333;
+        font-size: 20px;
+    }
+
+    .total-box h3 span {
+        color: #8B6914;
+        font-size: 26px;
+        font-weight: 700;
+    }
+
+    .empty-order {
+        text-align: center;
+        padding: 40px;
+        color: #999;
+        font-size: 14px;
+    }
+</style>
+
 <div class="card">
-    <h3>Detail Transaksi #<?= $transaksi['id'] ?></h3>
-    <a href="<?= base_url('admin/transaksi') ?>">← Kembali</a>
-    
-    <table style="margin-top: 20px;">
-        <tr><td width="150">Meja</td><td>: <?= $transaksi['meja'] ?></td></tr>
-        <tr><td>Metode Pembayaran</td><td>: <?= strtoupper($transaksi['metode_pembayaran']) ?></td></tr>
-        <tr><td>Tipe Pembayaran</td><td>: <?= strtoupper($transaksi['tipe_pembayaran'] ?? 'MEJA') ?></td></tr>
-        <tr><td>Status</td><td>: <?= strtoupper($transaksi['status']) ?></td></tr>
-        <tr><td>Tanggal</td><td>: <?= $transaksi['created_at'] ?></td></tr>
+    <div class="header">
+        <h3>Detail Transaksi #<?= $transaksi['id'] ?></h3>
+        <a href="<?= base_url('admin/transaksi') ?>" class="btn-back">← Kembali</a>
+    </div>
+
+    <table class="info-table">
+        <tr>
+            <td>Nomor Meja</td>
+            <td>: <strong><?= $transaksi['meja'] ?></strong></td>
+        </tr>
+        <tr>
+            <td>Metode Pembayaran</td>
+            <td>: <strong><?= strtoupper($transaksi['metode_pembayaran']) ?></strong></td>
+        </tr>
+        <tr>
+            <td>Tipe Pembayaran</td>
+            <td>: <strong><?= strtoupper($transaksi['tipe_pembayaran'] ?? 'MEJA') ?></strong></td>
+        </tr>
+        <tr>
+            <td>Status</td>
+            <td>: 
+                <?php
+                $statusClass = '';
+                $statusText = strtoupper($transaksi['status']);
+                if ($transaksi['status'] == 'lunas') {
+                    $statusClass = 'badge-lunas';
+                } elseif ($transaksi['status'] == 'menunggu_konfirmasi') {
+                    $statusClass = 'badge-menunggu_konfirmasi';
+                } else {
+                    $statusClass = 'badge-pending';
+                }
+                ?>
+                <span class="badge-status <?= $statusClass ?>"><?= $statusText ?></span>
+            </td>
+        </tr>
+        <tr>
+            <td>Tanggal Transaksi</td>
+            <td>: <strong><?= date('d-m-Y H:i:s', strtotime($transaksi['created_at'])) ?></strong></td>
+        </tr>
     </table>
 
     <h4>Daftar Pesanan</h4>
-    <table>
-        <thead>
-            <tr><th>Menu</th><th>Qty</th><th>Level Pedas</th><th>Harga</th><th>Subtotal</th></tr>
-        </thead>
-        <tbody>
-            <?php foreach ($detail as $d): ?>
-            <tr>
-                <td><?= $d['nama_menu'] ?></td>
-                <td><?= $d['qty'] ?></td>
-                <td><?= $d['level_pedas'] ? "Level {$d['level_pedas']}" : '-' ?></td>
-                <td>Rp <?= number_format($d['harga'], 0, ',', '.') ?></td>
-                <td>Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    
+    <?php if (!empty($detail)): ?>
+        <table class="order-table">
+            <thead>
+                <tr>
+                    <th>Menu</th>
+                    <th>Qty</th>
+                    <th>Level Pedas</th>
+                    <th>Harga</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($detail as $d): ?>
+                <tr>
+                    <td style="text-align: left;"><strong><?= esc($d['nama_menu']) ?></strong></td>
+                    <td><?= $d['qty'] ?></td>
+                    <td><?= $d['level_pedas'] ? "🌶️ Level {$d['level_pedas']}" : '🌶 Tidak Pedas' ?></td>
+                    <td>Rp <?= number_format($d['harga'], 0, ',', '.') ?></td>
+                    <td><strong>Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></strong></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    <?php else: ?>
+        <div class="empty-order">
+            Tidak ada pesanan dalam transaksi ini
+        </div>
+    <?php endif; ?>
 
-    <h3 style="text-align: right; margin-top: 20px;">Total: Rp <?= number_format($transaksi['total'], 0, ',', '.') ?></h3>
+    <div class="total-box">
+        <h3>Total: <span>Rp <?= number_format($transaksi['total'], 0, ',', '.') ?></span></h3>
+    </div>
 </div>
 
 <?= $this->endSection() ?>
