@@ -46,15 +46,19 @@ class MenuManager extends BaseController
     {
         $this->checkLogin();
 
+        // VALIDASI STOK MAKSIMAL 30
+        $stok = $this->request->getPost('stok');
+        if ($stok > 30) {
+            return redirect()->back()->with('error', 'Stok maksimal adalah 30');
+        }
+
         $file = $this->request->getFile('gambar');
         $namaGambar = null;
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
             $namaGambar = $file->getRandomName();
             
-            // UNIVERSAL: Gunakan FCPATH untuk semua hosting
             $uploadPath = FCPATH . 'uploads/';
-            
             if (!is_dir($uploadPath)) {
                 mkdir($uploadPath, 0777, true);
             }
@@ -67,7 +71,7 @@ class MenuManager extends BaseController
         $this->db->table('menu')->insert([
             'nama_menu' => $this->request->getPost('nama_menu'),
             'harga'     => $harga,
-            'stok'      => $this->request->getPost('stok'),
+            'stok'      => $stok,
             'kategori'  => $this->request->getPost('kategori'),
             'gambar'    => $namaGambar
         ]);
@@ -97,13 +101,19 @@ class MenuManager extends BaseController
     {
         $this->checkLogin();
 
+        // VALIDASI STOK MAKSIMAL 30
+        $stok = $this->request->getPost('stok');
+        if ($stok > 30) {
+            return redirect()->back()->with('error', 'Stok maksimal adalah 30');
+        }
+
         $file = $this->request->getFile('gambar');
         $harga = str_replace('.', '', $this->request->getPost('harga'));
 
         $dataUpdate = [
             'nama_menu' => $this->request->getPost('nama_menu'),
             'harga'     => $harga,
-            'stok'      => $this->request->getPost('stok'),
+            'stok'      => $stok,
             'kategori'  => $this->request->getPost('kategori'),
         ];
 

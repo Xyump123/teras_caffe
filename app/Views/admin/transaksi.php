@@ -167,8 +167,7 @@
 <div class="card">
     <div class="header">
         <h3>Daftar Transaksi</h3>
-        <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">
-            + Tambah Transaksi Manual
+        <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">+ Tambah Transaksi
         </a>
     </div>
 

@@ -32,6 +32,31 @@ class Checkout extends BaseController
             return redirect()->to('/menu/keranjang?meja=' . $meja);
         }
 
+        // ==================== VALIDASI STOK SEBELUM CHECKOUT ====================
+        foreach ($keranjang as $k) {
+            $menu = $this->db->table('menu')
+                ->where('id', $k['id_menu'])
+                ->get()
+                ->getRowArray();
+            
+            if (!$menu) {
+                return redirect()->to('/menu/keranjang?meja=' . $meja)
+                    ->with('error', 'Menu tidak ditemukan');
+            }
+            
+            // Cek apakah qty melebihi stok
+            if ($k['qty'] > $menu['stok']) {
+                return redirect()->to('/menu/keranjang?meja=' . $meja)
+                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa stok: ' . $menu['stok']);
+            }
+            
+            // Cek apakah qty melebihi batas maksimal 30
+            if ($k['qty'] > 30) {
+                return redirect()->to('/menu/keranjang?meja=' . $meja)
+                    ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
+            }
+        }
+
         $total = 0;
 
         foreach ($keranjang as $k) {
@@ -85,6 +110,20 @@ class Checkout extends BaseController
     {
         $id = $this->request->getPost('id_transaksi');
 
+        // Validasi transaksi ada
+        $transaksi = $this->db->table('transaksi')
+            ->where('id', $id)
+            ->get()
+            ->getRowArray();
+
+        if (!$transaksi) {
+            return redirect()->to('/menu/keranjang')->with('error', 'Transaksi tidak ditemukan');
+        }
+
+        if ($transaksi['status'] == 'lunas') {
+            return redirect()->to('/menu/keranjang')->with('error', 'Transaksi sudah lunas');
+        }
+
         $this->db->table('transaksi')
             ->where('id', $id)
             ->update([
@@ -100,6 +139,10 @@ class Checkout extends BaseController
             ->where('id', $id)
             ->get()
             ->getRowArray();
+
+        if (!$transaksi) {
+            return redirect()->to('/menu/keranjang')->with('error', 'Transaksi tidak ditemukan');
+        }
 
         $detail = $this->db->table('detail_transaksi')
             ->where('id_transaksi', $id)

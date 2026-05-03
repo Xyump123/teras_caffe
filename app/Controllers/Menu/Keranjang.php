@@ -29,9 +29,10 @@ class Keranjang extends BaseController
             return redirect()->back();
         }
 
+        // CEK STOK HABIS
         if ($menu['stok'] <= 0) {
             return redirect()->to('/menu?meja=' . $meja)
-                ->with('error', 'Stok habis');
+                ->with('error', 'Stok ' . $menu['nama_menu'] . ' habis!');
         }
 
         $cek = $keranjangModel
@@ -40,15 +41,35 @@ class Keranjang extends BaseController
             ->first();
 
         if ($cek) {
-            if ($cek['qty'] + 1 > $menu['stok']) {
+            $qtyBaru = $cek['qty'] + 1;
+            
+            // CEK APAKAH MELEBIHI STOK
+            if ($qtyBaru > $menu['stok']) {
                 return redirect()->to('/menu?meja=' . $meja)
-                    ->with('error', 'Stok tidak cukup');
+                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa stok: ' . $menu['stok']);
+            }
+            
+            // CEK MAKSIMAL 30
+            if ($qtyBaru > 30) {
+                return redirect()->to('/menu?meja=' . $meja)
+                    ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
             }
 
             $keranjangModel->update($cek['id'], [
-                'qty' => $cek['qty'] + 1
+                'qty' => $qtyBaru
             ]);
         } else {
+            // CEK MAKSIMAL 30 UNTUK PESANAN PERTAMA
+            if (1 > $menu['stok']) {
+                return redirect()->to('/menu?meja=' . $meja)
+                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' habis!');
+            }
+            
+            if (1 > 30) {
+                return redirect()->to('/menu?meja=' . $meja)
+                    ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
+            }
+
             $keranjangModel->insert([
                 'id_menu'   => $menu['id'],
                 'nama_menu' => $menu['nama_menu'],
@@ -58,7 +79,7 @@ class Keranjang extends BaseController
             ]);
         }
 
-        return redirect()->to('/menu?meja=' . $meja);
+        return redirect()->to('/menu?meja=' . $meja)->with('success', $menu['nama_menu'] . ' berhasil ditambahkan ke keranjang');
     }
 
     public function lihat()
@@ -66,7 +87,7 @@ class Keranjang extends BaseController
         $meja = $this->request->getGet('meja');
 
         $keranjang = $this->db->table('keranjang')
-            ->select('keranjang.*, menu.kategori, menu.ada_level')
+            ->select('keranjang.*, menu.kategori, menu.ada_level, menu.stok')
             ->join('menu', 'menu.id = keranjang.id_menu')
             ->where('keranjang.meja', $meja)
             ->get()
@@ -97,10 +118,24 @@ class Keranjang extends BaseController
 
         if ($item) {
             $menu = $menuModel->find($item['id_menu']);
-
+            
+            $qtyBaru = $item['qty'] + 1;
+            
+            // CEK APAKAH MELEBIHI STOK
+            if ($qtyBaru > $menu['stok']) {
+                return redirect()->to('/menu/keranjang?meja=' . $meja)
+                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa stok: ' . $menu['stok']);
+            }
+            
+            // CEK MAKSIMAL 30
+            if ($qtyBaru > 30) {
+                return redirect()->to('/menu/keranjang?meja=' . $meja)
+                    ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
+            }
+            
             if ($item['qty'] < $menu['stok']) {
                 $keranjangModel->update($id, [
-                    'qty' => $item['qty'] + 1
+                    'qty' => $qtyBaru
                 ]);
             }
         }
@@ -139,6 +174,6 @@ class Keranjang extends BaseController
             ->where('meja', $meja)
             ->delete();
 
-        return redirect()->to('/menu/keranjang?meja=' . $meja);
+        return redirect()->to('/menu/keranjang?meja=' . $meja)->with('success', 'Item berhasil dihapus');
     }
 }

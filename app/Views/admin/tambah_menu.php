@@ -4,56 +4,75 @@
 <style>
     .container-fix {
         width: 100%;
-        max-width: 800px;
+        max-width: 900px;
         margin: 0 auto;
     }
     
     .card {
         background: white;
-        padding: 30px;
-        border-radius: 16px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        padding: 35px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     }
     
     .btn-back {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: #6c757d;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 8px;
+        background: #f0f0f0;
+        color: #555;
+        padding: 8px 18px;
+        border-radius: 30px;
         text-decoration: none;
-        font-size: 14px;
+        font-size: 13px;
+        font-weight: 500;
         transition: all 0.3s ease;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
     
     .btn-back:hover {
-        background: #5a6268;
+        background: #e0e0e0;
         transform: translateX(-3px);
+        color: #333;
     }
     
     h3 {
-        font-size: 24px;
-        font-weight: 600;
-        color: #333;
-        margin: 0 0 10px 0;
+        font-size: 28px;
+        font-weight: 700;
+        color: #2c3e2f;
+        margin: 0 0 15px 0;
         padding-bottom: 15px;
-        border-bottom: 2px solid #8B6914;
+        border-bottom: 3px solid #8B6914;
         display: inline-block;
     }
     
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 25px;
+    }
+    
+    .form-group-full {
+        grid-column: span 2;
+    }
+    
     .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 5px;
     }
     
     .form-group label {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 8px;
         font-weight: 600;
-        color: #333;
-        margin-bottom: 8px;
+        color: #2c3e2f;
+        margin-bottom: 10px;
         font-size: 14px;
+    }
+    
+    .form-group label i {
+        font-size: 16px;
     }
     
     .form-group label span {
@@ -61,33 +80,49 @@
         margin-left: 4px;
     }
     
-    .form-group input,
-    .form-group select {
+    .form-control {
         width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
+        padding: 12px 16px;
+        border: 2px solid #e8ecef;
+        border-radius: 12px;
         font-size: 14px;
         transition: all 0.3s ease;
         box-sizing: border-box;
+        background: #fafbfc;
     }
     
-    .form-group input:focus,
-    .form-group select:focus {
+    .form-control:focus {
         outline: none;
         border-color: #8B6914;
-        box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.1);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(139, 105, 20, 0.1);
     }
     
-    .form-group input:hover,
-    .form-group select:hover {
-        border-color: #8B6914;
+    .form-control:hover {
+        border-color: #c9a03d;
     }
     
     .hint {
-        font-size: 12px;
-        color: #888;
-        margin-top: 5px;
+        font-size: 11px;
+        color: #94a3b8;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .hint:before {
+        content: "💡";
+        font-size: 11px;
+    }
+    
+    select.form-control {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238B6914' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px;
     }
     
     .file-input {
@@ -97,46 +132,55 @@
     }
     
     .file-input input[type="file"] {
-        padding: 10px;
-        background: #f9f9f9;
-        cursor: pointer;
         width: 100%;
-        box-sizing: border-box;
+        padding: 10px;
+        background: #fafbfc;
+        cursor: pointer;
+        border: 2px solid #e8ecef;
+        border-radius: 12px;
+        font-size: 13px;
+        color: #666;
     }
     
     .file-input input[type="file"]::file-selector-button {
         background: #8B6914;
         color: white;
         border: none;
-        padding: 8px 16px;
+        padding: 8px 18px;
         border-radius: 8px;
         cursor: pointer;
-        margin-right: 10px;
+        margin-right: 12px;
         transition: all 0.3s ease;
+        font-weight: 500;
     }
     
     .file-input input[type="file"]::file-selector-button:hover {
         background: #6B4F12;
+        transform: translateY(-1px);
     }
     
     .btn-simpan {
         background: #8B6914;
         color: white;
         border: none;
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-size: 16px;
-        font-weight: 600;
+        padding: 14px 28px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 700;
         cursor: pointer;
         transition: all 0.3s ease;
         width: 100%;
-        margin-top: 10px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
     }
     
     .btn-simpan:hover {
         background: #6B4F12;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(139, 105, 20, 0.3);
+        box-shadow: 0 8px 20px rgba(139, 105, 20, 0.25);
     }
     
     .btn-simpan:active {
@@ -145,21 +189,42 @@
     
     .alert {
         padding: 12px 16px;
-        border-radius: 10px;
+        border-radius: 12px;
         margin-bottom: 20px;
-        font-size: 14px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
     
     .alert-danger {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
     }
     
     .alert-success {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+    
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-group-full {
+            grid-column: span 1;
+        }
+        
+        .card {
+            padding: 20px;
+        }
+        
+        h3 {
+            font-size: 22px;
+        }
     }
 </style>
 
@@ -167,49 +232,46 @@
     <div class="card">
         <a href="<?= base_url('admin/menu') ?>" class="btn-back">
             ← Kembali
-        </a>
-
-        <h3>Tambah Menu</h3>
-        
-        <div style="margin: 20px 0;"></div>
-
+        </a>        
         <form action="<?= base_url('admin/menu/simpan') ?>" method="post" enctype="multipart/form-data">
             
-            <div class="form-group">
-                <label>Nama Menu <span>*</span></label>
-                <input type="text" name="nama_menu" placeholder="Masukkan nama menu" required>
-                <div class="hint">Contoh: Nasi Goreng, Es Teh Manis, dll.</div>
-            </div>
-
-            <div class="form-group">
-                <label>Harga <span>*</span></label>
-                <input type="text" id="harga" name="harga" placeholder="Rp 0" inputmode="numeric" required>
-                <div class="hint">Masukkan angka tanpa titik, contoh: 15000</div>
-            </div>
-
-            <div class="form-group">
-                <label>Stok <span>*</span></label>
-                <input type="number" name="stok" placeholder="Masukkan jumlah stok" required>
-                <div class="hint">Jumlah ketersediaan menu (minimal 0)</div>
-            </div>
-
-            <div class="form-group">
-                <label>Kategori <span>*</span></label>
-                <select name="kategori" required>
-                    <option value="" disabled selected>-- Pilih Kategori --</option>
-                    <option value="Makanan">🍚 Makanan</option>
-                    <option value="Minuman">🥤 Minuman</option>
-                    <option value="Dessert">🍰 Dessert</option>
-                </select>
-                <div class="hint">Pilih kategori yang sesuai dengan menu</div>
-            </div>
-
-            <div class="form-group">
-                <label>Gambar</label>
-                <div class="file-input">
-                    <input type="file" name="gambar" accept="image/*">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nama Menu</label>
+                    <input type="text" name="nama_menu" class="form-control" placeholder="Masukkan nama menu" required>
+                    <div class="hint">Contoh: Nasi Goreng Special, Es Teh Manis</div>
                 </div>
-                <div class="hint">Format: JPG, PNG, JPEG. Maksimal 2MB</div>
+
+                <div class="form-group">
+                    <label>Harga</label>
+                    <input type="text" id="harga" name="harga" class="form-control" placeholder="Rp 0" inputmode="numeric" required>
+                    <div class="hint">Masukkan angka tanpa titik (contoh: 15000)</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Stok</label>
+                    <input type="number" name="stok" class="form-control" placeholder="Jumlah stok" required>
+                    <div class="hint">Jumlah ketersediaan menu (minimal 0)</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Kategori</label>
+                    <select name="kategori" class="form-control" required>
+                        <option value="" disabled selected>Pilih Kategori</option>
+                        <option value="Makanan">🍚 Makanan</option>
+                        <option value="Minuman">🥤 Minuman</option>
+                        <option value="Dessert">🍰 Dessert</option>
+                    </select>
+                    <div class="hint">Pilih kategori yang sesuai</div>
+                </div>
+
+                <div class="form-group form-group-full">
+                    <label>Gambar Menu</label>
+                    <div class="file-input">
+                        <input type="file" name="gambar" class="form-control" accept="image/*" style="padding: 8px;">
+                    </div>
+                    <div class="hint">Format: JPG, PNG, JPEG. Maksimal 2MB. Kosongkan jika tidak ada gambar</div>
+                </div>
             </div>
 
             <button type="submit" class="btn-simpan">
@@ -226,15 +288,25 @@
     hargaInput.addEventListener('input', function() {
         let value = this.value.replace(/\D/g, '');
         if (value) {
-            this.value = new Intl.NumberFormat('id-ID').format(value);
+            let formatted = new Intl.NumberFormat('id-ID').format(value);
+            this.value = 'Rp ' + formatted;
         } else {
             this.value = '';
         }
     });
 
-    document.querySelector("form").addEventListener("submit", function() {
-        let hargaRaw = hargaInput.value.replace(/\./g, '');
-        hargaInput.value = hargaRaw;
+    hargaInput.addEventListener('blur', function() {
+        if (this.value === '' || this.value === 'Rp ') {
+            this.value = '';
+        }
+    });
+
+    document.querySelector("form").addEventListener("submit", function(e) {
+        let rawValue = hargaInput.value.replace(/[Rp\s\.]/g, '');
+        if (rawValue === '') {
+            rawValue = '0';
+        }
+        hargaInput.value = rawValue;
     });
 </script>
 

@@ -91,6 +91,11 @@ class Transaksi extends BaseController
                 ->getRowArray();
 
             if ($menu) {
+                // Validasi stok sebelum dikurangi
+                if ($menu['stok'] < $d['qty']) {
+                    return redirect()->to('/admin/transaksi')->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa stok: ' . $menu['stok']);
+                }
+                
                 $stokBaru = $menu['stok'] - $d['qty'];
                 if ($stokBaru < 0) $stokBaru = 0;
 
@@ -150,14 +155,27 @@ class Transaksi extends BaseController
                 ->getRowArray();
 
             if ($menu) {
-                $subtotal = $menu['harga'] * $item['qty'];
+                // VALIDASI STOK
+                $qty = (int)$item['qty'];
+                
+                // Cek maksimal 30
+                if ($qty > 30) {
+                    return redirect()->back()->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
+                }
+                
+                // Cek stok mencukupi
+                if ($qty > $menu['stok']) {
+                    return redirect()->back()->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa stok: ' . $menu['stok']);
+                }
+
+                $subtotal = $menu['harga'] * $qty;
                 $total += $subtotal;
 
                 $detailData[] = [
                     'id_menu' => $menu['id'],
                     'nama_menu' => $menu['nama_menu'],
                     'harga' => $menu['harga'],
-                    'qty' => $item['qty'],
+                    'qty' => $qty,
                     'subtotal' => $subtotal,
                     'level_pedas' => $item['level_pedas'] ?? null
                 ];
@@ -230,6 +248,9 @@ class Transaksi extends BaseController
                     ->getRowArray();
 
                 $stokBaru = $menu['stok'] + $d['qty'];
+                // Batasi maksimal stok 30
+                if ($stokBaru > 30) $stokBaru = 30;
+                
                 $this->db->table('menu')
                     ->where('id', $d['id_menu'])
                     ->update(['stok' => $stokBaru]);
