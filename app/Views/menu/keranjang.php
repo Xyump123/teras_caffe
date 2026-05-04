@@ -69,6 +69,12 @@
             margin-top: 4px;
         }
 
+        .stok-info {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #6c757d;
+        }
+
         .opsi {
             margin-top: 8px;
             font-size: 14px;
@@ -99,6 +105,12 @@
             border-radius: 50%;
             font-size: 18px;
             cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .qty-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         .minus {
@@ -158,10 +170,16 @@
             color: white;
             font-size: 16px;
             cursor: pointer;
+            transition: 0.3s;
         }
 
         .checkout:hover {
             background: #4b2e2e;
+        }
+
+        .checkout:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
 
         .kosong {
@@ -169,6 +187,12 @@
             margin-top: 60px;
             font-size: 18px;
             color: #777;
+        }
+
+        .warning {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -189,13 +213,19 @@
 
         <?php if (!empty($keranjang)): ?>
 
-            <form action="<?= base_url('/menu/struk') ?>" method="post">
+            <form action="<?= base_url('/menu/struk') ?>" method="post" id="formCheckout">
 
                 <?= csrf_field() ?>
 
                 <input type="hidden" name="meja" value="<?= $meja ?>">
 
-                <?php foreach ($keranjang as $k): ?>
+                <?php 
+                $stokValid = true;
+                foreach ($keranjang as $k): 
+                    $maxQty = min($k['stok'], 30);
+                    $isStokCukup = ($k['qty'] <= $k['stok'] && $k['qty'] <= 30);
+                    if (!$isStokCukup) $stokValid = false;
+                ?>
 
                     <div class="card">
 
@@ -209,6 +239,10 @@
 
                                 <div class="harga">
                                     Rp <?= number_format($k['harga'], 0, ',', '.') ?>
+                                </div>
+
+                                <div class="stok-info">
+                                    📦 Stok tersedia: <?= $k['stok'] ?> | Maksimal pesan: 30
                                 </div>
 
                                 <?php if ($k['ada_level'] == 1): ?>
@@ -230,6 +264,12 @@
 
                                 <?php endif; ?>
 
+                                <?php if (!$isStokCukup): ?>
+                                    <div class="warning">
+                                        ⚠️ Stok tidak mencukupi! (Stok: <?= $k['stok'] ?>)
+                                    </div>
+                                <?php endif; ?>
+
                             </div>
 
                             <div class="qty-box">
@@ -237,15 +277,18 @@
                                 <div class="qty">
 
                                     <a href="<?= base_url('/menu/keranjang/kurang/' . $k['id'] . '/' . $meja) ?>">
-                                        <button type="button" class="qty-btn minus">-</button>
+                                        <button type="button" class="qty-btn minus" <?= $k['qty'] <= 1 ? 'disabled' : '' ?>>-</button>
                                     </a>
 
                                     <b><?= $k['qty'] ?></b>
 
                                     <a href="<?= base_url('/menu/keranjang/tambah/' . $k['id'] . '/' . $meja) ?>">
-                                        <button type="button" class="qty-btn plus">+</button>
+                                        <button type="button" class="qty-btn plus" <?= $k['qty'] >= $maxQty ? 'disabled' : '' ?>>+</button>
                                     </a>
 
+                                </div>
+                                <div class="stok-info" style="font-size: 10px; text-align: center;">
+                                    Maks: <?= $maxQty ?>
                                 </div>
 
                             </div>
@@ -253,7 +296,7 @@
                             <div class="hapus-box">
 
                                 <a href="<?= base_url('/menu/keranjang/hapus/' . $k['id'] . '/' . $meja) ?>">
-                                    <button type="button" class="hapus">🗑</button>
+                                    <button type="button" class="hapus">🗑 Hapus</button>
                                 </a>
 
                             </div>
@@ -274,12 +317,12 @@
                         <b>Tipe Pembayaran :</b>
 
                         <label>
-                            <input type="radio" name="tipe_pembayaran" value="meja" required>
+                            <input type="radio" name="tipe_pembayaran" value="meja" id="tipeMeja" required>
                             Bayar di Meja
                         </label>
 
                         <label>
-                            <input type="radio" name="tipe_pembayaran" value="kasir">
+                            <input type="radio" name="tipe_pembayaran" value="kasir" id="tipeKasir">
                             Bayar di Kasir
                         </label>
 
@@ -288,20 +331,25 @@
                         <b>Metode Pembayaran :</b>
 
                         <label>
-                            <input type="radio" name="metode_bayar" value="Cash">
+                            <input type="radio" name="metode_bayar" value="Cash" id="metodeCash">
                             Cash
                         </label>
 
                         <label>
-                            <input type="radio" name="metode_bayar" value="QRIS">
+                            <input type="radio" name="metode_bayar" value="QRIS" id="metodeQRIS">
                             QRIS
                         </label>
 
                     </div>
 
-                    <button type="submit" class="checkout">
+                    <button type="submit" class="checkout" id="btnCheckout" <?= !$stokValid ? 'disabled' : '' ?>>
                         Checkout Pesanan
                     </button>
+                    <?php if (!$stokValid): ?>
+                        <div class="warning" style="text-align: center; margin-top: 10px;">
+                            ⚠️ Ada item yang stoknya tidak mencukupi. Silakan kurangi jumlah pesanan.
+                        </div>
+                    <?php endif; ?>
 
                 </div>
 
@@ -318,31 +366,24 @@
     </div>
 
     <script>
-        const meja = document.querySelector('input[value="meja"]');
-        const kasir = document.querySelector('input[value="kasir"]');
-        const cash = document.querySelector('input[value="Cash"]');
-        const qris = document.querySelector('input[value="QRIS"]');
+        const tipeMeja = document.getElementById('tipeMeja');
+        const tipeKasir = document.getElementById('tipeKasir');
+        const metodeCash = document.getElementById('metodeCash');
+        const metodeQRIS = document.getElementById('metodeQRIS');
 
-        if (meja) {
-
-            meja.addEventListener("change", function() {
-
-                cash.checked = false;
-                cash.disabled = true;
-                qris.checked = true;
-
+        if (tipeMeja) {
+            tipeMeja.addEventListener("change", function() {
+                if (metodeCash) metodeCash.disabled = true;
+                if (metodeQRIS) metodeQRIS.disabled = false;
+                if (metodeQRIS) metodeQRIS.checked = true;
             });
-
         }
 
-        if (kasir) {
-
-            kasir.addEventListener("change", function() {
-
-                cash.disabled = false;
-
+        if (tipeKasir) {
+            tipeKasir.addEventListener("change", function() {
+                if (metodeCash) metodeCash.disabled = false;
+                if (metodeQRIS) metodeQRIS.disabled = false;
             });
-
         }
     </script>
 

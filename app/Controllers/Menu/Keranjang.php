@@ -29,7 +29,6 @@ class Keranjang extends BaseController
             return redirect()->back();
         }
 
-        // CEK STOK HABIS
         if ($menu['stok'] <= 0) {
             return redirect()->to('/menu?meja=' . $meja)
                 ->with('error', 'Stok ' . $menu['nama_menu'] . ' habis!');
@@ -43,13 +42,11 @@ class Keranjang extends BaseController
         if ($cek) {
             $qtyBaru = $cek['qty'] + 1;
             
-            // CEK APAKAH MELEBIHI STOK
             if ($qtyBaru > $menu['stok']) {
                 return redirect()->to('/menu?meja=' . $meja)
-                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa stok: ' . $menu['stok']);
+                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa: ' . $menu['stok']);
             }
             
-            // CEK MAKSIMAL 30
             if ($qtyBaru > 30) {
                 return redirect()->to('/menu?meja=' . $meja)
                     ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
@@ -59,17 +56,6 @@ class Keranjang extends BaseController
                 'qty' => $qtyBaru
             ]);
         } else {
-            // CEK MAKSIMAL 30 UNTUK PESANAN PERTAMA
-            if (1 > $menu['stok']) {
-                return redirect()->to('/menu?meja=' . $meja)
-                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' habis!');
-            }
-            
-            if (1 > 30) {
-                return redirect()->to('/menu?meja=' . $meja)
-                    ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
-            }
-
             $keranjangModel->insert([
                 'id_menu'   => $menu['id'],
                 'nama_menu' => $menu['nama_menu'],
@@ -79,7 +65,7 @@ class Keranjang extends BaseController
             ]);
         }
 
-        return redirect()->to('/menu?meja=' . $meja)->with('success', $menu['nama_menu'] . ' berhasil ditambahkan ke keranjang');
+        return redirect()->to('/menu?meja=' . $meja)->with('success', $menu['nama_menu'] . ' ditambahkan');
     }
 
     public function lihat()
@@ -94,7 +80,6 @@ class Keranjang extends BaseController
             ->getResultArray();
 
         $total = 0;
-
         foreach ($keranjang as $k) {
             $total += $k['harga'] * $k['qty'];
         }
@@ -118,26 +103,19 @@ class Keranjang extends BaseController
 
         if ($item) {
             $menu = $menuModel->find($item['id_menu']);
-            
             $qtyBaru = $item['qty'] + 1;
             
-            // CEK APAKAH MELEBIHI STOK
             if ($qtyBaru > $menu['stok']) {
                 return redirect()->to('/menu/keranjang?meja=' . $meja)
-                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa stok: ' . $menu['stok']);
+                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa: ' . $menu['stok']);
             }
             
-            // CEK MAKSIMAL 30
             if ($qtyBaru > 30) {
                 return redirect()->to('/menu/keranjang?meja=' . $meja)
                     ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
             }
-            
-            if ($item['qty'] < $menu['stok']) {
-                $keranjangModel->update($id, [
-                    'qty' => $qtyBaru
-                ]);
-            }
+
+            $keranjangModel->update($id, ['qty' => $qtyBaru]);
         }
 
         return redirect()->to('/menu/keranjang?meja=' . $meja);
@@ -154,9 +132,7 @@ class Keranjang extends BaseController
 
         if ($item) {
             if ($item['qty'] > 1) {
-                $keranjangModel->update($id, [
-                    'qty' => $item['qty'] - 1
-                ]);
+                $keranjangModel->update($id, ['qty' => $item['qty'] - 1]);
             } else {
                 $keranjangModel->delete($id);
             }
@@ -168,11 +144,7 @@ class Keranjang extends BaseController
     public function hapusItem($id, $meja)
     {
         $keranjangModel = new KeranjangModel();
-
-        $keranjangModel
-            ->where('id', $id)
-            ->where('meja', $meja)
-            ->delete();
+        $keranjangModel->where('id', $id)->where('meja', $meja)->delete();
 
         return redirect()->to('/menu/keranjang?meja=' . $meja)->with('success', 'Item berhasil dihapus');
     }
