@@ -68,7 +68,7 @@
     }
 
     th {
-        background: #000;
+        background: #60450b;
         color: white;
         padding: 12px 12px;
         text-align: center;
@@ -167,7 +167,8 @@
 <div class="card">
     <div class="header">
         <h3>Daftar Transaksi</h3>
-        <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">+ Tambah Transaksi
+        <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">
+        + Tambah Transaksi
         </a>
     </div>
 

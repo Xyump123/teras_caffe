@@ -129,7 +129,7 @@
     }
 
     th {
-        background: #000;
+        background: #60450b;
         color: white;
         padding: 12px;
         text-align: left;

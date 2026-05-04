@@ -4,9 +4,9 @@
 <style>
     .card {
         background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        padding: 20px;
     }
 
     .header {
@@ -14,29 +14,23 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 20px;
-        padding-bottom: 15px;
+        padding-bottom: 12px;
         border-bottom: 2px solid #8B6914;
     }
 
     .header h3 {
         margin: 0;
-        color: #333;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 600;
     }
 
     .btn-back {
         background: #6c757d;
         color: white;
-        padding: 6px 12px;
-        border-radius: 8px;
+        padding: 5px 10px;
+        border-radius: 6px;
         text-decoration: none;
-        font-size: 13px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-back:hover {
-        background: #5a6268;
+        font-size: 12px;
     }
 
     .form-group {
@@ -47,7 +41,6 @@
         display: block;
         margin-bottom: 5px;
         font-weight: 600;
-        color: #333;
         font-size: 13px;
     }
 
@@ -55,9 +48,8 @@
         width: 100%;
         padding: 8px 12px;
         border: 1px solid #ddd;
-        border-radius: 8px;
+        border-radius: 6px;
         font-size: 13px;
-        box-sizing: border-box;
     }
 
     .form-control:focus {
@@ -65,133 +57,97 @@
         border-color: #8B6914;
     }
 
-    .hint {
-        font-size: 11px;
-        color: #888;
-        margin-top: 3px;
-    }
-
     h4 {
         margin: 20px 0 12px 0;
-        color: #333;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
     }
 
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 15px;
-        font-size: 13px;
+        font-size: 12px;
     }
 
     .table th,
     .table td {
         border: 1px solid #ddd;
-        padding: 8px 10px;
+        padding: 6px 8px;
         vertical-align: middle;
     }
 
     .table th {
-        background: #f5f5f5;
-        font-weight: 600;
+        background: #60450b;
         text-align: center;
-        color: #000000; 
     }
 
     .table td {
         text-align: center;
     }
 
-    /* STOK BADGE */
     .stok-badge {
         display: inline-block;
         font-size: 11px;
         padding: 2px 8px;
         border-radius: 20px;
-        font-weight: 500;
     }
 
-    .stok-aman {
-        background: #d4edda;
-        color: #155724;
-    }
+    .stok-aman { background: #d4edda; color: #155724; }
+    .stok-menipis { background: #fff3cd; color: #856404; }
+    .stok-habis { background: #f8d7da; color: #721c24; }
 
-    .stok-menipis {
-        background: #fff3cd;
-        color: #856404;
-    }
-
-    .stok-habis {
-        background: #f8d7da;
-        color: #721c24;
-    }
-
-    /* FORM CONTROL DI TABEL */
     .table .form-control {
-        padding: 6px 8px;
+        padding: 4px 6px;
         font-size: 12px;
-        width: 100%;
     }
 
     .table select.form-control {
-        width: 100%;
         min-width: 120px;
     }
 
     .table input.qty {
-        width: 70px;
+        width: 60px;
         text-align: center;
     }
 
     .btn-remove {
         background: #dc3545;
         color: white;
-        padding: 4px 8px;
+        padding: 3px 8px;
         border: none;
-        border-radius: 6px;
+        border-radius: 4px;
         cursor: pointer;
         font-size: 11px;
-        transition: 0.2s;
-    }
-
-    .btn-remove:hover {
-        background: #c82333;
     }
 
     .btn-add {
         background: #28a745;
         color: white;
-        padding: 6px 12px;
+        padding: 5px 12px;
         border: none;
-        border-radius: 8px;
+        border-radius: 5px;
         cursor: pointer;
         font-size: 12px;
-        font-weight: 500;
         margin-bottom: 15px;
-    }
-
-    .btn-add:hover {
-        background: #218838;
     }
 
     .total-box {
         background: #f8f9fa;
-        padding: 12px 20px;
+        padding: 10px 15px;
         margin: 15px 0;
         text-align: right;
-        border-radius: 10px;
-        border-left: 4px solid #8B6914;
+        border-radius: 8px;
+        border-left: 3px solid #8B6914;
     }
 
     .total-box h4 {
         margin: 0;
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .total-box h4 span {
         color: #8B6914;
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 700;
     }
 
@@ -205,31 +161,21 @@
     .btn-simpan {
         background: #8B6914;
         color: white;
-        padding: 8px 20px;
+        padding: 6px 16px;
         border: none;
-        border-radius: 8px;
+        border-radius: 6px;
         cursor: pointer;
         font-size: 13px;
-        font-weight: 600;
-    }
-
-    .btn-simpan:hover {
-        background: #6B4F12;
     }
 
     .btn-batal {
         background: #6c757d;
         color: white;
-        padding: 8px 20px;
-        border-radius: 8px;
+        padding: 6px 16px;
+        border-radius: 6px;
         text-decoration: none;
         font-size: 13px;
-        font-weight: 600;
         text-align: center;
-    }
-
-    .btn-batal:hover {
-        background: #5a6268;
     }
 </style>
 
@@ -269,11 +215,11 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th style="width:35%">Menu</th>
-                        <th style="width:15%">Stok</th>
-                        <th style="width:15%">Qty</th>
-                        <th style="width:25%">Level Pedas</th>
-                        <th style="width:10%">Aksi</th>
+                        <th>Menu</th>
+                        <th>Stok</th>
+                        <th>Qty</th>
+                        <th>Level Pedas</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody id="itemList">
@@ -305,7 +251,7 @@
                                 <?php endfor; ?>
                             </select>
                         </td>
-                        <td style="text-align:center">
+                        <td>
                             <button type="button" class="btn-remove">Hapus</button>
                         </td>
                     </tr>
@@ -346,52 +292,38 @@
         if (!stokCell) return;
         
         const stokBadge = stokCell.querySelector('.stok-badge');
-        const className = getStokClass(stok);
-        const text = getStokText(stok);
-        
-        stokBadge.className = 'stok-badge ' + className;
-        stokBadge.innerHTML = text;
+        stokBadge.className = 'stok-badge ' + getStokClass(stok);
+        stokBadge.innerHTML = getStokText(stok);
         
         const qtyInput = row.querySelector('.qty');
         const maxStok = Math.min(stok, 30);
         qtyInput.max = maxStok;
+        qtyInput.disabled = (stok <= 0);
         
-        if (stok <= 0) {
-            qtyInput.disabled = true;
-            qtyInput.value = 0;
-        } else {
-            qtyInput.disabled = false;
-            if (parseInt(qtyInput.value) > maxStok) {
-                qtyInput.value = maxStok;
-            }
-        }
+        if (qtyInput.disabled) qtyInput.value = 0;
+        else if (parseInt(qtyInput.value) > maxStok) qtyInput.value = maxStok;
     }
 
     function calculateTotal() {
         let total = 0;
         document.querySelectorAll('.item-row').forEach(row => {
             const select = row.querySelector('.menu-select');
-            const selectedOption = select.options[select.selectedIndex];
-            const harga = selectedOption && selectedOption.dataset.harga ? parseInt(selectedOption.dataset.harga) : 0;
+            const opt = select.options[select.selectedIndex];
+            const harga = opt && opt.dataset.harga ? parseInt(opt.dataset.harga) : 0;
             const qty = parseInt(row.querySelector('.qty').value) || 0;
             total += harga * qty;
         });
         document.getElementById('totalDisplay').innerText = total.toLocaleString('id-ID');
     }
 
-    function removeRow(e) {
-        const rows = document.querySelectorAll('.item-row');
-        if (rows.length > 1) {
-            e.target.closest('.item-row').remove();
-            calculateTotal();
-        } else {
-            alert('Minimal 1 item!');
-        }
-    }
-
     function attachEvents() {
         document.querySelectorAll('.btn-remove').forEach(btn => {
-            btn.onclick = removeRow;
+            btn.onclick = function() {
+                if (document.querySelectorAll('.item-row').length > 1) {
+                    this.closest('.item-row').remove();
+                    calculateTotal();
+                } else alert('Minimal 1 item!');
+            };
         });
         
         document.querySelectorAll('.menu-select').forEach(select => {
@@ -401,17 +333,11 @@
                 updateStokInfo(row, stok);
                 calculateTotal();
             };
-            // Trigger untuk baris pertama
-            if (select === document.querySelector('.menu-select')) {
-                const row = select.closest('.item-row');
-                const stok = parseInt(select.options[select.selectedIndex]?.dataset.stok) || 0;
-                updateStokInfo(row, stok);
-            }
+            select.onchange(); // trigger awal
         });
         
         document.querySelectorAll('.qty').forEach(qty => {
-            qty.onchange = calculateTotal;
-            qty.onkeyup = calculateTotal;
+            qty.oninput = calculateTotal;
         });
     }
 
@@ -420,41 +346,20 @@
         const newRow = document.createElement('tr');
         newRow.className = 'item-row';
         
-        let menuOptions = '<option value="">-- Pilih Menu --</option>';
+        let menuOpts = '<option value="">-- Pilih Menu --</option>';
         <?php foreach ($menu as $m): ?>
-            menuOptions += `<option value="<?= $m['id'] ?>" 
-                data-harga="<?= $m['harga'] ?>" 
-                data-stok="<?= $m['stok'] ?>"
-                data-nama="<?= addslashes($m['nama_menu']) ?>">
-                <?= addslashes($m['nama_menu']) ?>
-            </option>`;
+            menuOpts += `<option value="<?= $m['id'] ?>" data-harga="<?= $m['harga'] ?>" data-stok="<?= $m['stok'] ?>" data-nama="<?= addslashes($m['nama_menu']) ?>"><?= addslashes($m['nama_menu']) ?></option>`;
         <?php endforeach; ?>
         
-        let levelOptions = '<option value="">🌶 Tidak</option>';
-        <?php for ($i = 1; $i <= 5; $i++): ?>
-            levelOptions += `<option value="<?= $i ?>">Level <?= $i ?></option>`;
-        <?php endfor; ?>
+        let levelOpts = '<option value="">🌶 Tidak</option>';
+        <?php for ($i=1;$i<=5;$i++): ?> levelOpts += `<option value="<?= $i ?>">Level <?= $i ?></option>`; <?php endfor; ?>
         
         newRow.innerHTML = `
-            <td>
-                <select name="items[${itemIndex}][id_menu]" class="form-control menu-select" required>
-                    ${menuOptions}
-                </select>
-            </td>
-            <td class="stok-cell">
-                <span class="stok-badge">-</span>
-            </td>
-            <td>
-                <input type="number" name="items[${itemIndex}][qty]" class="form-control qty" value="1" min="1" step="1">
-            </td>
-            <td>
-                <select name="items[${itemIndex}][level_pedas]" class="form-control">
-                    ${levelOptions}
-                </select>
-            </td>
-            <td style="text-align:center">
-                <button type="button" class="btn-remove">Hapus</button>
-            </td>
+            <td><select name="items[${itemIndex}][id_menu]" class="form-control menu-select" required>${menuOpts}</select></td>
+            <td class="stok-cell"><span class="stok-badge">-</span></td>
+            <td><input type="number" name="items[${itemIndex}][qty]" class="form-control qty" value="1" min="1" step="1"></td>
+            <td><select name="items[${itemIndex}][level_pedas]" class="form-control">${levelOpts}</select></td>
+            <td><button type="button" class="btn-remove">Hapus</button></td>
         `;
         tbody.appendChild(newRow);
         
@@ -467,42 +372,23 @@
         calculateTotal();
     };
 
-    // Validasi sebelum submit
     document.getElementById('formTransaksi').onsubmit = function(e) {
-        let hasError = false;
-        let errorMessage = '';
-        
-        document.querySelectorAll('.item-row').forEach((row, idx) => {
+        let err = false, msg = '';
+        document.querySelectorAll('.item-row').forEach((row, i) => {
             const select = row.querySelector('.menu-select');
             const qty = row.querySelector('.qty');
-            const selectedOption = select.options[select.selectedIndex];
-            const maxStok = parseInt(selectedOption?.dataset.stok) || 0;
-            const menuNama = selectedOption?.dataset.nama || '';
-            const qtyValue = parseInt(qty.value) || 0;
+            const opt = select.options[select.selectedIndex];
+            const stok = parseInt(opt?.dataset.stok) || 0;
+            const nama = opt?.dataset.nama || '';
+            const val = parseInt(qty.value) || 0;
             
-            if (!select.value) {
-                hasError = true;
-                errorMessage = `Item ${idx + 1}: Pilih menu!`;
-                select.focus();
-            } else if (qtyValue < 1) {
-                hasError = true;
-                errorMessage = `Item ${idx + 1}: Qty minimal 1!`;
-                qty.focus();
-            } else if (qtyValue > 30) {
-                hasError = true;
-                errorMessage = `Item ${idx + 1}: Maksimal 30!`;
-                qty.focus();
-            } else if (qtyValue > maxStok) {
-                hasError = true;
-                errorMessage = `Item ${idx + 1}: Stok ${menuNama} sisa ${maxStok}!`;
-                qty.focus();
-            }
+            if (!select.value) { err = true; msg = `Item ${i+1}: Pilih menu!`; select.focus(); }
+            else if (val < 1) { err = true; msg = `Item ${i+1}: Qty minimal 1!`; qty.focus(); }
+            else if (val > 30) { err = true; msg = `Item ${i+1}: Maksimal 30!`; qty.focus(); }
+            else if (val > stok) { err = true; msg = `Item ${i+1}: Stok ${nama} sisa ${stok}!`; qty.focus(); }
+            if (err) return;
         });
-        
-        if (hasError) {
-            e.preventDefault();
-            alert(errorMessage);
-        }
+        if (err) { e.preventDefault(); alert(msg); }
     };
 
     attachEvents();

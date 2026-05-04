@@ -22,7 +22,7 @@
     
     /* TOMBOL TAMBAH WARNA COKLAT */
     .btn-tambah {
-        background: #8B6914; /* Coklat keemasan */
+        background: #8B6914; 
         color: #fff;
         padding: 10px 18px;
         border-radius: 10px;
@@ -34,7 +34,7 @@
         gap: 8px;
     }
     .btn-tambah:hover {
-        background: #6B4F12; /* Coklat lebih gelap */
+        background: #6B4F12; 
         transform: translateY(-2px);
     }
     
@@ -44,7 +44,7 @@
         font-size: 14px;
     }
     thead {
-        background: #000; /* Hitam seperti tabel transaksi */
+        background: #000; 
     }
     th, td {
         padding: 12px 10px;

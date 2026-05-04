@@ -125,7 +125,7 @@
         }
 
         th {
-            background: #3b2a21;
+            background: #60450b;
             color: white;
             padding: 14px;
             font-size: 13px;

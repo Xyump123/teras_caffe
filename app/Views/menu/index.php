@@ -26,6 +26,26 @@
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .meja-info {
+            background: #6f4e37;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 25px;
+            font-size: 14px;
+            display: inline-block;
+        }
+            @media (max-width: 768px) 
+        {
+            .top-bar { flex-direction: column; align-items: flex-start; }
+        }
         .container {
             max-width: 1500px;
             margin: auto;
@@ -111,10 +131,12 @@
     <div class="header">TERAS CAFFE ☕</div>
     <div class="container">
         <?php if ($meja): ?>
-            <div class="meja">Meja : <b><?= $meja ?></b></div>
-            <a href="<?= base_url('/menu/keranjang?meja=' . $meja) ?>">
+         <div class="top-bar">
+            <span class="meja-info">Meja <?= $meja ?></span>
+             <a href="<?= base_url('/menu/keranjang?meja=' . $meja) ?>">
                 <button class="keranjang-btn">🛒 Lihat Keranjang</button>
             </a>
+         </div>
         <?php endif; ?>
         <?php
         $kategori = [];

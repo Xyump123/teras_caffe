@@ -44,13 +44,13 @@ class Checkout extends BaseController
                     ->with('error', 'Menu tidak ditemukan');
             }
             
-            // Cek apakah qty melebihi stok
+            // Cek qty melebihi stok
             if ($k['qty'] > $menu['stok']) {
                 return redirect()->to('/menu/keranjang?meja=' . $meja)
-                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa stok: ' . $menu['stok']);
+                    ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa: ' . $menu['stok']);
             }
             
-            // Cek apakah qty melebihi batas maksimal 30
+            // Cek qty melebihi batas maksimal 30
             if ($k['qty'] > 30) {
                 return redirect()->to('/menu/keranjang?meja=' . $meja)
                     ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
@@ -58,7 +58,6 @@ class Checkout extends BaseController
         }
 
         $total = 0;
-
         foreach ($keranjang as $k) {
             $total += $k['harga'] * $k['qty'];
         }
@@ -110,7 +109,6 @@ class Checkout extends BaseController
     {
         $id = $this->request->getPost('id_transaksi');
 
-        // Validasi transaksi ada
         $transaksi = $this->db->table('transaksi')
             ->where('id', $id)
             ->get()
@@ -126,9 +124,7 @@ class Checkout extends BaseController
 
         $this->db->table('transaksi')
             ->where('id', $id)
-            ->update([
-                'status' => 'menunggu_konfirmasi'
-            ]);
+            ->update(['status' => 'menunggu_konfirmasi']);
 
         return redirect()->to('/menu/sukses/' . $id);
     }

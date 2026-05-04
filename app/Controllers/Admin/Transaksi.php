@@ -91,9 +91,8 @@ class Transaksi extends BaseController
                 ->getRowArray();
 
             if ($menu) {
-                // Validasi stok sebelum dikurangi
                 if ($menu['stok'] < $d['qty']) {
-                    return redirect()->to('/admin/transaksi')->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa stok: ' . $menu['stok']);
+                    return redirect()->to('/admin/transaksi')->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa: ' . $menu['stok']);
                 }
                 
                 $stokBaru = $menu['stok'] - $d['qty'];
@@ -155,17 +154,14 @@ class Transaksi extends BaseController
                 ->getRowArray();
 
             if ($menu) {
-                // VALIDASI STOK
                 $qty = (int)$item['qty'];
                 
-                // Cek maksimal 30
                 if ($qty > 30) {
                     return redirect()->back()->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
                 }
                 
-                // Cek stok mencukupi
                 if ($qty > $menu['stok']) {
-                    return redirect()->back()->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa stok: ' . $menu['stok']);
+                    return redirect()->back()->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa: ' . $menu['stok']);
                 }
 
                 $subtotal = $menu['harga'] * $qty;
@@ -211,7 +207,6 @@ class Transaksi extends BaseController
 
                 $stokBaru = $menu['stok'] - $detail['qty'];
                 if ($stokBaru < 0) $stokBaru = 0;
-
                 $this->db->table('menu')
                     ->where('id', $detail['id_menu'])
                     ->update(['stok' => $stokBaru]);
@@ -248,7 +243,6 @@ class Transaksi extends BaseController
                     ->getRowArray();
 
                 $stokBaru = $menu['stok'] + $d['qty'];
-                // Batasi maksimal stok 30
                 if ($stokBaru > 30) $stokBaru = 30;
                 
                 $this->db->table('menu')
