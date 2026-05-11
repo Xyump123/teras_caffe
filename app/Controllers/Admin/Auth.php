@@ -37,10 +37,9 @@ class Auth extends BaseController
             return redirect()->back()->with('error', 'Username tidak ditemukan');
         }
 
-        if (!password_verify($password, $user['password'])) {
-            return redirect()->back()->with('error', 'Password salah');
-        }
-
+        if ($password !== $user['password']) {
+    return redirect()->back()->with('error', 'Password salah');
+}
         $this->session->set([
             'logged_in' => true,
             'user_id'   => $user['id'],

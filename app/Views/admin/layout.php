@@ -92,6 +92,39 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            position: relative;
+            z-index: 9999;
+        }
+
+        /* ===== DROPDOWN PROFILE - TIDAK KEHALANG ===== */
+        .dropdown-profile {
+            position: absolute;
+            right: 0;
+            top: 55px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+            min-width: 160px;
+            overflow: hidden;
+            z-index: 100000;
+        }
+
+        .dropdown-profile a {
+            display: block;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            transition: 0.2s;
+            font-size: 14px;
+        }
+
+        .dropdown-profile a:hover {
+            background: #f5f5f5;
+        }
+
+        .dropdown-profile a:last-child {
+            color: #dc3545;
+            border-top: 1px solid #eee;
         }
 
         /* ===== CONTENT ===== */
@@ -175,9 +208,8 @@
             <i class="fa fa-file-invoice-dollar"></i> Laporan
         </a>
 
-        <!-- Tambahkan di sidebar -->
         <a href="<?= base_url('admin/qr-generator') ?>">
-              <i class="fa fa-qrcode"></i> QR Generator
+            <i class="fa fa-qrcode"></i> QR Generator
         </a>
     </div>
 
@@ -194,34 +226,19 @@
                     <small><?= session('role') ?></small>
                 </div>
 
-                <div style="position:relative;">
-
-                    <img
-                        src="<?= session('foto') ? base_url('uploads/' . session('foto')) : 'https://ui-avatars.com/api/?name=' . (session('nama') ?? session('username')) ?>"
-                        style="width:40px; height:40px; border-radius:50%; cursor:pointer;"
+                <div>
+                    <img src="<?= session('foto') ? base_url('uploads/' . session('foto')) : 'https://ui-avatars.com/api/?name=' . (session('nama') ?? session('username')) ?>"
+                        style="width:40px; height:40px; border-radius:50%; cursor:pointer; object-fit:cover;"
                         onclick="toggleDropdown()">
 
-                    <div id="dropdownProfile" style="
-                        display:none;
-                        position:absolute;
-                        right:0;
-                        top:50px;
-                        background:white;
-                        border-radius:10px;
-                        box-shadow:0 5px 15px rgba(0,0,0,0.1);
-                        overflow:hidden;
-                    ">
-
-                        <a href="<?= base_url('admin/profile') ?>" style="display:block; padding:10px; text-decoration:none; color:#333;">
+                    <div id="dropdownProfile" class="dropdown-profile" style="display:none;">
+                        <a href="<?= base_url('admin/profile') ?>">
                             <i class="fa fa-user"></i> Profile
                         </a>
-
-                        <a href="<?= base_url('admin/logout') ?>" style="display:block; padding:10px; color:red; text-decoration:none;">
+                        <a href="<?= base_url('admin/logout') ?>">
                             <i class="fa fa-sign-out-alt"></i> Logout
                         </a>
-
                     </div>
-
                 </div>
 
             </div>
@@ -242,9 +259,22 @@
     <!-- SCRIPT DROPDOWN -->
     <script>
         function toggleDropdown() {
-            let x = document.getElementById("dropdownProfile");
-            x.style.display = x.style.display === "block" ? "none" : "block";
+            let dropdown = document.getElementById("dropdownProfile");
+            if (dropdown.style.display === "none" || dropdown.style.display === "") {
+                dropdown.style.display = "block";
+            } else {
+                dropdown.style.display = "none";
+            }
         }
+
+        // Tutup dropdown jika klik di luar
+        document.addEventListener('click', function(event) {
+            let dropdown = document.getElementById("dropdownProfile");
+            let img = document.querySelector('.user-area img');
+            if (dropdown && img && !img.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = "none";
+            }
+        });
     </script>
 
 </body>
