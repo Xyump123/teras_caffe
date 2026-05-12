@@ -1,230 +1,164 @@
+<?= $this->extend('admin/layout') ?>
+<?= $this->section('content') ?>
+
 <style>
-    body {
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-        background: linear-gradient(135deg, #2c1f17, #6f4e37, #a67c52);
-        min-height: 100vh;
-        background-attachment: fixed;
-    }
-
-    body::before {
-        content: "";
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.15), transparent),
-            radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.2), transparent);
-        z-index: -1;
-    }
-
-    /* WRAPPER */
-    .container {
-        max-width: 900px;
-        margin: auto;
-        padding: 20px;
-    }
-
-    /* TITLE */
-    .title {
-        text-align: center;
-        color: white;
-        margin-bottom: 25px;
-        letter-spacing: 1px;
-    }
-
-    /* CARD */
-    .card {
-        padding: 30px;
+    .profile-card {
+        background: #fff;
         border-radius: 20px;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-        color: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        max-width: 700px;
+        margin: 0 auto;
+        overflow: hidden;
     }
-
-    /* HEADER */
     .profile-header {
-        display: flex;
-        gap: 25px;
-        align-items: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        padding-bottom: 20px;
-        margin-bottom: 25px;
+        background: linear-gradient(135deg, #3b2a21, #6f4e37);
+        padding: 35px 25px 25px;
+        text-align: center;
     }
-
-    /* FOTO */
-    .avatar {
-        position: relative;
-    }
-
-    .avatar img {
-        width: 110px;
-        height: 110px;
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
         object-fit: cover;
-        border: 4px solid rgba(255, 255, 255, 0.8);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+        border: 4px solid rgba(255,255,255,0.3);
+        margin-bottom: 12px;
     }
-
-    .avatar::before {
-        content: "";
-        position: absolute;
-        top: -8px;
-        left: -8px;
-        width: 125px;
-        height: 125px;
-        border-radius: 50%;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
-        z-index: -1;
-    }
-
-    /* INFO */
-    .profile-info h3 {
-        margin: 0;
+    .profile-name {
+        color: #fff;
         font-size: 22px;
-    }
-
-    .profile-info p {
-        margin: 5px 0;
-        color: #eee;
-    }
-
-    /* BADGE */
-    .badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #fff, #ddd);
-        color: #3b2a21;
-        padding: 5px 14px;
-        border-radius: 20px;
-        font-size: 12px;
         font-weight: 600;
+        margin-bottom: 4px;
     }
-
-    /* DETAIL */
-    .detail-box {
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(8px);
-        padding: 20px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+    .profile-role {
+        display: inline-block;
+        background: rgba(255,255,255,0.2);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 500;
+        color: #fff;
     }
-
-    .detail-item {
-        margin-bottom: 15px;
-    }
-
-    .label {
-        font-size: 12px;
-        color: #ddd;
-    }
-
-    .value {
-        margin-top: 5px;
-        font-size: 15px;
-    }
-
-    /* BUTTON */
-    .btn-group {
-        margin-top: 25px;
+    .profile-stats {
         display: flex;
-        gap: 15px;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 18px;
     }
-
-    .btn {
+    .stat-number {
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+    }
+    .stat-label {
+        font-size: 10px;
+        color: rgba(255,255,255,0.7);
+    }
+    .profile-body { padding: 25px; }
+    .info-section {
+        background: #f8f9fa;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 20px;
+    }
+    .info-section h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #3b2a21;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #f0e6d8;
+    }
+    .info-row {
+        display: flex;
+        margin-bottom: 10px;
+        padding: 5px 0;
+    }
+    .info-label {
+        width: 100px;
+        font-weight: 600;
+        color: #777;
+        font-size: 12px;
+    }
+    .info-value {
         flex: 1;
-        text-align: center;
+        font-size: 13px;
+        color: #333;
+    }
+    .info-value i { margin-right: 6px; color: #8B6914; }
+    .bio-text {
+        background: #fff;
         padding: 12px;
         border-radius: 10px;
+        font-size: 12px;
+        color: #666;
+        border-left: 3px solid #8B6914;
+    }
+    .btn-edit {
+        display: inline-block;
+        background: #8B6914;
+        color: #fff;
+        padding: 10px 24px;
+        border-radius: 30px;
         text-decoration: none;
-        font-size: 14px;
-        transition: .25s;
-    }
-
-    /* PRIMARY */
-    .btn-primary {
-        background: linear-gradient(135deg, #ffffff, #ddd);
-        color: #3b2a21;
         font-weight: 600;
+        font-size: 13px;
+        transition: 0.3s;
     }
-
-    .btn-primary:hover {
-        transform: scale(1.05);
-    }
-
-    /* SECONDARY */
-    .btn-secondary {
-        background: rgba(255, 255, 255, 0.2);
-        color: white;
-    }
-
-    .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.35);
-    }
-
-    /* RESPONSIVE */
+    .btn-edit:hover { background: #6B4F12; transform: translateY(-2px); }
     @media (max-width: 600px) {
-        .profile-header {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .btn-group {
-            flex-direction: column;
-        }
+        .profile-header { padding: 25px 20px; }
+        .info-row { flex-direction: column; }
+        .info-label { width: 100%; margin-bottom: 4px; }
+        .profile-stats { gap: 20px; }
     }
 </style>
 
-
-<div class="container">
-
-    <h2 class="title">Profile Saya</h2>
-
-    <div class="card">
-
-        <!-- HEADER -->
-        <div class="profile-header">
-
-            <div class="avatar">
-                <img src="<?= session('foto') ? base_url('uploads/' . session('foto')) : 'https://ui-avatars.com/api/?name=' . session('nama') ?>">
-            </div>
-
-            <div class="profile-info">
-                <h3><?= session('nama') ?></h3>
-                <p><?= session('email') ?></p>
-                <span class="badge"><?= strtoupper(session('role')) ?></span>
-            </div>
-
+<div class="profile-card">
+    <div class="profile-header">
+        <img class="profile-avatar" 
+             src="<?= session('foto') ? base_url('uploads/' . session('foto')) : 'https://ui-avatars.com/api/?name=' . urlencode(session('nama') ?? session('username')) . '&background=8B6914&color=fff' ?>">
+        <div class="profile-name"><?= session('nama') ?? session('username') ?></div>
+        <div class="profile-role"><i class="fa fa-shield-alt"></i> <?= strtoupper(session('role')) ?></div>
+        
+        <?php
+        $db = \Config\Database::connect();
+        $totalMenu = $db->table('menu')->countAll();
+        $totalTransaksi = $db->table('transaksi')->countAll();
+        ?>
+        <div class="profile-stats">
+            <div><div class="stat-number"><?= $totalMenu ?></div><div class="stat-label">Menu</div></div>
+            <div><div class="stat-number"><?= $totalTransaksi ?></div><div class="stat-label">Transaksi</div></div>
         </div>
-
-        <!-- DETAIL -->
-        <div class="detail-box">
-
-            <div class="detail-item">
-                <div class="label">Username</div>
-                <div class="value"><?= session('username') ?></div>
-            </div>
-
-            <div class="detail-item">
-                <div class="label">Bio</div>
-                <div class="value">
-                    <?= session('bio') ?: 'Belum ada bio' ?>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- BUTTON -->
-        <div class="btn-group">
-            <a href="<?= base_url('admin/edit-profile') ?>" class="btn btn-primary">
-                ✏️ Edit Profile
-            </a>
-
-            <a href="<?= base_url('admin/dashboard') ?>" class="btn btn-secondary">
-                ⬅️ Kembali
-            </a>
-        </div>
-
     </div>
 
+    <div class="profile-body">
+        <div class="info-section">
+            <h4><i class="fa fa-user-circle"></i> Informasi Pribadi</h4>
+            <div class="info-row">
+                <div class="info-label"><i class="fa fa-user"></i> Username</div>
+                <div class="info-value"><?= session('username') ?></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label"><i class="fa fa-envelope"></i> Email</div>
+                <div class="info-value"><?= session('email') ?: '<span style="color:#999;">-</span>' ?></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label"><i class="fa fa-calendar"></i> Bergabung</div>
+                <div class="info-value"><?= date('d M Y', strtotime(session('created_at') ?? 'now')) ?></div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h4><i class="fa fa-pencil-alt"></i> Bio</h4>
+            <div class="bio-text"><?= session('bio') ?: '<span style="color:#999;">Belum ada bio</span>' ?></div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="<?= base_url('admin/edit-profile') ?>" class="btn-edit">
+                <i class="fa fa-edit"></i> Edit Profile
+            </a>
+        </div>
+    </div>
 </div>
+
+<?= $this->endSection() ?>

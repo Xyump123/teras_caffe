@@ -1,246 +1,159 @@
- <link rel="icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
- <link rel="shortcut icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
+<?= $this->extend('admin/layout') ?>
+<?= $this->section('content') ?>
 
- <style>
-     /* ===== BACKGROUND ===== */
-     body {
-         margin: 0;
-         font-family: 'Segoe UI', sans-serif;
-         background: linear-gradient(135deg, #2c1f17, #6f4e37, #a67c52);
-         min-height: 100vh;
+<style>
+    .edit-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        max-width: 700px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+    .edit-header {
+        background: linear-gradient(135deg, #3b2a21, #6f4e37);
+        padding: 25px;
+        text-align: center;
+    }
+    .edit-header h3 {
+        color: #fff;
+        margin: 0;
+        font-size: 20px;
+    }
+    .edit-header p {
+        color: rgba(255,255,255,0.8);
+        font-size: 12px;
+        margin: 5px 0 0;
+    }
+    .avatar-area {
+        text-align: center;
+        margin-top: -40px;
+        position: relative;
+    }
+    .avatar-preview {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .camera-btn {
+        position: absolute;
+        bottom: 0;
+        right: 42%;
+        background: #8B6914;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .camera-btn:hover { background: #6B4F12; transform: scale(1.1); }
+    .camera-btn i { color: #fff; font-size: 14px; }
+    .form-body { padding: 25px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { font-weight: 600; font-size: 13px; color: #555; margin-bottom: 6px; display: block; }
+    .form-group label i { margin-right: 6px; color: #8B6914; }
+    .form-control {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 13px;
+        transition: 0.2s;
+    }
+    .form-control:focus {
+        outline: none;
+        border-color: #8B6914;
+        box-shadow: 0 0 0 3px rgba(139,105,20,0.1);
+    }
+    textarea.form-control { min-height: 80px; resize: vertical; }
+    .info-text { font-size: 10px; color: #999; margin-top: 4px; }
+    .form-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+    }
+    .btn-simpan {
+        background: #8B6914;
+        color: #fff;
+        padding: 8px 20px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: 0.3s;
+    }
+    .btn-simpan:hover { background: #6B4F12; transform: translateY(-2px); }
+    .btn-batal {
+        background: #f5f5f5;
+        color: #666;
+        padding: 8px 20px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-batal:hover { background: #eee; }
+    @media (max-width: 600px) {
+        .form-body { padding: 18px; }
+        .camera-btn { right: 38%; }
+    }
+</style>
 
-         display: flex;
-         justify-content: center;
-         align-items: center;
-     }
+<div class="edit-card">
+    <div class="edit-header">
+    </div>
 
-     body::before {
-         content: "";
-         position: fixed;
-         width: 100%;
-         height: 100%;
-         background:
-             radial-gradient(circle at top left, rgba(255, 255, 255, 0.15), transparent),
-             radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.25), transparent);
-         z-index: -1;
-     }
+    <div class="avatar-area">
+        <img id="preview" class="avatar-preview" 
+             src="<?= session('foto') ? base_url('uploads/' . session('foto')) : 'https://ui-avatars.com/api/?name=' . urlencode(session('nama') ?? session('username')) . '&background=8B6914&color=fff' ?>">
+        <label class="camera-btn" for="fotoInput">
+            <i class="fa fa-camera"></i>
+        </label>
+    </div>
 
-     /* ===== CONTAINER ===== */
-     .container {
-         width: 100%;
-         max-width: 460px;
-         padding: 20px;
-     }
+    <form action="<?= base_url('admin/update-profile') ?>" method="post" enctype="multipart/form-data">
+        <?= csrf_field() ?>
+        <div class="form-body">
+            <div class="form-group">
+                <label><i class="fa fa-user"></i> Nama Lengkap</label>
+                <input type="text" name="nama" class="form-control" value="<?= session('nama') ?>" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fa fa-envelope"></i> Email</label>
+                <input type="email" name="email" class="form-control" value="<?= session('email') ?>">
+            </div>
+            <div class="form-group">
+                <label><i class="fa fa-pencil"></i> Bio</label>
+                <textarea name="bio" class="form-control" placeholder="Tulis bio singkat..."><?= session('bio') ?></textarea>
+            </div>
+            <div class="form-actions">
+                <a href="<?= base_url('admin/profile') ?>" class="btn-batal"><i class="fa fa-arrow-left"></i> Batal</a>
+                <button type="submit" class="btn-simpan"><i class="fa fa-save"></i> Simpan</button>
+            </div>
+        </div>
+    </form>
+</div>
 
-     /* TITLE */
-     .title {
-         text-align: center;
-         color: white;
-         margin-bottom: 25px;
-         font-weight: 600;
-         letter-spacing: 0.5px;
-     }
+<script>
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            document.getElementById('preview').src = reader.result;
+        }
+        if (event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+    }
+    document.querySelector('.camera-btn').onclick = () => document.getElementById('fotoInput').click();
+</script>
 
-     /* CARD */
-     .card {
-         padding: 28px;
-         border-radius: 18px;
-         background: rgba(255, 255, 255, 0.12);
-         backdrop-filter: blur(18px);
-         border: 1px solid rgba(255, 255, 255, 0.2);
-         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
-         color: white;
-     }
-
-     /* ALERT */
-     .alert {
-         background: rgba(0, 255, 150, 0.15);
-         border: 1px solid rgba(0, 255, 150, 0.3);
-         padding: 12px;
-         border-radius: 10px;
-         margin-bottom: 20px;
-         font-size: 14px;
-     }
-
-     /* FORM */
-     .form-group {
-         margin-bottom: 20px;
-         position: relative;
-     }
-
-     /* INPUT */
-     .form-group input,
-     .form-group textarea {
-         width: 100%;
-         padding: 14px;
-         border-radius: 10px;
-         border: 1px solid rgba(255, 255, 255, 0.25);
-         background: rgba(255, 255, 255, 0.15);
-         color: white;
-         outline: none;
-         font-size: 14px;
-         transition: 0.2s;
-     }
-
-     .form-group input:focus,
-     .form-group textarea:focus {
-         border-color: #fff;
-         background: rgba(255, 255, 255, 0.2);
-     }
-
-     /* LABEL */
-     .form-group label {
-         position: absolute;
-         top: -8px;
-         left: 12px;
-         font-size: 11px;
-         color: #eee;
-         background: rgba(0, 0, 0, 0.4);
-         padding: 2px 6px;
-         border-radius: 6px;
-     }
-
-     /* FOTO */
-     .photo-wrapper {
-         text-align: center;
-         margin-bottom: 10px;
-     }
-
-     .photo-wrapper img {
-         width: 90px;
-         height: 90px;
-         border-radius: 50%;
-         border: 3px solid white;
-         object-fit: cover;
-         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-     }
-
-     /* FILE INPUT */
-     .file-input {
-         display: block;
-         text-align: center;
-         background: rgba(255, 255, 255, 0.2);
-         padding: 10px;
-         border-radius: 10px;
-         cursor: pointer;
-         font-size: 13px;
-         transition: 0.2s;
-     }
-
-     .file-input:hover {
-         background: rgba(255, 255, 255, 0.35);
-     }
-
-     input[type="file"] {
-         display: none;
-     }
-
-     /* BUTTON */
-     .btn-group {
-         display: flex;
-         gap: 10px;
-         margin-top: 25px;
-     }
-
-     .btn {
-         flex: 1;
-         padding: 12px;
-         border-radius: 10px;
-         border: none;
-         cursor: pointer;
-         font-size: 14px;
-         transition: 0.2s;
-     }
-
-     /* PRIMARY */
-     .btn-primary {
-         background: linear-gradient(135deg, #ffffff, #e0e0e0);
-         color: #3b2a21;
-         font-weight: 600;
-     }
-
-     .btn-primary:hover {
-         transform: translateY(-1px);
-     }
-
-     /* SECONDARY */
-     .btn-secondary {
-         background: rgba(255, 255, 255, 0.2);
-         color: white;
-         text-align: center;
-         text-decoration: none;
-     }
-
-     .btn-secondary:hover {
-         background: rgba(255, 255, 255, 0.35);
-     }
- </style>
-
-
- <div class="container">
-
-     <h2 class="title">Edit Profile</h2>
-
-     <div class="card">
-
-         <?php if (session()->getFlashdata('success')): ?>
-             <div class="alert">
-                 <?= session('success') ?>
-             </div>
-         <?php endif; ?>
-
-         <form action="<?= base_url('admin/update-profile') ?>" method="post" enctype="multipart/form-data">
-
-             <div class="form-group">
-                 <input type="text" name="nama" value="<?= session('nama') ?>">
-                 <label>Nama</label>
-             </div>
-
-             <div class="form-group">
-                 <input type="email" name="email" value="<?= session('email') ?>">
-                 <label>Email</label>
-             </div>
-
-             <div class="form-group">
-                 <textarea name="bio" rows="3"><?= session('bio') ?></textarea>
-                 <label>Bio</label>
-             </div>
-
-             <!-- FOTO -->
-             <div class="form-group">
-                 <div class="photo-wrapper">
-                     <img id="preview"
-                         src="<?= session('foto') ? base_url('uploads/' . session('foto')) : 'https://ui-avatars.com/api/?name=' . session('nama') ?>">
-                 </div>
-
-                 <label class="file-input">
-                     📷 Pilih Foto
-                     <input type="file" name="foto" onchange="previewImage(event)">
-                 </label>
-             </div>
-
-             <div class="btn-group">
-                 <button type="submit" class="btn btn-primary">
-                     💾 Simpan
-                 </button>
-
-                 <a href="<?= base_url('admin/profile') ?>" class="btn btn-secondary">
-                     ⬅️ Batal
-                 </a>
-             </div>
-
-         </form>
-
-     </div>
-
- </div>
-
- <script>
-     function previewImage(event) {
-         const reader = new FileReader();
-         reader.onload = function() {
-             document.getElementById('preview').src = reader.result;
-         }
-         reader.readAsDataURL(event.target.files[0]);
-     }
- </script>
+<?= $this->endSection() ?>

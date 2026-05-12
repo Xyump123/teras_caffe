@@ -44,20 +44,50 @@ class Profile extends BaseController
             'bio'   => $this->request->getPost('bio'),
         ];
 
+        // Ambil file foto
         $file = $this->request->getFile('foto');
 
-        if ($file && $file->isValid()) {
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            // Buat folder uploads jika belum ada
+            $uploadPath = FCPATH . 'uploads/';
+            if (!is_dir($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+            }
+
+            // Hapus foto lama jika ada
+            $oldUser = $this->db->table('users')
+                ->where('id', session('user_id'))
+                ->get()
+                ->getRowArray();
+                
+            if ($oldUser && $oldUser['foto'] && file_exists($uploadPath . $oldUser['foto'])) {
+                unlink($uploadPath . $oldUser['foto']);
+            }
+
+            // Upload foto baru
             $namaFile = $file->getRandomName();
-            $file->move('uploads', $namaFile);
+            $file->move($uploadPath, $namaFile);
             $data['foto'] = $namaFile;
         }
 
+        // Update ke database
         $this->db->table('users')
             ->where('id', session('user_id'))
             ->update($data);
 
-        $this->session->set($data);
+        // Update session dengan data baru
+        $sessionData = [
+            'nama'  => $data['nama'],
+            'email' => $data['email'],
+            'bio'   => $data['bio'],
+        ];
+        
+        if (isset($data['foto'])) {
+            $sessionData['foto'] = $data['foto'];
+        }
+        
+        $this->session->set($sessionData);
 
-        return redirect()->back()->with('success', 'Profile berhasil diupdate');
+        return redirect()->to('/admin/profile')->with('success', 'Profile berhasil diupdate');
     }
 }

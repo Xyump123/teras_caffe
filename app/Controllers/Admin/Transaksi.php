@@ -91,13 +91,8 @@ class Transaksi extends BaseController
                 ->getRowArray();
 
             if ($menu) {
-                if ($menu['stok'] < $d['qty']) {
-                    return redirect()->to('/admin/transaksi')->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak mencukupi. Sisa: ' . $menu['stok']);
-                }
-                
                 $stokBaru = $menu['stok'] - $d['qty'];
                 if ($stokBaru < 0) $stokBaru = 0;
-
                 $this->db->table('menu')
                     ->where('id', $d['id_menu'])
                     ->update(['stok' => $stokBaru]);
@@ -111,14 +106,13 @@ class Transaksi extends BaseController
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil dikonfirmasi');
     }
 
-    // ==================== TAMBAH TRANSAKSI MANUAL ====================
+    // ==================== TAMBAH TRANSAKSI ====================
     public function tambah()
     {
         $this->checkLogin();
 
-        $data['title'] = 'Tambah Transaksi Manual';
+        $data['title'] = 'Tambah Transaksi';
         $data['menu'] = $this->db->table('menu')
-            ->where('stok >', 0)
             ->orderBy('kategori', 'ASC')
             ->orderBy('nama_menu', 'ASC')
             ->get()
@@ -137,7 +131,7 @@ class Transaksi extends BaseController
         $items = $this->request->getPost('items');
 
         if (!$items || count($items) == 0) {
-            return redirect()->back()->with('error', 'Minimal 1 item pesanan');
+            return redirect()->back()->with('error', 'Minimal 1 item');
         }
 
         $total = 0;
@@ -155,40 +149,40 @@ class Transaksi extends BaseController
 
             if ($menu) {
                 $qty = (int)$item['qty'];
-                
+
                 if ($qty > 30) {
-                    return redirect()->back()->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
+                    return redirect()->back()->with('error', 'Maksimal 30 untuk ' . $menu['nama_menu']);
                 }
-                
+
                 if ($qty > $menu['stok']) {
-                    return redirect()->back()->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa: ' . $menu['stok']);
+                    return redirect()->back()->with('error', 'Stok ' . $menu['nama_menu'] . ' sisa ' . $menu['stok']);
                 }
 
                 $subtotal = $menu['harga'] * $qty;
                 $total += $subtotal;
 
                 $detailData[] = [
-                    'id_menu' => $menu['id'],
-                    'nama_menu' => $menu['nama_menu'],
-                    'harga' => $menu['harga'],
-                    'qty' => $qty,
-                    'subtotal' => $subtotal,
-                    'level_pedas' => $item['level_pedas'] ?? null
+                    'id_menu'    => $menu['id'],
+                    'nama_menu'  => $menu['nama_menu'],
+                    'harga'      => $menu['harga'],
+                    'qty'        => $qty,
+                    'subtotal'   => $subtotal,
+                    'level_pedas'=> $item['level_pedas'] ?? null
                 ];
             }
         }
 
         if (empty($detailData)) {
-            return redirect()->back()->with('error', 'Tidak ada item yang valid');
+            return redirect()->back()->with('error', 'Tidak ada item valid');
         }
 
         $this->db->table('transaksi')->insert([
-            'meja' => $meja,
-            'total' => $total,
+            'meja'          => $meja,
+            'total'         => $total,
             'metode_pembayaran' => $metode,
-            'status' => $status,
+            'status'        => $status,
             'tipe_pembayaran' => 'kasir',
-            'created_at' => date('Y-m-d H:i:s')
+            'created_at'    => date('Y-m-d H:i:s')
         ]);
 
         $id_transaksi = $this->db->insertID();
@@ -200,65 +194,143 @@ class Transaksi extends BaseController
 
         if ($status == 'lunas') {
             foreach ($detailData as $detail) {
-                $menu = $this->db->table('menu')
-                    ->where('id', $detail['id_menu'])
-                    ->get()
-                    ->getRowArray();
-
-                $stokBaru = $menu['stok'] - $detail['qty'];
-                if ($stokBaru < 0) $stokBaru = 0;
                 $this->db->table('menu')
                     ->where('id', $detail['id_menu'])
-                    ->update(['stok' => $stokBaru]);
+                    ->set('stok', 'stok - ' . $detail['qty'], false)
+                    ->update();
             }
         }
 
-        return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil ditambahkan');
+        return redirect()->to('/admin/transaksi')->with('success', 'Transaksi ditambahkan');
     }
 
-    // ==================== HAPUS TRANSAKSI ====================
-    public function hapus($id)
+    // ==================== EDIT TRANSAKSI ====================
+    public function edit($id)
     {
         $this->checkLogin();
 
-        $transaksi = $this->db->table('transaksi')
+        $data['title'] = 'Edit Transaksi';
+        $data['transaksi'] = $this->db->table('transaksi')
             ->where('id', $id)
             ->get()
             ->getRowArray();
 
-        if (!$transaksi) {
+        if (!$data['transaksi']) {
             return redirect()->to('/admin/transaksi')->with('error', 'Transaksi tidak ditemukan');
         }
 
-        if ($transaksi['status'] == 'lunas') {
-            $detail = $this->db->table('detail_transaksi')
-                ->where('id_transaksi', $id)
-                ->get()
-                ->getResultArray();
+        $data['detail'] = $this->db->table('detail_transaksi')
+            ->where('id_transaksi', $id)
+            ->get()
+            ->getResultArray();
 
-            foreach ($detail as $d) {
-                $menu = $this->db->table('menu')
-                    ->where('id', $d['id_menu'])
-                    ->get()
-                    ->getRowArray();
+        $data['menu'] = $this->db->table('menu')
+            ->orderBy('kategori', 'ASC')
+            ->orderBy('nama_menu', 'ASC')
+            ->get()
+            ->getResultArray();
 
-                $stokBaru = $menu['stok'] + $d['qty'];
-                if ($stokBaru > 30) $stokBaru = 30;
-                
+        return view('admin/edit_transaksi', $data);
+    }
+
+    public function update($id)
+    {
+        $this->checkLogin();
+
+        $meja = $this->request->getPost('meja');
+        $metode = $this->request->getPost('metode_pembayaran');
+        $status = $this->request->getPost('status');
+        $items = $this->request->getPost('items');
+
+        if (!$items || count($items) == 0) {
+            return redirect()->back()->with('error', 'Minimal 1 item');
+        }
+
+        // Data lama
+        $oldTransaksi = $this->db->table('transaksi')->where('id', $id)->get()->getRowArray();
+        $oldDetail = $this->db->table('detail_transaksi')->where('id_transaksi', $id)->get()->getResultArray();
+
+        if (!$oldTransaksi) {
+            return redirect()->to('/admin/transaksi')->with('error', 'Transaksi tidak ditemukan');
+        }
+
+        // Kembalikan stok jika sebelumnya LUNAS
+        if ($oldTransaksi['status'] == 'lunas') {
+            foreach ($oldDetail as $d) {
                 $this->db->table('menu')
                     ->where('id', $d['id_menu'])
-                    ->update(['stok' => $stokBaru]);
+                    ->set('stok', 'stok + ' . $d['qty'], false)
+                    ->update();
             }
         }
 
-        $this->db->table('detail_transaksi')
-            ->where('id_transaksi', $id)
-            ->delete();
+        // Hapus detail lama
+        $this->db->table('detail_transaksi')->where('id_transaksi', $id)->delete();
 
-        $this->db->table('transaksi')
-            ->where('id', $id)
-            ->delete();
+        // Hitung ulang total & detail baru
+        $total = 0;
+        $detailData = [];
 
-        return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil dihapus');
+        foreach ($items as $item) {
+            if (empty($item['id_menu']) || empty($item['qty'])) {
+                continue;
+            }
+
+            $menu = $this->db->table('menu')->where('id', $item['id_menu'])->get()->getRowArray();
+
+            if ($menu) {
+                $qty = (int)$item['qty'];
+
+                if ($qty > 30) {
+                    return redirect()->back()->with('error', 'Maksimal 30 untuk ' . $menu['nama_menu']);
+                }
+
+                if ($qty > $menu['stok']) {
+                    return redirect()->back()->with('error', 'Stok ' . $menu['nama_menu'] . ' sisa ' . $menu['stok']);
+                }
+
+                $subtotal = $menu['harga'] * $qty;
+                $total += $subtotal;
+
+                $detailData[] = [
+                    'id_transaksi' => $id,
+                    'id_menu'      => $menu['id'],
+                    'nama_menu'    => $menu['nama_menu'],
+                    'harga'        => $menu['harga'],
+                    'qty'          => $qty,
+                    'subtotal'     => $subtotal,
+                    'level_pedas'  => $item['level_pedas'] ?? null
+                ];
+            }
+        }
+
+        if (empty($detailData)) {
+            return redirect()->back()->with('error', 'Tidak ada item valid');
+        }
+
+        // Update transaksi
+        $this->db->table('transaksi')->where('id', $id)->update([
+            'meja'   => $meja,
+            'total'  => $total,
+            'metode_pembayaran' => $metode,
+            'status' => $status
+        ]);
+
+        // Simpan detail baru
+        foreach ($detailData as $detail) {
+            $this->db->table('detail_transaksi')->insert($detail);
+        }
+
+        // Kurangi stok jika status baru LUNAS
+        if ($status == 'lunas') {
+            foreach ($detailData as $d) {
+                $this->db->table('menu')
+                    ->where('id', $d['id_menu'])
+                    ->set('stok', 'stok - ' . $d['qty'], false)
+                    ->update();
+            }
+        }
+
+        return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil diupdate');
     }
 }

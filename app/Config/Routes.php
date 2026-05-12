@@ -54,14 +54,15 @@ $routes->get('admin', 'Admin\Dashboard::index');
 $routes->get('admin/dashboard', 'Admin\Dashboard::index');
 
 //------------------------------------------------------------------------------
-// TRANSAKSI
+// TRANSAKSI (CRUD LENGKAP)
 //------------------------------------------------------------------------------
-$routes->get('admin/transaksi', 'Admin\Transaksi::index');
-$routes->get('admin/transaksi/detail/(:num)', 'Admin\Transaksi::detail/$1');
-$routes->get('admin/transaksi/konfirmasi/(:num)', 'Admin\Transaksi::konfirmasi/$1');
-$routes->get('admin/transaksi/tambah', 'Admin\Transaksi::tambah');
-$routes->post('admin/transaksi/simpan', 'Admin\Transaksi::simpan');
-$routes->get('admin/transaksi/hapus/(:num)', 'Admin\Transaksi::hapus/$1');
+$routes->get('admin/transaksi', 'Admin\Transaksi::index');                              // Daftar transaksi
+$routes->get('admin/transaksi/detail/(:num)', 'Admin\Transaksi::detail/$1');           // Detail transaksi
+$routes->get('admin/transaksi/konfirmasi/(:num)', 'Admin\Transaksi::konfirmasi/$1');   // Konfirmasi pembayaran
+$routes->get('admin/transaksi/tambah', 'Admin\Transaksi::tambah');                     // Form tambah transaksi
+$routes->post('admin/transaksi/simpan', 'Admin\Transaksi::simpan');                    // Simpan transaksi
+$routes->get('admin/transaksi/edit/(:num)', 'Admin\Transaksi::edit/$1');               // FORM EDIT (BARU)
+$routes->post('admin/transaksi/update/(:num)', 'Admin\Transaksi::update/$1');          // UPDATE (BARU)
 
 //------------------------------------------------------------------------------
 // MANAJEMEN MENU
@@ -79,13 +80,16 @@ $routes->get('admin/menu/hapus/(:num)', 'Admin\MenuManager::hapus/$1');
 $routes->get('admin/laporan', 'Admin\Laporan::index');
 $routes->post('admin/laporan', 'Admin\Laporan::index');
 
-
-// // ==================== PROFIL ====================
+//------------------------------------------------------------------------------
+// PROFIL
+//------------------------------------------------------------------------------
 $routes->get('admin/profile', 'Admin\Profile::index');
 $routes->get('admin/edit-profile', 'Admin\Profile::edit');
 $routes->post('admin/update-profile', 'Admin\Profile::update');
 
-// ==================== ADMIN QR CODE GENERATOR ====================
+//------------------------------------------------------------------------------
+// QR CODE GENERATOR
+//------------------------------------------------------------------------------
 $routes->get('admin/qr-generator', 'Admin\QrGenerator::index');
 $routes->post('admin/qr-generator/generate', 'Admin\QrGenerator::generate');
 $routes->post('admin/qr-generator/bulk', 'Admin\QrGenerator::bulkGenerate');

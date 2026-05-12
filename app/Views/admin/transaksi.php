@@ -2,13 +2,6 @@
 <?= $this->section('content') ?>
 
 <style>
-    /* PERBAIKAN UTAMA - PASTIKAN CONTAINER FULL WIDTH */
-    .content-wrapper {
-        width: 100%;
-        max-width: 100%;
-        overflow-x: hidden;
-    }
-    
     .card {
         background: white;
         padding: 25px;
@@ -32,9 +25,9 @@
         gap: 10px;
     }
 
-    /* TOMBOL TAMBAH WARNA COKLAT */
+    /* TOMBOL TAMBAH - WARNA COKLAT */
     .btn-tambah {
-        background: #8B6914; /* Warna coklat keemasan */
+        background: #8B6914;
         color: white;
         padding: 8px 16px;
         border-radius: 6px;
@@ -48,27 +41,81 @@
     }
 
     .btn-tambah:hover {
-        background: #6B4F12; /* Coklat lebih gelap saat hover */
+        background: #6B4F12;
         transform: translateY(-2px);
     }
 
-    /* TABLE RESPONSIVE - SCROLL HORIZONTAL TIDAK MERUSAK LAYOUT */
+    /* TOMBOL EDIT - SAMA SEPERTI TAMBAH (WARNA COKLAT) */
+    .btn-edit {
+        background: #8B6914;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-edit:hover {
+        background: #6B4F12;
+        transform: translateY(-2px);
+    }
+
+    /* TOMBOL DETAIL */
+    .btn-detail {
+        background: #1e3a5f;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-detail:hover {
+        background: #0f2b4a;
+        transform: translateY(-2px);
+    }
+
+    /* TOMBOL KONFIRMASI */
+    .btn-konfirmasi {
+        background: #1a5a3a;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-konfirmasi:hover {
+        background: #0f3d26;
+        transform: translateY(-2px);
+    }
+
     .table-wrapper {
         overflow-x: auto;
         width: 100%;
-        margin: 0 -0px;
         position: relative;
     }
 
-    /* HILANGKAN min-width AGAR TABEL MENGIKUTI LEBAR KONTAINER */
     table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 0; /* GANTI DARI 1000px MENJADI 0 */
+        min-width: 0;
     }
 
     th {
-        background: #   ;
+        background: #3b2a21;
         color: white;
         padding: 12px 12px;
         text-align: center;
@@ -85,23 +132,19 @@
         white-space: nowrap;
     }
 
-    /* RESPONSIVE UNTUK LAYAR KECIL */
     @media (max-width: 1200px) {
         .table-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
-        
         table {
-            min-width: 900px; /* BERLAKU SAAT LAYAR KECIL */
+            min-width: 900px;
         }
-        
         th, td {
             padding: 8px 10px;
         }
     }
 
-    /* BADGE */
     .badge {
         padding: 4px 10px;
         border-radius: 6px;
@@ -119,33 +162,9 @@
     .badge.meja { background: #e2e3ff; color: #383d8a; }
     .badge.kasir { background: #ffe0e0; color: #8a1f1f; }
 
-    /* TOMBOL ACTION */
     .action {
         white-space: nowrap;
     }
-
-    .action a {
-        text-decoration: none;
-        font-weight: 500;
-        padding: 5px 10px;
-        border-radius: 4px;
-        margin: 0 2px;
-        display: inline-block;
-        font-size: 11px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-detail { background: #1e3a5f; color: white; }
-    .btn-detail:hover { background: #0f2b4a; transform: translateY(-2px); }
-
-    .btn-edit { background: #4a3a2a; color: white; }
-    .btn-edit:hover { background: #332618; transform: translateY(-2px); }
-
-    .btn-hapus { background: #5a2a2a; color: white; }
-    .btn-hapus:hover { background: #3d1c1c; transform: translateY(-2px); }
-
-    .btn-konfirmasi { background: #1a5a3a; color: white; }
-    .btn-konfirmasi:hover { background: #0f3d26; transform: translateY(-2px); }
 
     .empty-row td {
         text-align: center;
@@ -153,7 +172,6 @@
         color: #999;
     }
 
-    /* LEBAR KOLOM YANG LEBIH FLEKSIBEL */
     .col-id { width: 70px; }
     .col-meja { width: 70px; }
     .col-tipe { width: 100px; }
@@ -161,14 +179,14 @@
     .col-total { width: 130px; }
     .col-status { width: 120px; }
     .col-tanggal { width: 150px; }
-    .col-aksi { min-width: 250px; } /* GANTI width JADI min-width */
+    .col-aksi { min-width: 250px; }
 </style>
 
 <div class="card">
     <div class="header">
         <h3>Daftar Transaksi</h3>
         <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">
-        + Tambah Transaksi
+            + Tambah Transaksi
         </a>
     </div>
 
@@ -211,9 +229,7 @@
                             <td class="col-tanggal"><?= date('d-m-Y H:i', strtotime($t['created_at'])) ?></td>
                             <td class="col-aksi action">
                                 <a href="<?= base_url('admin/transaksi/detail/' . $t['id']) ?>" class="btn-detail">Detail</a>
-                                <a href="<?= base_url('admin/transaksi/hapus/' . $t['id']) ?>" 
-                                   class="btn-hapus"
-                                   onclick="return confirm('Yakin ingin menghapus transaksi ini?')">Hapus</a>
+                                <a href="<?= base_url('admin/transaksi/edit/' . $t['id']) ?>" class="btn-edit">Edit</a>
                                 <?php if ($t['status'] != 'lunas'): ?>
                                     <a href="<?= base_url('admin/transaksi/konfirmasi/' . $t['id']) ?>"
                                        class="btn-konfirmasi"
