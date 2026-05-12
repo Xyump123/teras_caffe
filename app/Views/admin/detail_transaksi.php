@@ -43,6 +43,31 @@
         transform: translateX(-3px);
     }
 
+    .btn-print {
+        background: #17a2b8;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 10px;
+    }
+
+    .btn-print:hover {
+        background: #138496;
+        transform: translateY(-2px);
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
     .info-table {
         width: 100%;
         background: #f8f9fa;
@@ -165,84 +190,186 @@
         color: #999;
         font-size: 14px;
     }
+
+    /* ========== STYLE KHUSUS UNTUK PRINT ========== */
+    @media print {
+        .sidebar, .top-bar, .header, .btn-back, .btn-print, .action-buttons, .footer {
+            display: none !important;
+        }
+        
+        .main-content {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .card {
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        body {
+            background: white !important;
+        }
+        
+        .print-header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+        
+        .print-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 10px;
+            border-top: 1px solid #ccc;
+            font-size: 10px;
+        }
+        
+        .invoice-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #3b2a21;
+        }
+        
+        .invoice-subtitle {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .order-table th {
+            background: #333 !important;
+            color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        .badge-status {
+            border: 1px solid #ccc;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
 </style>
 
 <div class="card">
     <div class="header">
         <h3>Detail Transaksi #<?= $transaksi['id'] ?></h3>
-        <a href="<?= base_url('admin/transaksi') ?>" class="btn-back">← Kembali</a>
-    </div>
-
-    <table class="info-table">
-        <tr>
-            <td>Nomor Meja</td>
-            <td>: <strong><?= $transaksi['meja'] ?></strong></td>
-        </tr>
-        <tr>
-            <td>Metode Pembayaran</td>
-            <td>: <strong><?= strtoupper($transaksi['metode_pembayaran']) ?></strong></td>
-        </tr>
-        <tr>
-            <td>Tipe Pembayaran</td>
-            <td>: <strong><?= strtoupper($transaksi['tipe_pembayaran'] ?? 'MEJA') ?></strong></td>
-        </tr>
-        <tr>
-            <td>Status</td>
-            <td>: 
-                <?php
-                $statusClass = '';
-                $statusText = strtoupper($transaksi['status']);
-                if ($transaksi['status'] == 'lunas') {
-                    $statusClass = 'badge-lunas';
-                } elseif ($transaksi['status'] == 'menunggu_konfirmasi') {
-                    $statusClass = 'badge-menunggu_konfirmasi';
-                } else {
-                    $statusClass = 'badge-pending';
-                }
-                ?>
-                <span class="badge-status <?= $statusClass ?>"><?= $statusText ?></span>
-            </td>
-        </tr>
-        <tr>
-            <td>Tanggal Transaksi</td>
-            <td>: <strong><?= date('d-m-Y H:i:s', strtotime($transaksi['created_at'])) ?></strong></td>
-        </tr>
-    </table>
-
-    <h4>Daftar Pesanan</h4>
-    
-    <?php if (!empty($detail)): ?>
-        <table class="order-table">
-            <thead>
-                <tr>
-                    <th>Menu</th>
-                    <th>Qty</th>
-                    <th>Level Pedas</th>
-                    <th>Harga</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($detail as $d): ?>
-                <tr>
-                    <td style="text-align: left;"><strong><?= esc($d['nama_menu']) ?></strong></td>
-                    <td><?= $d['qty'] ?></td>
-                    <td><?= $d['level_pedas'] ? "🌶️ Level {$d['level_pedas']}" : '🌶 Tidak Pedas' ?></td>
-                    <td>Rp <?= number_format($d['harga'], 0, ',', '.') ?></td>
-                    <td><strong>Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></strong></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php else: ?>
-        <div class="empty-order">
-            Tidak ada pesanan dalam transaksi ini
+        <div class="action-buttons">
+            <a href="<?= base_url('admin/transaksi') ?>" class="btn-back">← Kembali</a>
+            <button onclick="window.print()" class="btn-print">
+                <i class="fa fa-print"></i> Cetak Invoice
+            </button>
         </div>
-    <?php endif; ?>
-
-    <div class="total-box">
-        <h3>Total: <span>Rp <?= number_format($transaksi['total'], 0, ',', '.') ?></span></h3>
     </div>
-</div>
 
-<?= $this->endSection() ?>
+    <!-- AREA YANG AKAN DICETAK -->
+    <div id="printArea">
+        <!-- Header untuk print (hanya muncul saat print) -->
+        <div class="print-header" style="display: none;">
+            <div class="invoice-title">☕ TERAS CAFFE</div>
+            <div class="invoice-subtitle">Jl. Contoh No. 123, Kota</div>
+            <div class="invoice-subtitle">Telp: 0812-3456-7890</div>
+            <div class="invoice-subtitle">===================================</div>
+        </div>
+
+        <!-- Informasi Transaksi -->
+        <table class="info-table">
+            <tr>
+                <td>Nomor Meja</td>
+                <td>: <strong><?= $transaksi['meja'] ?></strong></td>
+            </tr>
+            <tr>
+                <td>Metode Pembayaran</td>
+                <td>: <strong><?= strtoupper($transaksi['metode_pembayaran']) ?></strong></td>
+            </tr>
+            <tr>
+                <td>Tipe Pembayaran</td>
+                <td>: <strong><?= strtoupper($transaksi['tipe_pembayaran'] ?? 'MEJA') ?></strong></td>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td>: 
+                    <?php
+                    $statusClass = '';
+                    $statusText = strtoupper($transaksi['status']);
+                    if ($transaksi['status'] == 'lunas') {
+                        $statusClass = 'badge-lunas';
+                    } elseif ($transaksi['status'] == 'menunggu_konfirmasi') {
+                        $statusClass = 'badge-menunggu_konfirmasi';
+                    } else {
+                        $statusClass = 'badge-pending';
+                    }
+                    ?>
+                    <span class="badge-status <?= $statusClass ?>"><?= $statusText ?></span>
+                 </td>
+             </tr>
+             <tr>
+                 <td>Tanggal Transaksi</td>
+                 <td>: <strong><?= date('d-m-Y H:i:s', strtotime($transaksi['created_at'])) ?></strong></td>
+             </tr>
+         </table>
+
+         <h4>📋 Daftar Pesanan</h4>
+         
+         <?php if (!empty($detail)): ?>
+             <table class="order-table">
+                 <thead>
+                     <tr>
+                         <th>Menu</th>
+                         <th>Qty</th>
+                         <th>Level Pedas</th>
+                         <th>Harga</th>
+                         <th>Subtotal</th>
+                      </tr>
+                 </thead>
+                 <tbody>
+                     <?php foreach ($detail as $d): ?>
+                     <tr>
+                         <td style="text-align: left;"><strong><?= esc($d['nama_menu']) ?></strong></td>
+                         <td><?= $d['qty'] ?></td>
+                         <td><?= $d['level_pedas'] ? "🌶️ Level {$d['level_pedas']}" : '🌶 Tidak Pedas' ?></td>
+                         <td>Rp <?= number_format($d['harga'], 0, ',', '.') ?></td>
+                         <td><strong>Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></strong></td>
+                     </tr>
+                     <?php endforeach; ?>
+                 </tbody>
+             </table>
+         <?php else: ?>
+             <div class="empty-order">
+                 Tidak ada pesanan dalam transaksi ini
+             </div>
+         <?php endif; ?>
+
+         <div class="total-box">
+             <h3>TOTAL: <span>Rp <?= number_format($transaksi['total'], 0, ',', '.') ?></span></h3>
+         </div>
+
+         <!-- Footer untuk print -->
+         <div class="print-footer" style="display: none;">
+             <div>===================================</div>
+             <div>Terima kasih telah memesan di Teras Caffe</div>
+             <div>© <?= date('Y') ?> Teras Caffe</div>
+         </div>
+     </div>
+ </div>
+
+ <script>
+     // Override print untuk menampilkan header dan footer yang disembunyikan
+     window.onbeforeprint = function() {
+         var headers = document.querySelectorAll('.print-header');
+         var footers = document.querySelectorAll('.print-footer');
+         headers.forEach(function(el) { el.style.display = 'block'; });
+         footers.forEach(function(el) { el.style.display = 'block'; });
+     };
+     
+     window.onafterprint = function() {
+         var headers = document.querySelectorAll('.print-header');
+         var footers = document.querySelectorAll('.print-footer');
+         headers.forEach(function(el) { el.style.display = 'none'; });
+         footers.forEach(function(el) { el.style.display = 'none'; });
+     };
+ </script>
+
+ <?= $this->endSection() ?>
