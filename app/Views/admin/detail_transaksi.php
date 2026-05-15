@@ -311,7 +311,7 @@
              </tr>
          </table>
 
-         <h4>📋 Daftar Pesanan</h4>
+         <h4>Daftar Pesanan</h4>
          
          <?php if (!empty($detail)): ?>
              <table class="order-table">
