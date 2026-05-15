@@ -7,9 +7,11 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 //==============================================================================
-// DEFAULT ROUTE
+// DEFAULT ROUTE - LANGSUNG KE LOGIN ADMIN
 //==============================================================================
-$routes->get('/', 'Menu\MenuPelanggan::landing');
+$routes->get('/', function() {
+    return redirect()->to('/admin/login');
+});
 
 //==============================================================================
 // ROUTES PELANGGAN
@@ -56,13 +58,13 @@ $routes->get('admin/dashboard', 'Admin\Dashboard::index');
 //------------------------------------------------------------------------------
 // TRANSAKSI (CRUD LENGKAP)
 //------------------------------------------------------------------------------
-$routes->get('admin/transaksi', 'Admin\Transaksi::index');                              // Daftar transaksi
-$routes->get('admin/transaksi/detail/(:num)', 'Admin\Transaksi::detail/$1');           // Detail transaksi
-$routes->get('admin/transaksi/konfirmasi/(:num)', 'Admin\Transaksi::konfirmasi/$1');   // Konfirmasi pembayaran
-$routes->get('admin/transaksi/tambah', 'Admin\Transaksi::tambah');                     // Form tambah transaksi
-$routes->post('admin/transaksi/simpan', 'Admin\Transaksi::simpan');                    // Simpan transaksi
-$routes->get('admin/transaksi/edit/(:num)', 'Admin\Transaksi::edit/$1');               // FORM EDIT (BARU)
-$routes->post('admin/transaksi/update/(:num)', 'Admin\Transaksi::update/$1');          // UPDATE (BARU)
+$routes->get('admin/transaksi', 'Admin\Transaksi::index');
+$routes->get('admin/transaksi/detail/(:num)', 'Admin\Transaksi::detail/$1');
+$routes->get('admin/transaksi/konfirmasi/(:num)', 'Admin\Transaksi::konfirmasi/$1');
+$routes->get('admin/transaksi/tambah', 'Admin\Transaksi::tambah');
+$routes->post('admin/transaksi/simpan', 'Admin\Transaksi::simpan');
+$routes->get('admin/transaksi/edit/(:num)', 'Admin\Transaksi::edit/$1');
+$routes->post('admin/transaksi/update/(:num)', 'Admin\Transaksi::update/$1');
 
 //------------------------------------------------------------------------------
 // MANAJEMEN MENU

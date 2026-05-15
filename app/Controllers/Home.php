@@ -4,8 +4,8 @@ namespace App\Controllers;
 
 class Home extends BaseController
 {
-    public function index()
+    public function landing()
     {
-        return view('landing');
+    return redirect()->to('/admin/login');
     }
 }
