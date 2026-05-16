@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 13 Bulan Mei 2026 pada 07.27
+-- Waktu pembuatan: 16 Bulan Mei 2026 pada 15.05
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.2.12
 
@@ -87,7 +87,9 @@ INSERT INTO `detail_transaksi` (`id`, `id_transaksi`, `id_menu`, `nama_menu`, `h
 (91, 73, 7, 'Chicken Katsu', 12000, 1, 12000, '2'),
 (92, 73, 8, 'Fire Wings', 13000, 1, 13000, '2'),
 (93, 73, 9, 'Ceker Saus Korea', 16000, 1, 16000, ''),
-(94, 73, 10, 'Nasi Katsu', 17000, 1, 17000, '2');
+(94, 73, 10, 'Nasi Katsu', 17000, 1, 17000, '2'),
+(95, 74, 7, 'Chicken Katsu', 12000, 1, 12000, '1'),
+(96, 75, 7, 'Chicken Katsu', 12000, 1, 12000, '1');
 
 -- --------------------------------------------------------
 
@@ -136,7 +138,7 @@ CREATE TABLE `menu` (
 --
 
 INSERT INTO `menu` (`id`, `nama_menu`, `harga`, `stok`, `kategori`, `gambar`, `created_at`, `ada_level`) VALUES
-(7, 'Chicken Katsu', 12000, 15, 'Makanan', '1773138148_1ae21ef378157d3b2f34.jpg', '2026-03-09 06:44:33', 1),
+(7, 'Chicken Katsu', 12000, 13, 'Makanan', '1773138148_1ae21ef378157d3b2f34.jpg', '2026-03-09 06:44:33', 1),
 (8, 'Fire Wings', 13000, 27, 'Makanan', '1773138122_bb6b8e19d4a1bb94cd74.jpg', '2026-03-09 06:45:52', 1),
 (9, 'Ceker Saus Korea', 16000, 28, 'Makanan', '1773138448_67dfe1b7a6054cbefb81.jpg', '2026-03-09 06:46:25', 0),
 (10, 'Nasi Katsu', 17000, 29, 'Makanan', '1773138504_c52b02985901a8f52f0d.jpg', '2026-03-09 06:46:45', 1),
@@ -257,7 +259,9 @@ INSERT INTO `transaksi` (`id`, `meja`, `tipe_pembayaran`, `total`, `metode_pemba
 (70, 1, 'meja', 12000, 'qris', '2026-03-25 14:53:36', 'lunas'),
 (71, 1, 'kasir', 12000, 'cash', '2026-03-25 14:54:02', 'lunas'),
 (72, 1, 'meja', 12000, 'qris', '2026-04-01 18:38:35', 'lunas'),
-(73, 1, 'meja', 58000, 'qris', '2026-05-12 04:18:33', 'lunas');
+(73, 1, 'meja', 58000, 'qris', '2026-05-12 04:18:33', 'lunas'),
+(74, 1, 'meja', 12000, 'qris', '2026-05-16 19:54:59', 'lunas'),
+(75, 1, 'kasir', 12000, 'cash', '2026-05-16 19:56:23', 'lunas');
 
 -- --------------------------------------------------------
 
@@ -283,7 +287,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `created_at`, `nama`, `bio`, `email`, `foto`, `updated_at`) VALUES
-(2, 'admin', 'admin123', 'admin', '2026-05-11 10:38:40', 'HYPENN', 'Jika Butuh pasti di usahakan, jika tidak maka di biarkan', 'hyepenn3@gmail.com', '1778577971_c0ee761b060b7af2e9e4.jpeg', '2026-05-12 09:26:11');
+(2, 'admin', 'admin123', 'admin', '2026-05-11 10:38:40', 'RANGGA', 'Jika Butuh pasti di usahakan, jika tidak maka di biarkan', 'rs6514493@gmail.com', '1778577971_c0ee761b060b7af2e9e4.jpeg', '2026-05-15 02:42:17');
 
 --
 -- Indexes for dumped tables
@@ -330,13 +334,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `detail_transaksi`
 --
 ALTER TABLE `detail_transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=97;
 
 --
 -- AUTO_INCREMENT untuk tabel `keranjang`
 --
 ALTER TABLE `keranjang`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT untuk tabel `menu`
@@ -348,7 +352,7 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT untuk tabel `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
