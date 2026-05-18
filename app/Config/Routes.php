@@ -7,10 +7,10 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 //==============================================================================
-// DEFAULT ROUTE - LANGSUNG KE HALAMAN MENU PELANGGAN
+// DEFAULT ROUTE - LANGSUNG KE LOGIN ADMIN
 //==============================================================================
 $routes->get('/', function() {
-    return redirect()->to('/menu');
+    return redirect()->to('/admin/login');
 });
 
 //==============================================================================
