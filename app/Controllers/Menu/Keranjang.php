@@ -22,11 +22,12 @@ class Keranjang extends BaseController
 
         $id_menu = $this->request->getPost('id_menu');
         $meja    = $this->request->getPost('meja');
+        $level_pedas = $this->request->getPost('level_pedas') ?? 0; // Ambil level dari request
 
         $menu = $menuModel->find($id_menu);
 
         if (!$menu) {
-            return redirect()->back();
+            return redirect()->back()->with('error', 'Menu tidak ditemukan');
         }
 
         if ($menu['stok'] <= 0) {
@@ -53,7 +54,8 @@ class Keranjang extends BaseController
             }
 
             $keranjangModel->update($cek['id'], [
-                'qty' => $qtyBaru
+                'qty' => $qtyBaru,
+                'level_pedas' => $level_pedas
             ]);
         } else {
             $keranjangModel->insert([
@@ -61,7 +63,8 @@ class Keranjang extends BaseController
                 'nama_menu' => $menu['nama_menu'],
                 'harga'     => $menu['harga'],
                 'qty'       => 1,
-                'meja'      => $meja
+                'meja'      => $meja,
+                'level_pedas' => $level_pedas
             ]);
         }
 
@@ -115,7 +118,10 @@ class Keranjang extends BaseController
                     ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
             }
 
-            $keranjangModel->update($id, ['qty' => $qtyBaru]);
+            $keranjangModel->update($id, [
+                'qty' => $qtyBaru,
+                'level_pedas' => $item['level_pedas'] // pertahankan level pedas
+            ]);
         }
 
         return redirect()->to('/menu/keranjang?meja=' . $meja);
@@ -132,7 +138,10 @@ class Keranjang extends BaseController
 
         if ($item) {
             if ($item['qty'] > 1) {
-                $keranjangModel->update($id, ['qty' => $item['qty'] - 1]);
+                $keranjangModel->update($id, [
+                    'qty' => $item['qty'] - 1,
+                    'level_pedas' => $item['level_pedas']
+                ]);
             } else {
                 $keranjangModel->delete($id);
             }

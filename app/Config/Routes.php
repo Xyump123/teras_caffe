@@ -54,7 +54,7 @@ $routes->get('admin', 'Admin\Dashboard::index');
 $routes->get('admin/dashboard', 'Admin\Dashboard::index');
 
 //------------------------------------------------------------------------------
-// TRANSAKSI (CRUD LENGKAP)
+// TRANSAKSI (CRUD LENGKAP + AJAX)
 //------------------------------------------------------------------------------
 $routes->get('admin/transaksi', 'Admin\Transaksi::index');
 $routes->get('admin/transaksi/detail/(:num)', 'Admin\Transaksi::detail/$1');
@@ -63,6 +63,10 @@ $routes->get('admin/transaksi/tambah', 'Admin\Transaksi::tambah');
 $routes->post('admin/transaksi/simpan', 'Admin\Transaksi::simpan');
 $routes->get('admin/transaksi/edit/(:num)', 'Admin\Transaksi::edit/$1');
 $routes->post('admin/transaksi/update/(:num)', 'Admin\Transaksi::update/$1');
+
+// NOTIFIKASI & AJAX (REAL TIME 3 DETIK)
+$routes->get('admin/transaksi/cek-pesanan-baru', 'Admin\Transaksi::cekPesananBaru');
+$routes->post('admin/transaksi/konfirmasi-ajax/(:num)', 'Admin\Transaksi::konfirmasiAjax/$1');
 
 //------------------------------------------------------------------------------
 // MANAJEMEN MENU

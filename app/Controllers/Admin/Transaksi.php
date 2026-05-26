@@ -61,7 +61,7 @@ class Transaksi extends BaseController
         return view('admin/detail_transaksi', $data);
     }
 
-    // ==================== KONFIRMASI PEMBAYARAN ====================
+    // ==================== KONFIRMASI PEMBAYARAN (TANPA AJAX) ====================
     public function konfirmasi($id)
     {
         $this->checkLogin();
@@ -104,6 +104,84 @@ class Transaksi extends BaseController
             ->update(['status' => 'lunas']);
 
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil dikonfirmasi');
+    }
+
+    // ==================== CEK PESANAN BARU (AJAX - REAL TIME) ====================
+    public function cekPesananBaru()
+    {
+        $this->checkLogin();
+
+        $lastCheck = $this->session->get('last_notification_check') ?? date('Y-m-d H:i:s', strtotime('-5 minutes'));
+        
+        $pesananBaru = $this->db->table('transaksi')
+            ->select('transaksi.*, (SELECT COUNT(*) FROM detail_transaksi WHERE detail_transaksi.id_transaksi = transaksi.id) as total_item')
+            ->where('transaksi.created_at >', $lastCheck)
+            ->whereIn('transaksi.status', ['pending', 'menunggu_konfirmasi'])
+            ->orderBy('transaksi.created_at', 'DESC')
+            ->get()
+            ->getResultArray();
+
+        $this->session->set('last_notification_check', date('Y-m-d H:i:s'));
+
+        return $this->response->setJSON([
+            'success' => true,
+            'total_baru' => count($pesananBaru),
+            'pesanan' => $pesananBaru
+        ]);
+    }
+
+    // ==================== KONFIRMASI PEMBAYARAN VIA AJAX (TANPA REFRESH) ====================
+    public function konfirmasiAjax($id)
+    {
+        $this->checkLogin();
+
+        $transaksi = $this->db->table('transaksi')
+            ->where('id', $id)
+            ->get()
+            ->getRowArray();
+
+        if (!$transaksi) {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Transaksi tidak ditemukan'
+            ]);
+        }
+
+        if ($transaksi['status'] == 'lunas') {
+            return $this->response->setJSON([
+                'success' => false, 
+                'message' => 'Transaksi sudah lunas'
+            ]);
+        }
+
+        $detail = $this->db->table('detail_transaksi')
+            ->where('id_transaksi', $id)
+            ->get()
+            ->getResultArray();
+
+        foreach ($detail as $d) {
+            $menu = $this->db->table('menu')
+                ->where('id', $d['id_menu'])
+                ->get()
+                ->getRowArray();
+
+            if ($menu) {
+                $stokBaru = $menu['stok'] - $d['qty'];
+                if ($stokBaru < 0) $stokBaru = 0;
+                $this->db->table('menu')
+                    ->where('id', $d['id_menu'])
+                    ->update(['stok' => $stokBaru]);
+            }
+        }
+
+        $this->db->table('transaksi')
+            ->where('id', $id)
+            ->update(['status' => 'lunas']);
+
+        return $this->response->setJSON([
+            'success' => true,
+            'message' => 'Transaksi berhasil dikonfirmasi'
+        ]);
     }
 
     // ==================== TAMBAH TRANSAKSI (VIEW) ====================
@@ -248,7 +326,6 @@ class Transaksi extends BaseController
             return redirect()->back()->with('error', 'Minimal 1 item');
         }
 
-        // Data lama
         $oldTransaksi = $this->db->table('transaksi')->where('id', $id)->get()->getRowArray();
         $oldDetail = $this->db->table('detail_transaksi')->where('id_transaksi', $id)->get()->getResultArray();
 
@@ -256,7 +333,6 @@ class Transaksi extends BaseController
             return redirect()->to('/admin/transaksi')->with('error', 'Transaksi tidak ditemukan');
         }
 
-        // Kembalikan stok jika sebelumnya LUNAS
         if ($oldTransaksi['status'] == 'lunas') {
             foreach ($oldDetail as $d) {
                 $this->db->table('menu')
@@ -266,10 +342,8 @@ class Transaksi extends BaseController
             }
         }
 
-        // Hapus detail lama
         $this->db->table('detail_transaksi')->where('id_transaksi', $id)->delete();
 
-        // Hitung ulang total & detail baru
         $total = 0;
         $detailData = [];
 
@@ -310,7 +384,6 @@ class Transaksi extends BaseController
             return redirect()->back()->with('error', 'Tidak ada item valid');
         }
 
-        // Update transaksi
         $this->db->table('transaksi')->where('id', $id)->update([
             'meja'   => $meja,
             'total'  => $total,
@@ -318,12 +391,10 @@ class Transaksi extends BaseController
             'status' => $status
         ]);
 
-        // Simpan detail baru
         foreach ($detailData as $detail) {
             $this->db->table('detail_transaksi')->insert($detail);
         }
 
-        // Kurangi stok jika status baru LUNAS
         if ($status == 'lunas') {
             foreach ($detailData as $d) {
                 $this->db->table('menu')

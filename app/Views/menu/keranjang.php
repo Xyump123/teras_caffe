@@ -96,16 +96,6 @@
             color: #6c757d;
         }
 
-        .opsi {
-            margin-top: 8px;
-            font-size: 12px;
-        }
-
-        .opsi label {
-            margin-right: 8px;
-            cursor: pointer;
-        }
-
         .qty-box {
             min-width: 100px;
             text-align: center;
@@ -175,10 +165,12 @@
 
         .metode-box {
             margin-bottom: 12px;
+            text-align: center;
         }
 
         .metode-box label {
-            display: block;
+            display: inline-block;
+            margin-right: 15px;
             margin-top: 5px;
             font-size: 13px;
         }
@@ -217,6 +209,13 @@
             color: #777;
         }
 
+        .info-text {
+            font-size: 12px;
+            color: #6f4e37;
+            margin-top: 8px;
+            text-align: center;
+        }
+
         @media (max-width: 600px) {
             .flex {
                 flex-direction: column;
@@ -238,6 +237,11 @@
             .top-bar {
                 flex-direction: column;
                 align-items: flex-start;
+            }
+            
+            .metode-box label {
+                display: block;
+                margin-right: 0;
             }
         }
     </style>
@@ -261,6 +265,7 @@
             <form action="<?= base_url('/menu/struk') ?>" method="post" id="formCheckout">
                 <?= csrf_field() ?>
                 <input type="hidden" name="meja" value="<?= $meja ?>">
+                <input type="hidden" name="tipe_pembayaran" value="kasir">
 
                 <?php 
                 $stokValid = true;
@@ -277,18 +282,6 @@
                                 <div class="nama"><?= esc($k['nama_menu']) ?></div>
                                 <div class="harga">Rp <?= number_format($k['harga'], 0, ',', '.') ?></div>
                                 <div class="stok-info">Stok: <?= $k['stok'] ?> | Maks: 30</div>
-
-                                <?php if ($k['ada_level'] == 1): ?>
-                                    <div class="opsi">
-                                        <b>Level Pedas :</b><br>
-                                        <?php for ($i = 1; $i <= 5; $i++): ?>
-                                            <label>
-                                                <input type="radio" name="level_<?= $k['id'] ?>" value="<?= $i ?>" required>
-                                                🌶 <?= $i ?>
-                                            </label>
-                                        <?php endfor; ?>
-                                    </div>
-                                <?php endif; ?>
 
                                 <?php if (!$isStokCukup): ?>
                                     <div class="warning">⚠️ Stok tidak mencukupi! (Stok: <?= $k['stok'] ?>)</div>
@@ -323,15 +316,13 @@
                     <div class="total">Total: Rp <?= number_format($total, 0, ',', '.') ?></div>
 
                     <div class="metode-box">
-                        <b>Tipe Pembayaran :</b>
-                        <label><input type="radio" name="tipe_pembayaran" value="meja" id="tipeMeja" required> Bayar di Meja</label>
-                        <label><input type="radio" name="tipe_pembayaran" value="kasir" id="tipeKasir"> Bayar di Kasir</label>
+                        <b>Metode Pembayaran :</b><br>
+                        <label><input type="radio" name="metode_bayar" value="Cash" required> 💵 Cash</label>
+                        <label><input type="radio" name="metode_bayar" value="QRIS"> 📱 QRIS</label>
+                    </div>
 
-                        <br>
-
-                        <b>Metode Pembayaran :</b>
-                        <label><input type="radio" name="metode_bayar" value="Cash" id="metodeCash"> Cash</label>
-                        <label><input type="radio" name="metode_bayar" value="QRIS" id="metodeQRIS"> QRIS</label>
+                    <div class="info-text">
+                        <i class="fa fa-info-circle"></i> Silakan lakukan pembayaran di kasir
                     </div>
 
                     <button type="submit" class="checkout" id="btnCheckout" <?= !$stokValid ? 'disabled' : '' ?>>✅ Checkout</button>
@@ -348,28 +339,6 @@
         <?php endif; ?>
 
     </div>
-
-    <script>
-        const tipeMeja = document.getElementById('tipeMeja');
-        const tipeKasir = document.getElementById('tipeKasir');
-        const metodeCash = document.getElementById('metodeCash');
-        const metodeQRIS = document.getElementById('metodeQRIS');
-
-        if (tipeMeja) {
-            tipeMeja.addEventListener("change", function() {
-                if (metodeCash) metodeCash.disabled = true;
-                if (metodeQRIS) metodeQRIS.disabled = false;
-                if (metodeQRIS) metodeQRIS.checked = true;
-            });
-        }
-
-        if (tipeKasir) {
-            tipeKasir.addEventListener("change", function() {
-                if (metodeCash) metodeCash.disabled = false;
-                if (metodeQRIS) metodeQRIS.disabled = false;
-            });
-        }
-    </script>
 
 </body>
 

@@ -4,6 +4,7 @@
     <link rel="icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
     <title>Menu Teras Caffe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * { box-sizing: border-box; }
         body {
@@ -42,8 +43,7 @@
             font-size: 14px;
             display: inline-block;
         }
-            @media (max-width: 768px) 
-        {
+        @media (max-width: 768px) {
             .top-bar { flex-direction: column; align-items: flex-start; }
         }
         .container {
@@ -60,6 +60,8 @@
             border-radius: 25px;
             cursor: pointer;
             transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
         }
         .keranjang-btn:hover { transform: scale(1.05); }
         .kategori-title {
@@ -97,12 +99,58 @@
         }
         .card:hover img { transform: scale(1.1); }
         .card-body { padding: 15px; text-align: center; }
-        .nama-menu { font-size: 18px; }
+        .nama-menu { font-size: 18px; font-weight: bold; }
         .harga {
             color: #6f4e37;
             font-weight: bold;
             margin: 10px 0;
         }
+        
+        /* LEVEL PEDAS STYLE */
+        .level-control {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .level-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .level-btn.minus {
+            background: #dc3545;
+            color: white;
+        }
+        .level-btn.plus {
+            background: #28a745;
+            color: white;
+        }
+        .level-btn:hover {
+            transform: scale(1.1);
+        }
+        .level-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .level-value {
+            font-size: 14px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+        }
+        .level-value i {
+            color: #dc3545;
+            margin-right: 4px;
+        }
+        
         .btn-pesan {
             background: #a67c52;
             border: none;
@@ -112,10 +160,18 @@
             color: white;
             cursor: pointer;
             transition: 0.3s;
+            margin-top: 5px;
         }
         .btn-pesan:hover {
             background: #6f4e37;
             transform: scale(1.05);
+        }
+        .stok-habis {
+            background: #dc3545;
+            color: white;
+            padding: 8px;
+            border-radius: 20px;
+            font-size: 12px;
         }
         @keyframes fadeUp {
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -138,12 +194,14 @@
             </a>
          </div>
         <?php endif; ?>
+        
         <?php
         $kategori = [];
         foreach ($menu as $m) {
             $kategori[$m['kategori']][] = $m;
         }
         ?>
+        
         <?php $delay = 0; ?>
         <?php foreach ($kategori as $nama_kategori => $menus): ?>
             <h2 class="kategori-title"><?= $nama_kategori ?></h2>
@@ -155,17 +213,29 @@
                         <div class="card-body">
                             <div class="nama-menu"><?= $m['nama_menu'] ?></div>
                             <div class="harga">Rp <?= number_format($m['harga'], 0, ',', '.') ?></div>
+                            
                             <?php if ($m['stok'] > 0): ?>
-                                <form action="<?= base_url('/menu/tambah') ?>" method="post">
+                                
+                                <?php if ($m['ada_level'] == 1): ?>
+                                    <!-- LEVEL PEDAS CONTROL -->
+                                    <div class="level-control">
+                                        <button type="button" class="level-btn minus" onclick="changeLevel(this, -1)">-</button>
+                                        <div class="level-value" id="level-<?= $m['id'] ?>">
+                                            <i class="fas fa-pepper-hot"></i> <span id="level-val-<?= $m['id'] ?>">0</span>
+                                        </div>
+                                        <button type="button" class="level-btn plus" onclick="changeLevel(this, 1)">+</button>
+                                    </div>
+                                <?php endif; ?>
+                                
+                                <form action="<?= base_url('/menu/tambah') ?>" method="post" class="order-form" data-menu-id="<?= $m['id'] ?>">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="id_menu" value="<?= $m['id'] ?>">
-                                    <input type="hidden" name="nama_menu" value="<?= $m['nama_menu'] ?>">
-                                    <input type="hidden" name="harga" value="<?= $m['harga'] ?>">
                                     <input type="hidden" name="meja" value="<?= $meja ?>">
+                                    <input type="hidden" name="level_pedas" id="level-input-<?= $m['id'] ?>" value="0">
                                     <button class="btn-pesan" type="submit">Pesan Menu</button>
                                 </form>
                             <?php else: ?>
-                                <div style="background:#dc3545;color:white;padding:8px;border-radius:20px;font-size:12px;">Stok Habis</div>
+                                <div class="stok-habis">Stok Habis</div>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -173,5 +243,58 @@
             </div>
         <?php endforeach; ?>
     </div>
+
+    <script>
+        function changeLevel(btn, delta) {
+            // Cari elemen level-value terdekat
+            const levelDiv = btn.parentElement.querySelector('.level-value');
+            const menuCard = btn.closest('.card');
+            const menuId = menuCard.querySelector('.order-form')?.dataset.menuId;
+            
+            if (!menuId) return;
+            
+            const levelSpan = document.getElementById(`level-val-${menuId}`);
+            const levelInput = document.getElementById(`level-input-${menuId}`);
+            
+            let currentLevel = parseInt(levelSpan.innerText) || 0;
+            let newLevel = currentLevel + delta;
+            
+            // Batasan level 0-5
+            if (newLevel < 0) newLevel = 0;
+            if (newLevel > 5) newLevel = 5;
+            
+            // Update tampilan
+            levelSpan.innerText = newLevel;
+            levelInput.value = newLevel;
+            
+            // Update icon cabai berdasarkan level
+            const levelIcon = levelDiv.querySelector('i');
+            if (newLevel === 0) {
+                levelIcon.style.color = '#6c757d';
+            } else if (newLevel <= 2) {
+                levelIcon.style.color = '#28a745';
+            } else if (newLevel <= 4) {
+                levelIcon.style.color = '#fd7e14';
+            } else {
+                levelIcon.style.color = '#dc3545';
+            }
+            
+            // Disable/enable tombol minus/plus
+            const minusBtn = btn.parentElement.querySelector('.level-btn.minus');
+            const plusBtn = btn.parentElement.querySelector('.level-btn.plus');
+            if (minusBtn) minusBtn.disabled = (newLevel <= 0);
+            if (plusBtn) plusBtn.disabled = (newLevel >= 5);
+        }
+        
+        // Inisialisasi semua level control (set default 0)
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.level-control').forEach(control => {
+                const minusBtn = control.querySelector('.level-btn.minus');
+                const plusBtn = control.querySelector('.level-btn.plus');
+                if (minusBtn) minusBtn.disabled = true; // level 0, minus disabled
+                if (plusBtn) plusBtn.disabled = false;
+            });
+        });
+    </script>
 </body>
 </html>

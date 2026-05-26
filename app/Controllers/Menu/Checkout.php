@@ -17,10 +17,16 @@ class Checkout extends BaseController
     {
         $meja   = $this->request->getPost('meja');
         $metode = strtolower($this->request->getPost('metode_bayar'));
-        $tipe   = strtolower($this->request->getPost('tipe_pembayaran'));
+        $tipe   = $this->request->getPost('tipe_pembayaran');
 
-        if (!$metode || !$tipe) {
-            return redirect()->to('/menu/keranjang?meja=' . $meja);
+        // Jika tipe_pembayaran tidak dikirim, set default ke 'kasir'
+        if (empty($tipe)) {
+            $tipe = 'kasir';
+        }
+
+        if (!$metode) {
+            return redirect()->to('/menu/keranjang?meja=' . $meja)
+                ->with('error', 'Pilih metode pembayaran terlebih dahulu');
         }
 
         $keranjang = $this->db->table('keranjang')
@@ -29,7 +35,8 @@ class Checkout extends BaseController
             ->getResultArray();
 
         if (!$keranjang) {
-            return redirect()->to('/menu/keranjang?meja=' . $meja);
+            return redirect()->to('/menu/keranjang?meja=' . $meja)
+                ->with('error', 'Keranjang kosong');
         }
 
         // ==================== VALIDASI STOK SEBELUM CHECKOUT ====================
@@ -91,6 +98,7 @@ class Checkout extends BaseController
             ->get()
             ->getResultArray();
 
+        // Hapus keranjang setelah checkout
         $this->db->table('keranjang')
             ->where('meja', $meja)
             ->delete();
