@@ -124,6 +124,10 @@
 
     <form action="<?= base_url('admin/update-profile') ?>" method="post" enctype="multipart/form-data">
         <?= csrf_field() ?>
+        
+        <!-- ========== INPUT FILE UNTUK FOTO (Tersembunyi) ========== -->
+        <input type="file" name="foto" id="fotoInput" accept="image/*" style="display: none;" onchange="previewImage(event)">
+        
         <div class="form-body">
             <div class="form-group">
                 <label><i class="fa fa-user"></i> Nama Lengkap</label>
@@ -136,6 +140,7 @@
             <div class="form-group">
                 <label><i class="fa fa-pencil"></i> Bio</label>
                 <textarea name="bio" class="form-control" placeholder="Tulis bio singkat..."><?= session('bio') ?></textarea>
+                <div class="info-text">Ceritakan sedikit tentang diri Anda</div>
             </div>
             <div class="form-actions">
                 <a href="<?= base_url('admin/profile') ?>" class="btn-batal"><i class="fa fa-arrow-left"></i> Batal</a>
@@ -149,11 +154,21 @@
     function previewImage(event) {
         const reader = new FileReader();
         reader.onload = function() {
-            document.getElementById('preview').src = reader.result;
+            const preview = document.getElementById('preview');
+            if (preview) {
+                preview.src = reader.result;
+            }
         }
-        if (event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+        if (event.target.files && event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
     }
-    document.querySelector('.camera-btn').onclick = () => document.getElementById('fotoInput').click();
+    
+    // Trigger file input saat tombol kamera diklik
+    document.querySelector('.camera-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('fotoInput').click();
+    });
 </script>
 
 <?= $this->endSection() ?>

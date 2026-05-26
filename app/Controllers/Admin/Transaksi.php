@@ -106,7 +106,7 @@ class Transaksi extends BaseController
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil dikonfirmasi');
     }
 
-    // ==================== TAMBAH TRANSAKSI ====================
+    // ==================== TAMBAH TRANSAKSI (VIEW) ====================
     public function tambah()
     {
         $this->checkLogin();
@@ -121,6 +121,7 @@ class Transaksi extends BaseController
         return view('admin/tambah_transaksi', $data);
     }
 
+    // ==================== SIMPAN TRANSAKSI ====================
     public function simpan()
     {
         $this->checkLogin();
@@ -233,6 +234,7 @@ class Transaksi extends BaseController
         return view('admin/edit_transaksi', $data);
     }
 
+    // ==================== UPDATE TRANSAKSI ====================
     public function update($id)
     {
         $this->checkLogin();

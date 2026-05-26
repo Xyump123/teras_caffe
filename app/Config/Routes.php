@@ -7,11 +7,9 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 //==============================================================================
-// DEFAULT ROUTE - LANGSUNG KE LOGIN ADMIN
+// DEFAULT ROUTE - LANGSUNG KE HALAMAN PELANGGAN
 //==============================================================================
-$routes->get('/', function() {
-    return redirect()->to('/admin/login');
-});
+$routes->get('/', 'Menu\MenuPelanggan::index');
 
 //==============================================================================
 // ROUTES PELANGGAN
