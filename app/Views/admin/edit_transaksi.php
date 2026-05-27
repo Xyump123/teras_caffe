@@ -611,4 +611,4 @@ Object.keys(menuStok).forEach(menuId => {
 renderOrderList();
 </script>
 
-<?= $this->endSection() ?>
+<?= $this->endSection() ?>}
