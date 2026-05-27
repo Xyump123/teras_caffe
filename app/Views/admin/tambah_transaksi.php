@@ -113,6 +113,7 @@
     .table-menu th {
         background: #60450b;
         text-align: center;
+        color: white;  /* ✅ TEKS PUTIH */
     }
 
     .table-menu td {
@@ -166,6 +167,7 @@
 
     .table-order th {
         background: #60450b;
+        color: white;  /* ✅ TEKS PUTIH */
     }
 
     .btn-remove {

@@ -22,7 +22,7 @@ class Keranjang extends BaseController
 
         $id_menu = $this->request->getPost('id_menu');
         $meja    = $this->request->getPost('meja');
-        $level_pedas = $this->request->getPost('level_pedas') ?? 0; // Ambil level dari request
+        $level_pedas = $this->request->getPost('level_pedas') ?? 0;
 
         $menu = $menuModel->find($id_menu);
 
@@ -120,7 +120,7 @@ class Keranjang extends BaseController
 
             $keranjangModel->update($id, [
                 'qty' => $qtyBaru,
-                'level_pedas' => $item['level_pedas'] // pertahankan level pedas
+                'level_pedas' => $item['level_pedas']
             ]);
         }
 

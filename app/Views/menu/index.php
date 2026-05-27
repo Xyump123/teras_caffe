@@ -86,6 +86,9 @@
             opacity: 0;
             transform: translateY(20px) scale(0.95);
             animation: fadeUp 0.6s ease forwards;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         .card:hover {
             transform: translateY(-8px) scale(1.03);
@@ -98,7 +101,16 @@
             transition: 0.4s;
         }
         .card:hover img { transform: scale(1.1); }
-        .card-body { padding: 15px; text-align: center; }
+        .card-body {
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .menu-info {
+            flex-grow: 1;
+        }
         .nama-menu { font-size: 18px; font-weight: bold; }
         .harga {
             color: #6f4e37;
@@ -160,11 +172,11 @@
             color: white;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 5px;
+            margin-top: 10px;
         }
         .btn-pesan:hover {
             background: #6f4e37;
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
         .stok-habis {
             background: #dc3545;
@@ -172,6 +184,7 @@
             padding: 8px;
             border-radius: 20px;
             font-size: 12px;
+            margin-top: 10px;
         }
         @keyframes fadeUp {
             to { opacity: 1; transform: translateY(0) scale(1); }
@@ -211,13 +224,12 @@
                         <img src="<?= !empty($m['gambar']) ? base_url('uploads/' . $m['gambar']) : base_url('uploads/default.jpg') ?>"
                              onerror="this.src='<?= base_url('uploads/default.jpg') ?>'">
                         <div class="card-body">
-                            <div class="nama-menu"><?= $m['nama_menu'] ?></div>
-                            <div class="harga">Rp <?= number_format($m['harga'], 0, ',', '.') ?></div>
-                            
-                            <?php if ($m['stok'] > 0): ?>
+                            <div class="menu-info">
+                                <div class="nama-menu"><?= $m['nama_menu'] ?></div>
+                                <div class="harga">Rp <?= number_format($m['harga'], 0, ',', '.') ?></div>
                                 
-                                <?php if ($m['ada_level'] == 1): ?>
-                                    <!-- LEVEL PEDAS CONTROL -->
+                                <?php if ($m['stok'] > 0 && $m['ada_level'] == 1): ?>
+                                    <!-- LEVEL PEDAS CONTROL (hanya untuk menu yang memiliki level) -->
                                     <div class="level-control">
                                         <button type="button" class="level-btn minus" onclick="changeLevel(this, -1)">-</button>
                                         <div class="level-value" id="level-<?= $m['id'] ?>">
@@ -226,7 +238,9 @@
                                         <button type="button" class="level-btn plus" onclick="changeLevel(this, 1)">+</button>
                                     </div>
                                 <?php endif; ?>
-                                
+                            </div>
+                            
+                            <?php if ($m['stok'] > 0): ?>
                                 <form action="<?= base_url('/menu/tambah') ?>" method="post" class="order-form" data-menu-id="<?= $m['id'] ?>">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="id_menu" value="<?= $m['id'] ?>">
@@ -246,8 +260,6 @@
 
     <script>
         function changeLevel(btn, delta) {
-            // Cari elemen level-value terdekat
-            const levelDiv = btn.parentElement.querySelector('.level-value');
             const menuCard = btn.closest('.card');
             const menuId = menuCard.querySelector('.order-form')?.dataset.menuId;
             
@@ -259,39 +271,36 @@
             let currentLevel = parseInt(levelSpan.innerText) || 0;
             let newLevel = currentLevel + delta;
             
-            // Batasan level 0-5
             if (newLevel < 0) newLevel = 0;
             if (newLevel > 5) newLevel = 5;
             
-            // Update tampilan
             levelSpan.innerText = newLevel;
             levelInput.value = newLevel;
             
-            // Update icon cabai berdasarkan level
-            const levelIcon = levelDiv.querySelector('i');
-            if (newLevel === 0) {
-                levelIcon.style.color = '#6c757d';
-            } else if (newLevel <= 2) {
-                levelIcon.style.color = '#28a745';
-            } else if (newLevel <= 4) {
-                levelIcon.style.color = '#fd7e14';
-            } else {
-                levelIcon.style.color = '#dc3545';
+            const levelIcon = document.querySelector(`#level-${menuId} i`);
+            if (levelIcon) {
+                if (newLevel === 0) {
+                    levelIcon.style.color = '#6c757d';
+                } else if (newLevel <= 2) {
+                    levelIcon.style.color = '#28a745';
+                } else if (newLevel <= 4) {
+                    levelIcon.style.color = '#fd7e14';
+                } else {
+                    levelIcon.style.color = '#dc3545';
+                }
             }
             
-            // Disable/enable tombol minus/plus
             const minusBtn = btn.parentElement.querySelector('.level-btn.minus');
             const plusBtn = btn.parentElement.querySelector('.level-btn.plus');
             if (minusBtn) minusBtn.disabled = (newLevel <= 0);
             if (plusBtn) plusBtn.disabled = (newLevel >= 5);
         }
         
-        // Inisialisasi semua level control (set default 0)
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.level-control').forEach(control => {
                 const minusBtn = control.querySelector('.level-btn.minus');
                 const plusBtn = control.querySelector('.level-btn.plus');
-                if (minusBtn) minusBtn.disabled = true; // level 0, minus disabled
+                if (minusBtn) minusBtn.disabled = true;
                 if (plusBtn) plusBtn.disabled = false;
             });
         });

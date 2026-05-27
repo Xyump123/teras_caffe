@@ -83,6 +83,16 @@
             font-weight: 600;
         }
 
+        .level-info {
+            font-size: 12px;
+            color: #dc3545;
+            margin-top: 4px;
+        }
+
+        .level-info i {
+            margin-right: 4px;
+        }
+
         .harga {
             color: #6f4e37;
             font-weight: bold;
@@ -165,7 +175,6 @@
 
         .metode-box {
             margin-bottom: 12px;
-            text-align: center;
         }
 
         .metode-box label {
@@ -213,7 +222,7 @@
             font-size: 12px;
             color: #6f4e37;
             margin-top: 8px;
-            text-align: center;
+            text-align: left;
         }
 
         @media (max-width: 600px) {
@@ -280,6 +289,21 @@
 
                             <div class="menu-info">
                                 <div class="nama"><?= esc($k['nama_menu']) ?></div>
+                                
+                                <!-- ========== TAMPILAN LEVEL PEDAS ========== -->
+                                <?php if (!empty($k['level_pedas']) && $k['level_pedas'] > 0): ?>
+                                    <div class="level-info">
+                                        <i class="fa fa-pepper-hot"></i> Level Pedas: 
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <?php if ($i <= $k['level_pedas']): ?>
+                                                🌶
+                                            <?php endif; ?>
+                                        <?php endfor; ?>
+                                        (Level <?= $k['level_pedas'] ?>)
+                                    </div>
+                                <?php endif; ?>
+                                <!-- ======================================= -->
+                                
                                 <div class="harga">Rp <?= number_format($k['harga'], 0, ',', '.') ?></div>
                                 <div class="stok-info">Stok: <?= $k['stok'] ?> | Maks: 30</div>
 
@@ -317,15 +341,15 @@
 
                     <div class="metode-box">
                         <b>Metode Pembayaran :</b><br>
-                        <label><input type="radio" name="metode_bayar" value="Cash" required> 💵 Cash</label>
-                        <label><input type="radio" name="metode_bayar" value="QRIS"> 📱 QRIS</label>
+                        <label><input type="radio" name="metode_bayar" value="Cash" required>Cash</label>
+                        <label><input type="radio" name="metode_bayar" value="QRIS">QRIS</label>
                     </div>
 
                     <div class="info-text">
                         <i class="fa fa-info-circle"></i> Silakan lakukan pembayaran di kasir
                     </div>
 
-                    <button type="submit" class="checkout" id="btnCheckout" <?= !$stokValid ? 'disabled' : '' ?>>✅ Checkout</button>
+                    <button type="submit" class="checkout" id="btnCheckout" <?= !$stokValid ? 'disabled' : '' ?>>Checkout</button>
                     
                     <?php if (!$stokValid): ?>
                         <div class="warning" style="text-align: center; margin-top: 10px;">⚠️ Ada item yang stoknya tidak mencukupi. Kurangi jumlah pesanan.</div>

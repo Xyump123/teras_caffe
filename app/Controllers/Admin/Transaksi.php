@@ -106,7 +106,7 @@ class Transaksi extends BaseController
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil dikonfirmasi');
     }
 
-    // ==================== CEK PESANAN BARU (AJAX - REAL TIME) ====================
+    // ==================== CEK PESANAN BARU (AJAX) ====================
     public function cekPesananBaru()
     {
         $this->checkLogin();
@@ -130,7 +130,7 @@ class Transaksi extends BaseController
         ]);
     }
 
-    // ==================== KONFIRMASI PEMBAYARAN VIA AJAX (TANPA REFRESH) ====================
+    // ==================== KONFIRMASI PEMBAYARAN VIA AJAX ====================
     public function konfirmasiAjax($id)
     {
         $this->checkLogin();
@@ -184,7 +184,43 @@ class Transaksi extends BaseController
         ]);
     }
 
-    // ==================== TAMBAH TRANSAKSI (VIEW) ====================
+    // ==================== AMBIL DATA TRANSAKSI (AJAX) ====================
+    public function getTransaksiData()
+    {
+        $this->checkLogin();
+
+        $transaksi = $this->db->table('transaksi')
+            ->orderBy('created_at', 'DESC')
+            ->get()
+            ->getResultArray();
+
+        $html = '';
+        foreach ($transaksi as $t) {
+            $html .= '<tr id="transaksi-' . $t['id'] . '" data-id="' . $t['id'] . '">';
+            $html .= '<td class="col-id"><strong>#' . $t['id'] . '</strong></td>';
+            $html .= '<td class="col-meja">' . $t['meja'] . '</td>';
+            $html .= '<td class="col-tipe"><span class="badge ' . strtolower($t['tipe_pembayaran'] ?? 'meja') . '">' . strtoupper($t['tipe_pembayaran'] ?? 'MEJA') . '</span></td>';
+            $html .= '<td class="col-metode"><span class="badge ' . strtolower($t['metode_pembayaran'] ?? 'cash') . '">' . strtoupper($t['metode_pembayaran'] ?? 'CASH') . '</span></td>';
+            $html .= '<td class="col-total">Rp ' . number_format($t['total'], 0, ',', '.') . '</td>';
+            $html .= '<td class="col-status"><span class="badge ' . strtolower($t['status']) . '">' . strtoupper($t['status']) . '</span></td>';
+            $html .= '<td class="col-tanggal">' . date('d-m-Y H:i', strtotime($t['created_at'])) . '</td>';
+            $html .= '<td class="col-aksi action">';
+            $html .= '<a href="' . base_url('admin/transaksi/detail/' . $t['id']) . '" class="btn-detail">Detail</a> ';
+            $html .= '<a href="' . base_url('admin/transaksi/edit/' . $t['id']) . '" class="btn-edit">Edit</a> ';
+            if ($t['status'] != 'lunas') {
+                $html .= '<button type="button" class="btn-konfirmasi" data-id="' . $t['id'] . '">Konfirmasi</button>';
+            }
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $this->response->setJSON([
+            'success' => true,
+            'html' => $html
+        ]);
+    }
+
+    // ==================== TAMBAH TRANSAKSI ====================
     public function tambah()
     {
         $this->checkLogin();

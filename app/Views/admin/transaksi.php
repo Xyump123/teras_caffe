@@ -6,16 +6,8 @@
         background: white;
         padding: 25px;
         border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-        width: 100%;
-        box-sizing: border-box;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
-
-    h3 {
-        margin: 0;
-        font-size: 18px;
-    }
-
     .header {
         display: flex;
         justify-content: space-between;
@@ -24,8 +16,6 @@
         flex-wrap: wrap;
         gap: 10px;
     }
-
-    /* TOMBOL TAMBAH - WARNA COKLAT */
     .btn-tambah {
         background: #8B6914;
         color: white;
@@ -36,16 +26,8 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        transition: all 0.3s ease;
-        white-space: nowrap;
     }
-
-    .btn-tambah:hover {
-        background: #6B4F12;
-        transform: translateY(-2px);
-    }
-
-    /* TOMBOL EDIT - SAMA SEPERTI TAMBAH (WARNA COKLAT) */
+    .btn-tambah:hover { background: #6B4F12; transform: translateY(-2px); }
     .btn-edit {
         background: #8B6914;
         color: white;
@@ -53,18 +35,7 @@
         border-radius: 4px;
         text-decoration: none;
         font-size: 11px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.3s ease;
     }
-
-    .btn-edit:hover {
-        background: #6B4F12;
-        transform: translateY(-2px);
-    }
-
-    /* TOMBOL DETAIL */
     .btn-detail {
         background: #1e3a5f;
         color: white;
@@ -72,57 +43,26 @@
         border-radius: 4px;
         text-decoration: none;
         font-size: 11px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.3s ease;
     }
-
-    .btn-detail:hover {
-        background: #0f2b4a;
-        transform: translateY(-2px);
-    }
-
-    /* TOMBOL KONFIRMASI */
     .btn-konfirmasi {
         background: #1a5a3a;
         color: white;
         padding: 5px 10px;
         border-radius: 4px;
-        text-decoration: none;
+        border: none;
+        cursor: pointer;
         font-size: 11px;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.3s ease;
     }
-
-    .btn-konfirmasi:hover {
-        background: #0f3d26;
-        transform: translateY(-2px);
-    }
-
-    .table-wrapper {
-        overflow-x: auto;
-        width: 100%;
-        position: relative;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 0;
-    }
-
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
     th {
-        background: #3b2a21;
+        background: #60450b;
         color: white;
-        padding: 12px 12px;
+        padding: 12px;
         text-align: center;
         font-size: 13px;
         white-space: nowrap;
     }
-
     td {
         padding: 10px 12px;
         border-bottom: 1px solid #eee;
@@ -131,121 +71,167 @@
         vertical-align: middle;
         white-space: nowrap;
     }
-
-    @media (max-width: 1200px) {
-        .table-wrapper {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        table {
-            min-width: 900px;
-        }
-        th, td {
-            padding: 8px 10px;
-        }
-    }
-
     .badge {
         padding: 4px 10px;
         border-radius: 6px;
         font-size: 11px;
         font-weight: bold;
-        white-space: nowrap;
         display: inline-block;
     }
-
     .badge.pending { background: #fff3cd; color: #856404; }
     .badge.menunggu_konfirmasi { background: #cce5ff; color: #004085; }
     .badge.lunas { background: #d4edda; color: #155724; }
     .badge.qris { background: #cce5ff; color: #004085; }
     .badge.cash { background: #d4edda; color: #155724; }
-    .badge.meja { background: #e2e3ff; color: #383d8a; }
     .badge.kasir { background: #ffe0e0; color: #8a1f1f; }
-
-    .action {
-        white-space: nowrap;
+    @keyframes highlightNew {
+        0% { background-color: #d4edda; }
+        100% { background-color: transparent; }
     }
-
-    .empty-row td {
-        text-align: center;
-        padding: 40px;
-        color: #999;
-    }
-
-    .col-id { width: 70px; }
-    .col-meja { width: 70px; }
-    .col-tipe { width: 100px; }
-    .col-metode { width: 100px; }
-    .col-total { width: 130px; }
-    .col-status { width: 120px; }
-    .col-tanggal { width: 150px; }
-    .col-aksi { min-width: 250px; }
+    .new-row { animation: highlightNew 1s ease; }
 </style>
 
 <div class="card">
     <div class="header">
         <h3>Daftar Transaksi</h3>
-        <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">
-            + Tambah Transaksi
-        </a>
+        <a href="<?= base_url('admin/transaksi/tambah') ?>" class="btn-tambah">+ Tambah Transaksi</a>
     </div>
-
     <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
-                    <th class="col-id">ID</th>
-                    <th class="col-meja">Meja</th>
-                    <th class="col-tipe">Tipe</th>
-                    <th class="col-metode">Metode</th>
-                    <th class="col-total">Total</th>
-                    <th class="col-status">Status</th>
-                    <th class="col-tanggal">Tanggal</th>
-                    <th class="col-aksi">Aksi</th>
+                    <th>ID</th><th>Meja</th><th>Tipe</th><th>Metode</th><th>Total</th><th>Status</th><th>Tanggal</th><th>Aksi</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="transaksiTableBody">
                 <?php if (!empty($transaksi)): ?>
                     <?php foreach ($transaksi as $t): ?>
-                        <tr>
-                            <td class="col-id"><strong>#<?= esc($t['id']) ?></strong></td>
-                            <td class="col-meja"><?= esc($t['meja']) ?></td>
-                            <td class="col-tipe">
-                                <span class="badge <?= strtolower($t['tipe_pembayaran'] ?? 'meja') ?>">
-                                    <?= strtoupper($t['tipe_pembayaran'] ?? 'MEJA') ?>
-                                </span>
-                            </td>
-                            <td class="col-metode">
-                                <span class="badge <?= strtolower($t['metode_pembayaran'] ?? 'cash') ?>">
-                                    <?= strtoupper($t['metode_pembayaran'] ?? 'CASH') ?>
-                                </span>
-                            </td>
-                            <td class="col-total">Rp <?= number_format($t['total'], 0, ',', '.') ?></td>
-                            <td class="col-status">
-                                <span class="badge <?= strtolower($t['status']) ?>">
-                                    <?= strtoupper($t['status']) ?>
-                                </span>
-                            </td>
-                            <td class="col-tanggal"><?= date('d-m-Y H:i', strtotime($t['created_at'])) ?></td>
-                            <td class="col-aksi action">
-                                <a href="<?= base_url('admin/transaksi/detail/' . $t['id']) ?>" class="btn-detail">Detail</a>
-                                <a href="<?= base_url('admin/transaksi/edit/' . $t['id']) ?>" class="btn-edit">Edit</a>
-                                <?php if ($t['status'] != 'lunas'): ?>
-                                    <a href="<?= base_url('admin/transaksi/konfirmasi/' . $t['id']) ?>"
-                                       class="btn-konfirmasi"
-                                       onclick="return confirm('Konfirmasi pembayaran dan kurangi stok?')">Konfirmasi</a>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
+                    <tr id="transaksi-<?= $t['id'] ?>" data-id="<?= $t['id'] ?>">
+                        <td><strong>#<?= esc($t['id']) ?></strong></td>
+                        <td><?= esc($t['meja']) ?></td>
+                        <td><span class="badge <?= strtolower($t['tipe_pembayaran'] ?? 'meja') ?>"><?= strtoupper($t['tipe_pembayaran'] ?? 'MEJA') ?></span></td>
+                        <td><span class="badge <?= strtolower($t['metode_pembayaran'] ?? 'cash') ?>"><?= strtoupper($t['metode_pembayaran'] ?? 'CASH') ?></span></td>
+                        <td>Rp <?= number_format($t['total'], 0, ',', '.') ?></td>
+                        <td><span class="badge <?= strtolower($t['status']) ?>"><?= strtoupper($t['status']) ?></span></td>
+                        <td><?= date('d-m-Y H:i', strtotime($t['created_at'])) ?></td>
+                        <td>
+                            <a href="<?= base_url('admin/transaksi/detail/' . $t['id']) ?>" class="btn-detail">Detail</a>
+                            <a href="<?= base_url('admin/transaksi/edit/' . $t['id']) ?>" class="btn-edit">Edit</a>
+                            <?php if ($t['status'] != 'lunas'): ?>
+                                <button type="button" class="btn-konfirmasi" data-id="<?= $t['id'] ?>">Konfirmasi</button>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr class="empty-row">
-                        <td colspan="8">Belum ada transaksi</td>
-                    </tr>
+                    <tr><td colspan="8">Belum ada transaksi</td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+function attachKonfirmasiEvents() {
+    document.querySelectorAll('.btn-konfirmasi').forEach(btn => {
+        btn.removeEventListener('click', konfirmasiHandler);
+        btn.addEventListener('click', konfirmasiHandler);
+    });
+}
+
+async function konfirmasiHandler(e) {
+    const btn = e.currentTarget;
+    const id = btn.dataset.id;
+    if (!confirm(`Konfirmasi transaksi #${id}?`)) return;
+    const original = btn.innerHTML;
+    btn.innerHTML = '⏳...';
+    btn.disabled = true;
+    try {
+        const res = await fetch(`<?= base_url('admin/transaksi/konfirmasi-ajax') ?>/${id}`, {
+            method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.success) {
+            refreshTransaksiTable();
+            showNotif('success', data.message);
+        } else {
+            showNotif('error', data.message);
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }
+    } catch(e) {
+        showNotif('error', 'Terjadi kesalahan');
+        btn.innerHTML = original;
+        btn.disabled = false;
+    }
+}
+
+async function refreshTransaksiTable() {
+    try {
+        const res = await fetch('<?= base_url("admin/transaksi/get-transaksi-data") ?>', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+        if (data.success) {
+            const tbody = document.getElementById('transaksiTableBody');
+            const oldIds = Array.from(tbody.querySelectorAll('tr')).map(row => row.dataset?.id);
+            tbody.innerHTML = data.html;
+            const newRows = tbody.querySelectorAll('tr');
+            newRows.forEach(row => {
+                if (row.dataset?.id && !oldIds.includes(row.dataset.id)) {
+                    row.classList.add('new-row');
+                }
+            });
+            attachKonfirmasiEvents();
+        }
+    } catch(e) { console.error(e); }
+}
+
+function showNotif(type, msg) {
+    let container = document.querySelector('.notification-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.className = 'notification-container';
+        container.style.cssText = 'position:fixed; top:80px; right:20px; z-index:9999;';
+        document.body.appendChild(container);
+    }
+    const notif = document.createElement('div');
+    notif.style.cssText = `background:${type === 'success' ? '#d4edda' : '#f8d7da'}; color:${type === 'success' ? '#155724' : '#721c24'}; padding:12px 20px; margin-bottom:10px; border-radius:8px; font-size:13px;`;
+    notif.innerHTML = msg;
+    container.appendChild(notif);
+    setTimeout(() => notif.remove(), 3000);
+}
+
+let lastCount = 0;
+async function cekDanRefresh() {
+    try {
+        const res = await fetch('<?= base_url("admin/transaksi/cek-pesanan-baru") ?>', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        const data = await res.json();
+        if (data.success) {
+            const count = data.total_baru;
+            const notifCount = document.getElementById('notificationCount');
+            if (count > 0) {
+                notifCount.innerText = count;
+                notifCount.style.display = 'inline-block';
+                const bell = document.querySelector('.notification-bell i');
+                bell.classList.add('pulse');
+                setTimeout(() => bell.classList.remove('pulse'), 500);
+                if (count > lastCount) {
+                    refreshTransaksiTable();
+                }
+            } else {
+                notifCount.style.display = 'none';
+            }
+            lastCount = count;
+        }
+    } catch(e) { console.error(e); }
+}
+
+attachKonfirmasiEvents();
+setInterval(cekDanRefresh, 3000);
+cekDanRefresh();
+</script>
 
 <?= $this->endSection() ?>

@@ -68,6 +68,9 @@ $routes->post('admin/transaksi/update/(:num)', 'Admin\Transaksi::update/$1');
 $routes->get('admin/transaksi/cek-pesanan-baru', 'Admin\Transaksi::cekPesananBaru');
 $routes->post('admin/transaksi/konfirmasi-ajax/(:num)', 'Admin\Transaksi::konfirmasiAjax/$1');
 
+// AUTO REFRESH TABEL TRANSAKSI
+$routes->get('admin/transaksi/get-transaksi-data', 'Admin\Transaksi::getTransaksiData');
+
 //------------------------------------------------------------------------------
 // MANAJEMEN MENU
 //------------------------------------------------------------------------------

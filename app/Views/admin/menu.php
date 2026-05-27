@@ -45,15 +45,17 @@
     }
     thead {
         background: #000; 
-    }
+    font-weight: 600;
+    color: #ffffff;  /* ← SUDAH PUTIH */
+}
+
     th, td {
         padding: 12px 10px;
         text-align: center;
     }
     th {
-        font-weight: 600;
-        color: #ffffff;
-    }
+    background: #60450b; 
+}
     tbody tr {
         border-bottom: 1px solid #eee;
         transition: 0.2s;

@@ -8,6 +8,7 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         padding: 20px;
     }
+
     .header {
         display: flex;
         justify-content: space-between;
@@ -16,10 +17,12 @@
         padding-bottom: 12px;
         border-bottom: 2px solid #8B6914;
     }
+
     .header h3 {
         margin: 0;
         font-size: 18px;
     }
+
     .btn-back {
         background: #6c757d;
         color: white;
@@ -28,15 +31,18 @@
         text-decoration: none;
         font-size: 12px;
     }
+
     .form-group {
         margin-bottom: 15px;
     }
+
     .form-group label {
         display: block;
         margin-bottom: 5px;
         font-weight: 600;
         font-size: 13px;
     }
+
     .form-control {
         width: 100%;
         padding: 8px 12px;
@@ -44,29 +50,126 @@
         border-radius: 6px;
         font-size: 13px;
     }
-    .table {
+
+    h4 {
+        margin: 20px 0 12px 0;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    /* SEARCH STYLE */
+    .search-section {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .search-box {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .search-box input {
+        flex: 1;
+    }
+
+    .btn-reset {
+        background: #6c757d;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .btn-reset:hover {
+        background: #5a6268;
+    }
+
+    .search-info {
+        font-size: 11px;
+        color: #6c757d;
+        margin-top: 8px;
+    }
+
+    /* TABEL MENU */
+    .table-menu {
         width: 100%;
         border-collapse: collapse;
         font-size: 12px;
     }
-    .table th, .table td {
+
+    .table-menu th,
+    .table-menu td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        vertical-align: middle;
+    }
+
+    .table-menu th {
+        background: #60450b;
+        text-align: center;
+        color: white;
+    }
+
+    .table-menu td {
+        text-align: center;
+    }
+
+    /* TABEL PESANAN */
+    .table-order {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .table-order th,
+    .table-order td {
         border: 1px solid #ddd;
         padding: 6px 8px;
         vertical-align: middle;
         text-align: center;
     }
-    .table th {
+
+    .table-order th {
         background: #60450b;
+        color: white;
     }
-    .btn-add {
+
+    .stok-badge {
+        display: inline-block;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 20px;
+    }
+
+    .stok-aman { background: #d4edda; color: #155724; }
+    .stok-menipis { background: #fff3cd; color: #856404; }
+    .stok-habis { background: #f8d7da; color: #721c24; }
+
+    .btn-pilih {
         background: #28a745;
         color: white;
-        padding: 5px 12px;
+        padding: 4px 10px;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         cursor: pointer;
-        margin-bottom: 15px;
+        font-size: 11px;
     }
+
+    .btn-pilih:hover {
+        background: #1e7e34;
+    }
+
+    .btn-pilih:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+    }
+
     .btn-remove {
         background: #dc3545;
         color: white;
@@ -76,6 +179,7 @@
         cursor: pointer;
         font-size: 11px;
     }
+
     .total-box {
         background: #f8f9fa;
         padding: 10px 15px;
@@ -83,6 +187,7 @@
         text-align: right;
         border-radius: 8px;
     }
+
     .btn-update {
         background: #8B6914;
         color: white;
@@ -91,6 +196,7 @@
         border-radius: 6px;
         cursor: pointer;
     }
+
     .btn-batal {
         background: #6c757d;
         color: white;
@@ -98,15 +204,13 @@
         border-radius: 6px;
         text-decoration: none;
     }
-    .stok-badge {
-        display: inline-block;
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 20px;
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 15px;
     }
-    .stok-aman { background: #d4edda; color: #155724; }
-    .stok-menipis { background: #fff3cd; color: #856404; }
-    .stok-habis { background: #f8d7da; color: #721c24; }
 </style>
 
 <div class="card">
@@ -126,64 +230,68 @@
         <div class="form-group">
             <label>Metode Pembayaran</label>
             <select name="metode_pembayaran" class="form-control" required>
-                <option value="cash" <?= $transaksi['metode_pembayaran'] == 'cash' ? 'selected' : '' ?>>Cash</option>
-                <option value="qris" <?= $transaksi['metode_pembayaran'] == 'qris' ? 'selected' : '' ?>>QRIS</option>
+                <option value="cash" <?= $transaksi['metode_pembayaran'] == 'cash' ? 'selected' : '' ?>>💵 Cash</option>
+                <option value="qris" <?= $transaksi['metode_pembayaran'] == 'qris' ? 'selected' : '' ?>>📱 QRIS</option>
             </select>
         </div>
 
         <div class="form-group">
             <label>Status</label>
             <select name="status" class="form-control" required>
-                <option value="pending" <?= $transaksi['status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="menunggu_konfirmasi" <?= $transaksi['status'] == 'menunggu_konfirmasi' ? 'selected' : '' ?>>Menunggu</option>
-                <option value="lunas" <?= $transaksi['status'] == 'lunas' ? 'selected' : '' ?>>Lunas</option>
+                <option value="lunas" <?= $transaksi['status'] == 'lunas' ? 'selected' : '' ?>>✅ Lunas</option>
+                <option value="menunggu_konfirmasi" <?= $transaksi['status'] == 'menunggu_konfirmasi' ? 'selected' : '' ?>>⏳ Menunggu Konfirmasi</option>
+                <option value="pending" <?= $transaksi['status'] == 'pending' ? 'selected' : '' ?>>🕒 Pending</option>
             </select>
         </div>
 
-        <h4>Daftar Pesanan</h4>
-        <div style="overflow-x: auto;">
-            <table class="table">
+        <!-- SEARCH MENU -->
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchMenu" class="form-control" placeholder="🔍 Cari menu... (ketik nama menu)">
+                <button type="button" id="btnResetSearch" class="btn-reset">Reset</button>
+            </div>
+            <div class="search-info">
+                <i class="fa fa-info-circle"></i> Mengetik akan langsung memfilter daftar menu di bawah
+            </div>
+        </div>
+
+        <h4>Daftar Menu</h4>
+        <div style="overflow-x: auto; max-height: 300px; overflow-y: auto;">
+            <table class="table-menu">
                 <thead>
                     <tr>
-                        <th width="35%">Menu</th>
-                        <th width="15%">Stok</th>
-                        <th width="15%">Qty</th>
-                        <th width="25%">Level Pedas</th>
-                        <th width="10%">Aksi</th>
+                        <th>Nama Menu</th>
+                        <th>Harga</th>
+                        <th>Stok</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
-                <tbody id="itemList">
-                    <?php foreach ($detail as $index => $item): ?>
-                    <tr class="item-row">
+                <tbody id="menuList">
+                    <?php foreach ($menu as $m): ?>
+                    <tr class="menu-row" data-namamenux="<?= strtolower(esc($m['nama_menu'])) ?>">
+                        <td style="text-align: left;"><?= esc($m['nama_menu']) ?></td>
+                        <td>Rp <?= number_format($m['harga'], 0, ',', '.') ?></td>
                         <td>
-                            <select name="items[<?= $index ?>][id_menu]" class="form-control menu-select" required>
-                                <option value="">-- Pilih Menu --</option>
-                                <?php foreach ($menu as $m): ?>
-                                    <option value="<?= $m['id'] ?>" 
-                                            data-harga="<?= $m['harga'] ?>" 
-                                            data-stok="<?= $m['stok'] ?>"
-                                            <?= $item['id_menu'] == $m['id'] ? 'selected' : '' ?>>
-                                        <?= $m['nama_menu'] ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </td>
-                        <td class="stok-cell">
-                            <span class="stok-badge">-</span>
+                            <?php
+                            $stok = $m['stok'];
+                            if ($stok <= 0) {
+                                echo '<span class="stok-badge stok-habis">❌ Habis</span>';
+                            } elseif ($stok <= 5) {
+                                echo '<span class="stok-badge stok-menipis">⚠️ ' . $stok . '</span>';
+                            } else {
+                                echo '<span class="stok-badge stok-aman">✅ ' . $stok . '</span>';
+                            }
+                            ?>
                         </td>
                         <td>
-                            <input type="number" name="items[<?= $index ?>][qty]" class="form-control qty" value="<?= $item['qty'] ?>" min="1" required>
-                        </td>
-                        <td>
-                            <select name="items[<?= $index ?>][level_pedas]" class="form-control">
-                                <option value="">🌶 Tidak</option>
-                                <?php for ($i = 1; $i <= 5; $i++): ?>
-                                    <option value="<?= $i ?>" <?= $item['level_pedas'] == $i ? 'selected' : '' ?>>Level <?= $i ?></option>
-                                <?php endfor; ?>
-                            </select>
-                        </td>
-                        <td>
-                            <button type="button" class="btn-remove">Hapus</button>
+                            <button type="button" class="btn-pilih" 
+                                    data-id="<?= $m['id'] ?>"
+                                    data-nama="<?= esc($m['nama_menu']) ?>"
+                                    data-harga="<?= $m['harga'] ?>"
+                                    data-stok="<?= $m['stok'] ?>"
+                                    <?= $m['stok'] <= 0 ? 'disabled' : '' ?>>
+                                + Pilih
+                            </button>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -191,13 +299,56 @@
             </table>
         </div>
 
-        <button type="button" id="tambahItem" class="btn-add">+ Tambah Item</button>
-
+        <h4>Daftar Pesanan</h4>
+        <div style="overflow-x: auto;">
+            <table class="table-order">
+                <thead>
+                    <tr>
+                        <th>Menu</th>
+                        <th>Harga</th>
+                        <th>Qty</th>
+                        <th>Level Pedas</th>
+                        <th>Subtotal</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="orderList">
+                    <?php if (!empty($detail)): ?>
+                        <?php foreach ($detail as $index => $item): ?>
+                        <tr data-order-id="<?= $index ?>" data-menu-id="<?= $item['id_menu'] ?>">
+                            <td style="text-align: left;"><?= esc($item['nama_menu']) ?></td>
+                            <td>Rp <?= number_format($item['harga'], 0, ',', '.') ?></td>
+                            <td>
+                                <input type="number" class="form-control qty-input" 
+                                       style="width: 60px; text-align: center;"
+                                       value="<?= $item['qty'] ?>" min="1" max="30" step="1">
+                                <small style="font-size: 9px; color: #666;">Stok: <?= $item['stok'] ?? $item['qty'] ?></small>
+                            </td>
+                            <td>
+                                <select class="form-control level-select">
+                                    <option value="">🌶 Tidak</option>
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <option value="<?= $i ?>" <?= ($item['level_pedas'] == $i) ? 'selected' : '' ?>>Level <?= $i ?></option>
+                                    <?php endfor; ?>
+                                </select>
+                            </td>
+                            <td class="subtotal">Rp <?= number_format($item['subtotal'], 0, ',', '.') ?></td>
+                            <td><button type="button" class="btn-remove">Hapus</button></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr class="empty-order">
+                            <td colspan="6" style="text-align: center; color: #999;">Belum ada pesanan</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
         <div class="total-box">
             <strong>Total: Rp <span id="totalDisplay"><?= number_format($transaksi['total'], 0, ',', '.') ?></span></strong>
         </div>
 
-        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <div class="form-actions">
             <button type="submit" class="btn-update">Update Transaksi</button>
             <a href="<?= base_url('admin/transaksi') ?>" class="btn-batal">Batal</a>
         </div>
@@ -205,109 +356,265 @@
 </div>
 
 <script>
-let itemIndex = <?= count($detail) ?>;
+// ==================== DATA PESANAN ====================
+let orderItems = [];
+let nextOrderId = <?= count($detail) ?>;
 
-function getStokClass(stok) {
-    if (stok <= 0) return 'stok-habis';
-    if (stok <= 5) return 'stok-menipis';
-    return 'stok-aman';
-}
+// Inisialisasi orderItems dari data yang ada
+<?php foreach ($detail as $index => $item): ?>
+orderItems.push({
+    id: <?= $index ?>,
+    id_menu: <?= $item['id_menu'] ?>,
+    nama_menu: '<?= addslashes($item['nama_menu']) ?>',
+    harga: <?= $item['harga'] ?>,
+    qty: <?= $item['qty'] ?>,
+    level_pedas: '<?= $item['level_pedas'] ?>'
+});
+<?php endforeach; ?>
 
-function getStokText(stok) {
-    if (stok <= 0) return '❌ Habis';
-    if (stok <= 5) return '⚠️ ' + stok;
-    return '✅ ' + stok;
-}
+// ==================== DATA STOK ====================
+let menuStok = {};
 
-function updateStokInfo(row, stok) {
-    const stokCell = row.querySelector('.stok-cell');
-    if (!stokCell) return;
-    const stokBadge = stokCell.querySelector('.stok-badge');
-    stokBadge.className = 'stok-badge ' + getStokClass(stok);
-    stokBadge.innerHTML = getStokText(stok);
-    
-    const qtyInput = row.querySelector('.qty');
-    const maxStok = Math.min(stok, 30);
-    qtyInput.max = maxStok;
-    if (stok <= 0) {
-        qtyInput.disabled = true;
-        qtyInput.value = 0;
-    } else {
-        qtyInput.disabled = false;
-        if (parseInt(qtyInput.value) > maxStok) qtyInput.value = maxStok;
+document.querySelectorAll('.btn-pilih').forEach(btn => {
+    const menuId = btn.dataset.id;
+    const stokAwal = parseInt(btn.dataset.stok);
+    menuStok[menuId] = stokAwal;
+});
+
+// Kurangi stok dengan qty yang sudah ada di pesanan
+orderItems.forEach(item => {
+    if (menuStok[item.id_menu]) {
+        menuStok[item.id_menu] -= item.qty;
     }
+});
+
+// ==================== SEARCH MENU ====================
+const searchInput = document.getElementById('searchMenu');
+const menuRows = document.querySelectorAll('#menuList .menu-row');
+const resetBtn = document.getElementById('btnResetSearch');
+
+function filterMenu() {
+    const keyword = searchInput.value.toLowerCase().trim();
+    menuRows.forEach(row => {
+        const namaMenu = row.getAttribute('data-namamenux') || '';
+        if (keyword === '' || namaMenu.includes(keyword)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 }
 
-function calculateTotal() {
+function resetSearch() {
+    searchInput.value = '';
+    menuRows.forEach(row => row.style.display = '');
+    searchInput.focus();
+}
+
+searchInput.addEventListener('keyup', filterMenu);
+resetBtn.addEventListener('click', resetSearch);
+
+// ==================== UPDATE STOK DISPLAY ====================
+function updateStokDisplay(menuId) {
+    const btn = document.querySelector(`.btn-pilih[data-id="${menuId}"]`);
+    if (!btn) return;
+    
+    const stokSisa = menuStok[menuId];
+    const row = btn.closest('tr');
+    const stokCell = row.querySelector('td:nth-child(3)');
+    
+    if (stokCell) {
+        if (stokSisa <= 0) {
+            stokCell.innerHTML = '<span class="stok-badge stok-habis">❌ Habis</span>';
+            btn.disabled = true;
+        } else if (stokSisa <= 5) {
+            stokCell.innerHTML = `<span class="stok-badge stok-menipis">⚠️ ${stokSisa}</span>`;
+            btn.disabled = false;
+        } else {
+            stokCell.innerHTML = `<span class="stok-badge stok-aman">✅ ${stokSisa}</span>`;
+            btn.disabled = false;
+        }
+    }
+    btn.dataset.stok = stokSisa;
+}
+
+// ==================== RENDER PESANAN ====================
+function renderOrderList() {
+    const tbody = document.getElementById('orderList');
+    const totalSpan = document.getElementById('totalDisplay');
     let total = 0;
-    document.querySelectorAll('.item-row').forEach(row => {
-        const select = row.querySelector('.menu-select');
-        const harga = select.options[select.selectedIndex]?.dataset.harga || 0;
-        const qty = row.querySelector('.qty').value || 0;
-        total += harga * qty;
+    
+    if (orderItems.length === 0) {
+        tbody.innerHTML = '<tr class="empty-order"><td colspan="6" style="text-align: center; color: #999;">Belum ada pesanan</td></tr>';
+        totalSpan.innerText = '0';
+        return;
+    }
+    
+    let html = '';
+    orderItems.forEach((item, index) => {
+        const subtotal = item.harga * item.qty;
+        total += subtotal;
+        
+        let levelOptions = '<option value="">🌶 Tidak</option>';
+        for (let i = 1; i <= 5; i++) {
+            levelOptions += `<option value="${i}" ${item.level_pedas == i ? 'selected' : ''}>Level ${i}</option>`;
+        }
+        
+        html += `
+            <tr data-order-id="${item.id}" data-menu-id="${item.id_menu}">
+                <td style="text-align: left;">${item.nama_menu}</td>
+                <td>Rp ${item.harga.toLocaleString('id-ID')}</td>
+                <td>
+                    <input type="number" class="form-control qty-input" 
+                           style="width: 60px; text-align: center;"
+                           value="${item.qty}" min="1" max="30" step="1">
+                    <small style="font-size: 9px; color: #666;">Stok: ${menuStok[item.id_menu]}</small>
+                </td>
+                <td><select class="form-control level-select">${levelOptions}</select></td>
+                <td class="subtotal">Rp ${subtotal.toLocaleString('id-ID')}</td>
+                <td><button type="button" class="btn-remove">Hapus</button></td>
+            </tr>
+        `;
     });
-    document.getElementById('totalDisplay').innerText = total.toLocaleString('id-ID');
-}
-
-function attachEvents() {
-    document.querySelectorAll('.btn-remove').forEach(btn => {
-        btn.onclick = function() {
-            if (document.querySelectorAll('.item-row').length > 1) {
-                this.closest('.item-row').remove();
-                calculateTotal();
-            } else {
-                alert('Minimal 1 item');
+    
+    tbody.innerHTML = html;
+    totalSpan.innerText = total.toLocaleString('id-ID');
+    
+    // Event qty
+    document.querySelectorAll('.qty-input').forEach((input, idx) => {
+        input.addEventListener('change', function() {
+            let newQty = parseInt(this.value) || 1;
+            const item = orderItems[idx];
+            const stokTersedia = menuStok[item.id_menu] + item.qty;
+            
+            if (newQty > 30) {
+                alert(`Maksimal pemesanan ${item.nama_menu} adalah 30`);
+                newQty = item.qty;
+                this.value = item.qty;
+            } else if (newQty > stokTersedia) {
+                alert(`Stok tidak cukup! Stok tersisa ${stokTersedia}`);
+                newQty = item.qty;
+                this.value = item.qty;
             }
-        };
+            
+            if (newQty < 1) newQty = 1;
+            
+            if (newQty !== item.qty) {
+                menuStok[item.id_menu] += item.qty;
+                menuStok[item.id_menu] -= newQty;
+                item.qty = newQty;
+                updateStokDisplay(item.id_menu);
+                renderOrderList();
+            }
+        });
     });
     
-    document.querySelectorAll('.menu-select').forEach(select => {
-        select.onchange = function() {
-            const row = this.closest('.item-row');
-            const stok = this.options[this.selectedIndex]?.dataset.stok || 0;
-            updateStokInfo(row, stok);
-            calculateTotal();
-        };
-        const row = select.closest('.item-row');
-        const stok = select.options[select.selectedIndex]?.dataset.stok || 0;
-        updateStokInfo(row, stok);
+    // Event level pedas
+    document.querySelectorAll('.level-select').forEach((select, idx) => {
+        select.addEventListener('change', function() {
+            orderItems[idx].level_pedas = this.value;
+        });
     });
     
-    document.querySelectorAll('.qty').forEach(qty => {
-        qty.oninput = calculateTotal;
+    // Event hapus
+    document.querySelectorAll('.btn-remove').forEach((btn, idx) => {
+        btn.addEventListener('click', function() {
+            const item = orderItems[idx];
+            menuStok[item.id_menu] += item.qty;
+            updateStokDisplay(item.id_menu);
+            orderItems.splice(idx, 1);
+            renderOrderList();
+        });
     });
 }
 
-document.getElementById('tambahItem').onclick = function() {
-    const tbody = document.getElementById('itemList');
-    const newRow = document.createElement('tr');
-    newRow.className = 'item-row';
-    
-    let menuOptions = '<option value="">-- Pilih Menu --</option>';
-    <?php foreach ($menu as $m): ?>
-        menuOptions += `<option value="<?= $m['id'] ?>" data-harga="<?= $m['harga'] ?>" data-stok="<?= $m['stok'] ?>"><?= addslashes($m['nama_menu']) ?></option>`;
-    <?php endforeach; ?>
-    
-    let levelOptions = '<option value="">🌶 Tidak</option>';
-    <?php for ($i = 1; $i <= 5; $i++): ?>
-        levelOptions += `<option value="<?= $i ?>">Level <?= $i ?></option>`;
-    <?php endfor; ?>
-    
-    newRow.innerHTML = `
-        <td><select name="items[${itemIndex}][id_menu]" class="form-control menu-select" required>${menuOptions}</select></td>
-        <td class="stok-cell"><span class="stok-badge">-</span></td>
-        <td><input type="number" name="items[${itemIndex}][qty]" class="form-control qty" value="1" min="1"></td>
-        <td><select name="items[${itemIndex}][level_pedas]" class="form-control">${levelOptions}</select></td>
-        <td><button type="button" class="btn-remove">Hapus</button></td>
-    `;
-    tbody.appendChild(newRow);
-    itemIndex++;
-    attachEvents();
-    calculateTotal();
-};
+// ==================== TOMBOL PILIH MENU ====================
+document.querySelectorAll('.btn-pilih').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const nama = this.dataset.nama;
+        const harga = parseInt(this.dataset.harga);
+        let stok = menuStok[id];
+        
+        if (stok <= 0) {
+            alert(`Stok ${nama} habis!`);
+            return;
+        }
+        
+        const existingIndex = orderItems.findIndex(item => item.id_menu === id);
+        
+        if (existingIndex !== -1) {
+            const currentQty = orderItems[existingIndex].qty;
+            if (currentQty + 1 > 30) {
+                alert(`Maksimal pemesanan ${nama} adalah 30`);
+                return;
+            }
+            menuStok[id]--;
+            orderItems[existingIndex].qty++;
+        } else {
+            orderItems.push({
+                id: nextOrderId++,
+                id_menu: id,
+                nama_menu: nama,
+                harga: harga,
+                qty: 1,
+                level_pedas: ''
+            });
+            menuStok[id]--;
+        }
+        
+        updateStokDisplay(id);
+        renderOrderList();
+    });
+});
 
-attachEvents();
-calculateTotal();
+// ==================== TOMBOL TAMBAH ITEM ====================
+document.getElementById('tambahItem').addEventListener('click', function() {
+    // Bisa tambahkan logika untuk menambah item kosong
+    alert('Silakan pilih menu dari daftar di atas');
+});
+
+// ==================== SUBMIT FORM ====================
+document.getElementById('formTransaksi').addEventListener('submit', function(e) {
+    if (orderItems.length === 0) {
+        e.preventDefault();
+        alert('Minimal 1 item pesanan!');
+        return;
+    }
+    
+    // Hapus input hidden lama jika ada
+    document.querySelectorAll('input.hidden-item').forEach(el => el.remove());
+    
+    orderItems.forEach((item, idx) => {
+        const inputIdMenu = document.createElement('input');
+        inputIdMenu.type = 'hidden';
+        inputIdMenu.name = `items[${idx}][id_menu]`;
+        inputIdMenu.value = item.id_menu;
+        inputIdMenu.className = 'hidden-item';
+        this.appendChild(inputIdMenu);
+        
+        const inputQty = document.createElement('input');
+        inputQty.type = 'hidden';
+        inputQty.name = `items[${idx}][qty]`;
+        inputQty.value = item.qty;
+        inputQty.className = 'hidden-item';
+        this.appendChild(inputQty);
+        
+        const inputLevel = document.createElement('input');
+        inputLevel.type = 'hidden';
+        inputLevel.name = `items[${idx}][level_pedas]`;
+        inputLevel.value = item.level_pedas || '';
+        inputLevel.className = 'hidden-item';
+        this.appendChild(inputLevel);
+    });
+});
+
+// ==================== INITIAL RENDER ====================
+// Update stok display untuk semua menu
+Object.keys(menuStok).forEach(menuId => {
+    updateStokDisplay(parseInt(menuId));
+});
+renderOrderList();
 </script>
 
 <?= $this->endSection() ?>
