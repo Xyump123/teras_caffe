@@ -568,12 +568,6 @@ document.querySelectorAll('.btn-pilih').forEach(btn => {
     });
 });
 
-// ==================== TOMBOL TAMBAH ITEM ====================
-document.getElementById('tambahItem').addEventListener('click', function() {
-    // Bisa tambahkan logika untuk menambah item kosong
-    alert('Silakan pilih menu dari daftar di atas');
-});
-
 // ==================== SUBMIT FORM ====================
 document.getElementById('formTransaksi').addEventListener('submit', function(e) {
     if (orderItems.length === 0) {
