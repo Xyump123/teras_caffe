@@ -122,8 +122,8 @@
     }
 
     .badge-pending {
-        background: #f8d7da;
-        color: #721c24;
+        background: #fff3cd;
+        color: #856404;
     }
 
     h4 {
@@ -258,9 +258,11 @@
         <h3>Detail Transaksi #<?= $transaksi['id'] ?></h3>
         <div class="action-buttons">
             <a href="<?= base_url('admin/transaksi') ?>" class="btn-back">← Kembali</a>
-            <button onclick="window.print()" class="btn-print">
-                <i class="fa fa-print"></i> Cetak Invoice
-            </button>
+            <a href="<?= base_url('admin/transaksi/print/'.$transaksi['id']) ?>"
+   target="_blank"
+   class="btn-print">
+    <i class="fa fa-print"></i> Cetak Struk
+</a>
         </div>
     </div>
 

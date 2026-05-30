@@ -442,4 +442,26 @@ class Transaksi extends BaseController
 
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil diupdate');
     }
+    public function print($id)
+{
+    $this->checkLogin();
+
+    $data['transaksi'] = $this->db->table('transaksi')
+        ->where('id', $id)
+        ->get()
+        ->getRowArray();
+
+    if (!$data['transaksi']) {
+        return redirect()->to('/admin/transaksi');
+    }
+
+    $data['detail'] = $this->db->table('detail_transaksi')
+        ->select('detail_transaksi.*, menu.nama_menu')
+        ->join('menu', 'menu.id = detail_transaksi.id_menu')
+        ->where('id_transaksi', $id)
+        ->get()
+        ->getResultArray();
+
+    return view('admin/print_transaksi', $data);
+}
 }

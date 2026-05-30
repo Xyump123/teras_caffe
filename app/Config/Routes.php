@@ -63,6 +63,7 @@ $routes->get('admin/transaksi/tambah', 'Admin\Transaksi::tambah');
 $routes->post('admin/transaksi/simpan', 'Admin\Transaksi::simpan');
 $routes->get('admin/transaksi/edit/(:num)', 'Admin\Transaksi::edit/$1');
 $routes->post('admin/transaksi/update/(:num)', 'Admin\Transaksi::update/$1');
+$routes->get('admin/transaksi/print/(:num)','Admin\Transaksi::print/$1');
 
 // NOTIFIKASI & AJAX (REAL TIME 3 DETIK)
 $routes->get('admin/transaksi/cek-pesanan-baru', 'Admin\Transaksi::cekPesananBaru');
