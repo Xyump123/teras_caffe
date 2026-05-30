@@ -167,32 +167,20 @@ body{
             Rp <?= number_format($transaksi['total'],0,',','.') ?>
         </span>
     </div>
-
     <div class="line"></div>
-
-    
-
     <div class="footer">
-
         Terima Kasih<br>
         Selamat Menikmati
-
         <br><br>
-
         <?= date('d-m-Y H:i:s') ?>
-
     </div>
-
 </div>
-
 <div class="actions">
     <button onclick="window.print()" class="btn">
         Cetak Struk
     </button>
 </div>
-
 <script>
-
 window.onload = function(){
 
     setTimeout(function(){
