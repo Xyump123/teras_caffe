@@ -61,7 +61,7 @@ class Transaksi extends BaseController
         return view('admin/detail_transaksi', $data);
     }
 
-    // ==================== KONFIRMASI PEMBAYARAN (TANPA AJAX) ====================
+    // ==================== KONFIRMASI PEMBAYARAN ====================
     public function konfirmasi($id)
     {
         $this->checkLogin();
@@ -106,7 +106,7 @@ class Transaksi extends BaseController
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil dikonfirmasi');
     }
 
-    // ==================== CEK PESANAN BARU (AJAX) ====================
+    // ==================== CEK PESANAN BARU  ====================
     public function cekPesananBaru()
     {
         $this->checkLogin();
@@ -130,7 +130,7 @@ class Transaksi extends BaseController
         ]);
     }
 
-    // ==================== KONFIRMASI PEMBAYARAN VIA AJAX ====================
+    // ==================== KONFIRMASI PEMBAYARAN ====================
     public function konfirmasiAjax($id)
     {
         $this->checkLogin();
@@ -184,7 +184,7 @@ class Transaksi extends BaseController
         ]);
     }
 
-    // ==================== AMBIL DATA TRANSAKSI (AJAX) ====================
+    // ==================== AMBIL DATA TRANSAKSI ====================
     public function getTransaksiData()
     {
         $this->checkLogin();
