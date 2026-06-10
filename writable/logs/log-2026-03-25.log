@@ -1,0 +1,15 @@
+CRITICAL - 2026-03-25 07:55:24 --> ErrorException: Undefined variable $label
+[Method: GET, Route: admin/laporan]
+in APPPATH\Views\admin\laporan.php on line 117.
+ 1 APPPATH\Views\admin\laporan.php(117): CodeIgniter\Debug\Exceptions->errorHandler(2, 'Undefined variable $label', 'C:\\xampp\\htdocs\\teras_caffe\\app\\Views\\admin\\laporan.php', 117)
+ 2 SYSTEMPATH\View\View.php(238): include('C:\\xampp\\htdocs\\teras_caffe\\app\\Views\\admin\\laporan.php')
+ 3 SYSTEMPATH\View\View.php(241): CodeIgniter\View\View->CodeIgniter\View\{closure}()
+ 4 SYSTEMPATH\Common.php(1250): CodeIgniter\View\View->render('admin/laporan', [], true)
+ 5 APPPATH\Controllers\Admin.php(332): view('admin/laporan', [...])
+ 6 SYSTEMPATH\CodeIgniter.php(951): App\Controllers\Admin->laporan()
+ 7 SYSTEMPATH\CodeIgniter.php(497): CodeIgniter\CodeIgniter->runController(Object(App\Controllers\Admin))
+ 8 SYSTEMPATH\CodeIgniter.php(340): CodeIgniter\CodeIgniter->handleRequest(null, Object(Config\Cache), false)
+ 9 SYSTEMPATH\Boot.php(417): CodeIgniter\CodeIgniter->run()
+10 SYSTEMPATH\Boot.php(68): CodeIgniter\Boot::runCodeIgniter(Object(CodeIgniter\CodeIgniter))
+11 FCPATH\index.php(59): CodeIgniter\Boot::bootWeb(Object(Config\Paths))
+12 SYSTEMPATH\rewrite.php(44): require_once('C:\\xampp\\htdocs\\teras_caffe\\public\\index.php')
