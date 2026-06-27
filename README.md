@@ -72,6 +72,7 @@ Aplikasi pemesanan menu berbasis web yang memudahkan pelanggan dalam melakukan p
 ## 👨‍💻 Developer
 
 - Fauzan Fachrul Rozy (D1A230010)
+- Rangga Sandi Saputra (D1A230100)
 
 ---
 
