@@ -43,6 +43,7 @@ $routes->get('menu/sukses/(:num)', 'Menu\Checkout::sukses/$1');
 //------------------------------------------------------------------------------
 // AUTH (Login/Logout)
 //------------------------------------------------------------------------------
+// PERBAIKAN: Gunakan huruf kecil 'admin' untuk konsistensi
 $routes->get('admin/login', 'Admin\Auth::login');
 $routes->post('admin/loginProcess', 'Admin\Auth::loginProcess');
 $routes->get('admin/logout', 'Admin\Auth::logout');
@@ -65,7 +66,7 @@ $routes->get('admin/transaksi/edit/(:num)', 'Admin\Transaksi::edit/$1');
 $routes->post('admin/transaksi/update/(:num)', 'Admin\Transaksi::update/$1');
 $routes->get('admin/transaksi/print/(:num)','Admin\Transaksi::print/$1');
 
-// NOTIFIKASI & AJAX (REAL TIME 3 DETIK)
+// NOTIFIKASI & AJAX (REAL TIME)
 $routes->get('admin/transaksi/cek-pesanan-baru', 'Admin\Transaksi::cekPesananBaru');
 $routes->post('admin/transaksi/konfirmasi-ajax/(:num)', 'Admin\Transaksi::konfirmasiAjax/$1');
 

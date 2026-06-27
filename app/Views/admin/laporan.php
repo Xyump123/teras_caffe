@@ -48,7 +48,6 @@
     .btn-filter:hover {
         background: #5a3c2e;
     }
-
     .stats {
         display: flex;
         gap: 20px;
@@ -110,7 +109,6 @@
     .badge.menunggu_konfirmasi { background: #cce5ff; color: #004085; }
     .badge.lunas { background: #d4edda; color: #155724; }
 
-    /* PAGINATION */
     .pagination {
         display: flex;
         justify-content: center;
@@ -155,9 +153,11 @@
 
 <h2>Laporan Penjualan</h2>
 
-<!-- FORM FILTER (TIDAK DIUBAH) -->
+<!-- FORM FILTER -->
 <div class="card">
-    <form method="post" class="filter-form">
+    <form method="post" class="filter-form" id="filterForm">
+        <?= csrf_field() ?>
+        
         <div class="filter-group">
             <label>Harian</label>
             <input type="date" name="tanggal" value="<?= $tanggal ?? '' ?>">
@@ -168,7 +168,7 @@
         </div>
         <div class="filter-group">
             <label>Tahunan</label>
-            <input type="number" name="tahun" placeholder="2026" value="<?= $tahun ?? '' ?>">
+            <input type="number" name="tahun" placeholder="2026" value="<?= $tahun ?? '' ?>" min="2000" max="<?= date('Y') ?>">
         </div>
         <div class="filter-group">
             <button type="submit" class="btn-filter">Filter</button>
@@ -176,7 +176,7 @@
     </form>
 </div>
 
-<!-- STATISTIK (TIDAK DIUBAH) -->
+<!-- STATISTIK -->
 <div class="stats">
     <div class="card stat-card">
         <h4>Total Transaksi</h4>
@@ -188,13 +188,13 @@
     </div>
 </div>
 
-<!-- GRAFIK (TIDAK DIUBAH) -->
+<!-- GRAFIK -->
 <div class="card">
-    <h3> Grafik Penjualan</h3>
+    <h3>Grafik Penjualan</h3>
     <canvas id="chartPenjualan" height="100"></canvas>
 </div>
 
-<!-- DATA TRANSAKSI DENGAN PAGINATION (HANYA INI YANG DIUBAH) -->
+<!-- DATA TRANSAKSI -->
 <div class="card">
     <h3>Data Transaksi</h3>
     
@@ -226,14 +226,14 @@
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr class="empty-row">
-                        <td colspan="5" style="text-align: center;">Tidak ada data transaksi</td>
+                        <td colspan="5" style="text-align: center; padding: 30px; color: #999;">Tidak ada data transaksi</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
 
-    <!-- PAGINATION (TAMBAHAN) -->
+    <!-- PAGINATION -->
     <?php if ($totalHalaman > 1): ?>
     <div class="pagination">
         <?php if ($halamanAktif > 1): ?>
@@ -264,6 +264,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // ==================== CHART ====================
     const ctx = document.getElementById('chartPenjualan');
 
     new Chart(ctx, {

@@ -52,7 +52,10 @@
         border: none;
         cursor: pointer;
         font-size: 11px;
+        transition: all 0.2s;
     }
+    .btn-konfirmasi:hover { background: #0d4028; transform: scale(1.05); }
+    .btn-konfirmasi:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .table-wrapper { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     th {
@@ -84,6 +87,7 @@
     .badge.qris { background: #cce5ff; color: #004085; }
     .badge.cash { background: #d4edda; color: #155724; }
     .badge.kasir { background: #ffe0e0; color: #8a1f1f; }
+    .badge.meja { background: #e2e3ff; color: #383d8a; }
     @keyframes highlightNew {
         0% { background-color: #d4edda; }
         100% { background-color: transparent; }
@@ -124,7 +128,7 @@
                     </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="8">Belum ada transaksi</td></tr>
+                    <tr><td colspan="8" style="text-align:center; padding:30px; color:#999;">Belum ada transaksi</td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
@@ -132,6 +136,33 @@
 </div>
 
 <script>
+// ==================== CSRF TOKEN ====================
+function getCsrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    if (meta) {
+        return meta.getAttribute('content');
+    }
+    // Fallback: ambil dari cookie
+    const name = '<?= csrf_token() ?>';
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) {
+            return decodeURIComponent(value);
+        }
+    }
+    return '';
+}
+
+function getCsrfName() {
+    const meta = document.querySelector('meta[name="csrf-name"]');
+    if (meta) {
+        return meta.getAttribute('content');
+    }
+    return '<?= csrf_token() ?>';
+}
+
+// ==================== KONFIRMASI HANDLER ====================
 function attachKonfirmasiEvents() {
     document.querySelectorAll('.btn-konfirmasi').forEach(btn => {
         btn.removeEventListener('click', konfirmasiHandler);
@@ -142,96 +173,215 @@ function attachKonfirmasiEvents() {
 async function konfirmasiHandler(e) {
     const btn = e.currentTarget;
     const id = btn.dataset.id;
-    if (!confirm(`Konfirmasi transaksi #${id}?`)) return;
+    
+    if (!confirm(`Konfirmasi transaksi #${id} sebagai LUNAS?`)) return;
+    
     const original = btn.innerHTML;
     btn.innerHTML = '⏳...';
     btn.disabled = true;
+    
     try {
-        const res = await fetch(`<?= base_url('admin/transaksi/konfirmasi-ajax') ?>/${id}`, {
-            method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json' }
+        const baseUrl = '<?= base_url() ?>';
+        const csrfName = getCsrfName();
+        const csrfToken = getCsrfToken();
+        
+        console.log('CSRF Name:', csrfName);
+        console.log('CSRF Token:', csrfToken);
+        
+        // Kirim CSRF token di body dan header
+        const postData = {};
+        postData[csrfName] = csrfToken;
+        
+        const response = await fetch(baseUrl + 'admin/transaksi/konfirmasi-ajax/' + id, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-cache',
+                'X-CSRF-TOKEN': csrfToken // Kirim juga di header
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify(postData)
         });
-        const data = await res.json();
+        
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+        }
+        
+        const data = await response.json();
+        console.log('Response konfirmasi:', data);
+        
         if (data.success) {
-            refreshTransaksiTable();
-            showNotif('success', data.message);
+            showToast('success', '✅ ' + data.message);
+            await refreshTransaksiTable();
         } else {
-            showNotif('error', data.message);
+            showToast('error', '❌ ' + data.message);
             btn.innerHTML = original;
             btn.disabled = false;
         }
-    } catch(e) {
-        showNotif('error', 'Terjadi kesalahan');
+    } catch(error) {
+        console.error('Error konfirmasi:', error);
+        showToast('error', '❌ Terjadi kesalahan: ' + error.message);
         btn.innerHTML = original;
         btn.disabled = false;
     }
 }
 
+// ==================== REFRESH TABEL ====================
 async function refreshTransaksiTable() {
     try {
-        const res = await fetch('<?= base_url("admin/transaksi/get-transaksi-data") ?>', {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        const baseUrl = '<?= base_url() ?>';
+        const response = await fetch(baseUrl + 'admin/transaksi/get-transaksi-data', {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Cache-Control': 'no-cache'
+            }
         });
-        const data = await res.json();
+        
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+        
+        const data = await response.json();
+        console.log('Refresh table response:', data);
+        
         if (data.success) {
             const tbody = document.getElementById('transaksiTableBody');
             const oldIds = Array.from(tbody.querySelectorAll('tr')).map(row => row.dataset?.id);
+            
             tbody.innerHTML = data.html;
+            
             const newRows = tbody.querySelectorAll('tr');
             newRows.forEach(row => {
                 if (row.dataset?.id && !oldIds.includes(row.dataset.id)) {
                     row.classList.add('new-row');
                 }
             });
+            
             attachKonfirmasiEvents();
         }
-    } catch(e) { console.error(e); }
+    } catch(error) {
+        console.error('Error refreshing table:', error);
+    }
 }
 
-function showNotif(type, msg) {
-    let container = document.querySelector('.notification-container');
+// ==================== TOAST NOTIFICATION ====================
+function showToast(type, message) {
+    let container = document.getElementById('toastContainer');
     if (!container) {
         container = document.createElement('div');
-        container.className = 'notification-container';
-        container.style.cssText = 'position:fixed; top:80px; right:20px; z-index:9999;';
+        container.id = 'toastContainer';
+        container.style.cssText = 'position:fixed; top:80px; right:20px; z-index:99999;';
         document.body.appendChild(container);
     }
-    const notif = document.createElement('div');
-    notif.style.cssText = `background:${type === 'success' ? '#d4edda' : '#f8d7da'}; color:${type === 'success' ? '#155724' : '#721c24'}; padding:12px 20px; margin-bottom:10px; border-radius:8px; font-size:13px;`;
-    notif.innerHTML = msg;
-    container.appendChild(notif);
-    setTimeout(() => notif.remove(), 3000);
+    
+    const toast = document.createElement('div');
+    const colors = {
+        success: 'background: #d4edda; color: #155724; border-left: 4px solid #28a745;',
+        error: 'background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545;',
+        info: 'background: #cce5ff; color: #004085; border-left: 4px solid #17a2b8;'
+    };
+    
+    toast.style.cssText = `
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        min-width: 200px;
+        max-width: 400px;
+        ${colors[type] || colors.info}
+    `;
+    toast.innerHTML = message;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(50px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 }
 
+// ==================== CEK NOTIFIKASI ====================
 let lastCount = 0;
+
 async function cekDanRefresh() {
     try {
-        const res = await fetch('<?= base_url("admin/transaksi/cek-pesanan-baru") ?>', {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        const timestamp = new Date().getTime();
+        const baseUrl = '<?= base_url() ?>';
+        const response = await fetch(baseUrl + 'admin/transaksi/cek-pesanan-baru?_=' + timestamp, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Cache-Control': 'no-cache'
+            }
         });
-        const data = await res.json();
+        
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+        
+        const data = await response.json();
+        console.log('Cek notifikasi response:', data);
+        
         if (data.success) {
             const count = data.total_baru;
             const notifCount = document.getElementById('notificationCount');
+            
             if (count > 0) {
                 notifCount.innerText = count;
                 notifCount.style.display = 'inline-block';
+                
                 const bell = document.querySelector('.notification-bell i');
                 bell.classList.add('pulse');
                 setTimeout(() => bell.classList.remove('pulse'), 500);
+                
                 if (count > lastCount) {
-                    refreshTransaksiTable();
+                    await refreshTransaksiTable();
                 }
             } else {
                 notifCount.style.display = 'none';
             }
             lastCount = count;
         }
-    } catch(e) { console.error(e); }
+    } catch(error) {
+        console.error('Error checking notifications:', error);
+    }
 }
 
-attachKonfirmasiEvents();
-setInterval(cekDanRefresh, 3000);
-cekDanRefresh();
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Transaksi page loaded');
+    console.log('Base URL:', '<?= base_url() ?>');
+    console.log('CSRF Token:', getCsrfToken());
+    console.log('CSRF Name:', getCsrfName());
+    attachKonfirmasiEvents();
+    
+    setInterval(cekDanRefresh, 5000);
+    setTimeout(cekDanRefresh, 2000);
+});
+
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        cekDanRefresh();
+    }
+});
+
+if (!document.getElementById('toastStyle')) {
+    const style = document.createElement('style');
+    style.id = 'toastStyle';
+    style.textContent = `
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    `;
+    document.head.appendChild(style);
+}
 </script>
 
 <?= $this->endSection() ?>

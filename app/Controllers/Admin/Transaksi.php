@@ -61,7 +61,7 @@ class Transaksi extends BaseController
         return view('admin/detail_transaksi', $data);
     }
 
-    // ==================== KONFIRMASI PEMBAYARAN ====================
+    // ==================== KONFIRMASI PEMBAYARAN (GET) ====================
     public function konfirmasi($id)
     {
         $this->checkLogin();
@@ -111,17 +111,16 @@ class Transaksi extends BaseController
     {
         $this->checkLogin();
 
-        $lastCheck = $this->session->get('last_notification_check') ?? date('Y-m-d H:i:s', strtotime('-5 minutes'));
-        
+        // Ambil semua transaksi dengan status pending atau menunggu_konfirmasi
         $pesananBaru = $this->db->table('transaksi')
             ->select('transaksi.*, (SELECT COUNT(*) FROM detail_transaksi WHERE detail_transaksi.id_transaksi = transaksi.id) as total_item')
-            ->where('transaksi.created_at >', $lastCheck)
             ->whereIn('transaksi.status', ['pending', 'menunggu_konfirmasi'])
             ->orderBy('transaksi.created_at', 'DESC')
             ->get()
             ->getResultArray();
 
-        $this->session->set('last_notification_check', date('Y-m-d H:i:s'));
+        // Log untuk debugging
+        log_message('debug', 'Total pesanan pending/menunggu: ' . count($pesananBaru));
 
         return $this->response->setJSON([
             'success' => true,
@@ -130,58 +129,85 @@ class Transaksi extends BaseController
         ]);
     }
 
-    // ==================== KONFIRMASI PEMBAYARAN ====================
+    // ==================== KONFIRMASI AJAX (POST) ====================
     public function konfirmasiAjax($id)
     {
         $this->checkLogin();
 
-        $transaksi = $this->db->table('transaksi')
-            ->where('id', $id)
-            ->get()
-            ->getRowArray();
+        // Log untuk debugging
+        log_message('debug', 'Konfirmasi AJAX dipanggil untuk ID: ' . $id);
 
-        if (!$transaksi) {
-            return $this->response->setJSON([
-                'success' => false, 
-                'message' => 'Transaksi tidak ditemukan'
-            ]);
-        }
+        // Mulai transaction untuk keamanan
+        $this->db->transStart();
 
-        if ($transaksi['status'] == 'lunas') {
-            return $this->response->setJSON([
-                'success' => false, 
-                'message' => 'Transaksi sudah lunas'
-            ]);
-        }
-
-        $detail = $this->db->table('detail_transaksi')
-            ->where('id_transaksi', $id)
-            ->get()
-            ->getResultArray();
-
-        foreach ($detail as $d) {
-            $menu = $this->db->table('menu')
-                ->where('id', $d['id_menu'])
+        try {
+            $transaksi = $this->db->table('transaksi')
+                ->where('id', $id)
                 ->get()
                 ->getRowArray();
 
-            if ($menu) {
-                $stokBaru = $menu['stok'] - $d['qty'];
-                if ($stokBaru < 0) $stokBaru = 0;
-                $this->db->table('menu')
-                    ->where('id', $d['id_menu'])
-                    ->update(['stok' => $stokBaru]);
+            if (!$transaksi) {
+                return $this->response->setJSON([
+                    'success' => false, 
+                    'message' => 'Transaksi tidak ditemukan'
+                ]);
             }
+
+            if ($transaksi['status'] == 'lunas') {
+                return $this->response->setJSON([
+                    'success' => false, 
+                    'message' => 'Transaksi sudah lunas'
+                ]);
+            }
+
+            $detail = $this->db->table('detail_transaksi')
+                ->where('id_transaksi', $id)
+                ->get()
+                ->getResultArray();
+
+            foreach ($detail as $d) {
+                $menu = $this->db->table('menu')
+                    ->where('id', $d['id_menu'])
+                    ->get()
+                    ->getRowArray();
+
+                if ($menu) {
+                    $stokBaru = $menu['stok'] - $d['qty'];
+                    if ($stokBaru < 0) $stokBaru = 0;
+                    $this->db->table('menu')
+                        ->where('id', $d['id_menu'])
+                        ->update(['stok' => $stokBaru]);
+                }
+            }
+
+            $this->db->table('transaksi')
+                ->where('id', $id)
+                ->update(['status' => 'lunas']);
+
+            $this->db->transComplete();
+
+            if ($this->db->transStatus() === false) {
+                return $this->response->setJSON([
+                    'success' => false,
+                    'message' => 'Gagal mengkonfirmasi transaksi'
+                ]);
+            }
+
+            log_message('debug', 'Transaksi #' . $id . ' berhasil dikonfirmasi');
+
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Transaksi berhasil dikonfirmasi'
+            ]);
+
+        } catch (\Exception $e) {
+            $this->db->transRollback();
+            log_message('error', 'Error konfirmasi transaksi: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ]);
         }
-
-        $this->db->table('transaksi')
-            ->where('id', $id)
-            ->update(['status' => 'lunas']);
-
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Transaksi berhasil dikonfirmasi'
-        ]);
     }
 
     // ==================== AMBIL DATA TRANSAKSI ====================
@@ -442,26 +468,27 @@ class Transaksi extends BaseController
 
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil diupdate');
     }
+    
     public function print($id)
-{
-    $this->checkLogin();
+    {
+        $this->checkLogin();
 
-    $data['transaksi'] = $this->db->table('transaksi')
-        ->where('id', $id)
-        ->get()
-        ->getRowArray();
+        $data['transaksi'] = $this->db->table('transaksi')
+            ->where('id', $id)
+            ->get()
+            ->getRowArray();
 
-    if (!$data['transaksi']) {
-        return redirect()->to('/admin/transaksi');
+        if (!$data['transaksi']) {
+            return redirect()->to('/admin/transaksi');
+        }
+
+        $data['detail'] = $this->db->table('detail_transaksi')
+            ->select('detail_transaksi.*, menu.nama_menu')
+            ->join('menu', 'menu.id = detail_transaksi.id_menu')
+            ->where('id_transaksi', $id)
+            ->get()
+            ->getResultArray();
+
+        return view('admin/print_transaksi', $data);
     }
-
-    $data['detail'] = $this->db->table('detail_transaksi')
-        ->select('detail_transaksi.*, menu.nama_menu')
-        ->join('menu', 'menu.id = detail_transaksi.id_menu')
-        ->where('id_transaksi', $id)
-        ->get()
-        ->getResultArray();
-
-    return view('admin/print_transaksi', $data);
-}
 }
