@@ -28,6 +28,12 @@ class Auth extends BaseController
         $username = $this->request->getPost('username');
         $password = trim($this->request->getPost('password'));
 
+        // Validasi input
+        if (empty($username) || empty($password)) {
+            return redirect()->back()->with('error', 'Username dan password wajib diisi');
+        }
+
+        // Cari user di database
         $user = $this->db->table('users')
             ->where('username', $username)
             ->get()
@@ -37,31 +43,31 @@ class Auth extends BaseController
             return redirect()->back()->with('error', 'Username tidak ditemukan');
         }
 
-        if ($password !== $user['password']) {
-    return redirect()->back()->with('error', 'Password salah');
-}
+        // ============================================================
+        // CEK PASSWORD DENGAN PASSWORD_VERIFY (HASH)
+        // ============================================================
+        if (!password_verify($password, $user['password'])) {
+            return redirect()->back()->with('error', 'Password salah');
+        }
+
+        // Set session
         $this->session->set([
             'logged_in' => true,
             'user_id'   => $user['id'],
             'username'  => $user['username'],
-            'nama'      => $user['nama'],
-            'email'     => $user['email'],
-            'foto'      => $user['foto'],
-            'bio'       => $user['bio'],
-            'role'      => $user['role']
+            'nama'      => $user['nama'] ?? $user['username'],
+            'email'     => $user['email'] ?? '',
+            'foto'      => $user['foto'] ?? null,
+            'bio'       => $user['bio'] ?? '',
+            'role'      => $user['role'] ?? 'admin'
         ]);
 
-        return redirect()->to('/admin/dashboard');
-    }
-
-    public function register()
-    {
-        return view('admin/register');
+        return redirect()->to('/admin/dashboard')->with('success', 'Selamat datang, ' . ($user['nama'] ?? $user['username']));
     }
 
     public function logout()
     {
         $this->session->destroy();
-        return redirect()->to('/admin/login');
+        return redirect()->to('/admin/login')->with('success', 'Anda telah logout');
     }
 }
