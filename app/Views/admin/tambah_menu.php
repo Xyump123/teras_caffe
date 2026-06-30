@@ -234,28 +234,30 @@
             ← Kembali
         </a>        
         <form action="<?= base_url('admin/menu/simpan') ?>" method="post" enctype="multipart/form-data">
+            <!-- ========== CSRF TOKEN ========== -->
+            <?= csrf_field() ?>
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label>Nama Menu</label>
+                    <label>Nama Menu <span>*</span></label>
                     <input type="text" name="nama_menu" class="form-control" placeholder="Masukkan nama menu" required>
                     <div class="hint">Contoh: Nasi Goreng Special, Es Teh Manis</div>
                 </div>
 
                 <div class="form-group">
-                    <label>Harga</label>
+                    <label>Harga <span>*</span></label>
                     <input type="text" id="harga" name="harga" class="form-control" placeholder="Rp 0" inputmode="numeric" required>
                     <div class="hint">Masukkan angka tanpa titik (contoh: 15000)</div>
                 </div>
 
                 <div class="form-group">
-                    <label>Stok</label>
+                    <label>Stok <span>*</span></label>
                     <input type="number" name="stok" class="form-control" placeholder="Jumlah stok" required>
-                    <div class="hint">Jumlah ketersediaan menu (minimal 0)</div>
+                    <div class="hint">Jumlah ketersediaan menu (minimal 0, maksimal 30)</div>
                 </div>
 
                 <div class="form-group">
-                    <label>Kategori</label>
+                    <label>Kategori <span>*</span></label>
                     <select name="kategori" class="form-control" required>
                         <option value="" disabled selected>Pilih Kategori</option>
                         <option value="Makanan">🍚 Makanan</option>
@@ -263,6 +265,15 @@
                         <option value="Dessert">🍰 Dessert</option>
                     </select>
                     <div class="hint">Pilih kategori yang sesuai</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Level Pedas</label>
+                    <select name="ada_level" class="form-control">
+                        <option value="0">🌶 Tidak</option>
+                        <option value="1">🌶 Ada Level Pedas (1-5)</option>
+                    </select>
+                    <div class="hint">Pilih apakah menu ini memiliki level pedas</div>
                 </div>
 
                 <div class="form-group form-group-full">
@@ -275,7 +286,7 @@
             </div>
 
             <button type="submit" class="btn-simpan">
-                Simpan Menu
+                <i class="fa fa-save"></i> Simpan Menu
             </button>
 
         </form>

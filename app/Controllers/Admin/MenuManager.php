@@ -67,13 +67,15 @@ class MenuManager extends BaseController
         }
 
         $harga = str_replace('.', '', $this->request->getPost('harga'));
+        $ada_level = $this->request->getPost('ada_level') ?? 0;
 
         $this->db->table('menu')->insert([
             'nama_menu' => $this->request->getPost('nama_menu'),
             'harga'     => $harga,
             'stok'      => $stok,
             'kategori'  => $this->request->getPost('kategori'),
-            'gambar'    => $namaGambar
+            'gambar'    => $namaGambar,
+            'ada_level' => $ada_level
         ]);
 
         session()->setFlashdata('success', 'Menu berhasil ditambahkan');
@@ -109,12 +111,14 @@ class MenuManager extends BaseController
 
         $file = $this->request->getFile('gambar');
         $harga = str_replace('.', '', $this->request->getPost('harga'));
+        $ada_level = $this->request->getPost('ada_level') ?? 0;
 
         $dataUpdate = [
             'nama_menu' => $this->request->getPost('nama_menu'),
             'harga'     => $harga,
             'stok'      => $stok,
             'kategori'  => $this->request->getPost('kategori'),
+            'ada_level' => $ada_level
         ];
 
         if ($file && $file->isValid() && !$file->hasMoved()) {
@@ -143,13 +147,19 @@ class MenuManager extends BaseController
         $this->checkLogin();
 
         $menu = $this->db->table('menu')->where('id', $id)->get()->getRowArray();
-        $filePath = FCPATH . 'uploads/' . $menu['gambar'];
-        if ($menu && $menu['gambar'] && file_exists($filePath)) {
-            unlink($filePath);
-        }
+        
+        if ($menu) {
+            $filePath = FCPATH . 'uploads/' . $menu['gambar'];
+            if ($menu['gambar'] && file_exists($filePath)) {
+                unlink($filePath);
+            }
 
-        $this->db->table('menu')->where('id', $id)->delete();
-        session()->setFlashdata('success', 'Menu berhasil dihapus');
+            $this->db->table('menu')->where('id', $id)->delete();
+            session()->setFlashdata('success', 'Menu "' . $menu['nama_menu'] . '" berhasil dihapus');
+        } else {
+            session()->setFlashdata('error', 'Menu tidak ditemukan');
+        }
+        
         return redirect()->to('/admin/menu');
     }
 }

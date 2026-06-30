@@ -6,23 +6,18 @@ use CodeIgniter\Config\BaseConfig;
 
 class App extends BaseConfig
 {
-    /**
-     * --------------------------------------------------------------------------
-     * Base Site URL
-     * --------------------------------------------------------------------------
-     */
     public string $baseURL = '';
     
-    /**
-     * Constructor - Deteksi base URL otomatis untuk semua hosting
-     */
     public function __construct()
     {
         parent::__construct();
         
-        // Deteksi base URL otomatis (localhost, ngrok, hosting)
         if (isset($_SERVER['HTTP_HOST'])) {
-            $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+            $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
+                       || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+                       || (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+            
+            $protocol = $isHttps ? 'https://' : 'http://';
             $host = $_SERVER['HTTP_HOST'];
             $this->baseURL = $protocol . $host . '/';
         } else {
@@ -30,91 +25,16 @@ class App extends BaseConfig
         }
     }
 
-    /**
-     * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
-     *
-     * @var list<string>
-     */
     public array $allowedHostnames = [];
-
-    /**
-     * --------------------------------------------------------------------------
-     * Index File
-     * --------------------------------------------------------------------------
-     */
     public string $indexPage = '';
-
-    /**
-     * --------------------------------------------------------------------------
-     * URI PROTOCOL
-     * --------------------------------------------------------------------------
-     */
     public string $uriProtocol = 'REQUEST_URI';
-
-    /*
-    |--------------------------------------------------------------------------
-    | Allowed URL Characters
-    |--------------------------------------------------------------------------
-    */
     public string $permittedURIChars = 'a-z 0-9~%.:_\-';
-
-    /**
-     * --------------------------------------------------------------------------
-     * Default Locale
-     * --------------------------------------------------------------------------
-     */
-    public string $defaultLocale = 'en';
-
-    /**
-     * --------------------------------------------------------------------------
-     * Negotiate Locale
-     * --------------------------------------------------------------------------
-     */
+    public string $defaultLocale = 'id';
     public bool $negotiateLocale = false;
-
-    /**
-     * --------------------------------------------------------------------------
-     * Supported Locales
-     * --------------------------------------------------------------------------
-     *
-     * @var list<string>
-     */
-    public array $supportedLocales = ['en'];
-
-    /**
-     * --------------------------------------------------------------------------
-     * Application Timezone
-     * --------------------------------------------------------------------------
-     */
-    public string $appTimezone = 'UTC';
-
-    /**
-     * --------------------------------------------------------------------------
-     * Default Character Set
-     * --------------------------------------------------------------------------
-     */
+    public array $supportedLocales = ['id', 'en'];
+    public string $appTimezone = 'Asia/Jakarta';
     public string $charset = 'UTF-8';
-
-    /**
-     * --------------------------------------------------------------------------
-     * Force Global Secure Requests
-     * --------------------------------------------------------------------------
-     */
-    public bool $forceGlobalSecureRequests = false;
-
-    /**
-     * --------------------------------------------------------------------------
-     * Reverse Proxy IPs
-     * --------------------------------------------------------------------------
-     *
-     * @var array<string, string>
-     */
+    public bool $forceGlobalSecureRequests = true;
     public array $proxyIPs = [];
-
-    /**
-     * --------------------------------------------------------------------------
-     * Content Security Policy
-     * --------------------------------------------------------------------------
-     */
     public bool $CSPEnabled = false;
 }

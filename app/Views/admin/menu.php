@@ -20,7 +20,6 @@
         color: #333;
     }
     
-    /* TOMBOL TAMBAH WARNA COKLAT */
     .btn-tambah {
         background: #8B6914; 
         color: #fff;
@@ -45,17 +44,16 @@
     }
     thead {
         background: #000; 
-    font-weight: 600;
-    color: #ffffff;  /* ← SUDAH PUTIH */
-}
-
+        font-weight: 600;
+        color: #ffffff;
+    }
     th, td {
         padding: 12px 10px;
         text-align: center;
     }
     th {
-    background: #60450b; 
-}
+        background: #60450b; 
+    }
     tbody tr {
         border-bottom: 1px solid #eee;
         transition: 0.2s;
@@ -67,7 +65,6 @@
         border-radius: 8px;
     }
     
-    /* TOMBOL AKSI WARNA COKLAT SEMUA */
     .aksi a {
         text-decoration: none;
         padding: 6px 12px;
@@ -78,9 +75,8 @@
         transition: all 0.3s ease;
     }
     
-    /* Tombol Edit warna coklat */
     .edit {
-        background: #8B6914; /* Coklat keemasan */
+        background: #8B6914;
         color: white;
     }
     .edit:hover {
@@ -88,19 +84,49 @@
         transform: translateY(-2px);
     }
     
-    /* Tombol Hapus warna coklat kemerahan */
     .hapus {
-        background: #8B3A3A; /* Coklat kemerahan */
+        background: #8B3A3A;
         color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
     .hapus:hover {
         background: #6B2C2C;
         transform: translateY(-2px);
     }
     
-    /* Tambahan untuk efek hover pada baris */
     .aksi a:active {
         transform: translateY(0);
+    }
+    
+    /* Toast notification */
+    .toast-container {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        z-index: 99999;
+    }
+    .toast {
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        min-width: 200px;
+        max-width: 400px;
+    }
+    .toast.success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+    .toast.error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+    .toast.info { background: #cce5ff; color: #004085; border-left: 4px solid #17a2b8; }
+    
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(50px); }
+        to { opacity: 1; transform: translateX(0); }
     }
 </style>
 
@@ -134,20 +160,82 @@
                         -
                     <?php endif; ?>
                 </td>
-                <td><?= $m['nama_menu'] ?></td>
+                <td><?= esc($m['nama_menu']) ?></td>
                 <td>Rp <?= number_format($m['harga'], 0, ',', '.') ?></td>
                 <td><?= $m['stok'] ?></td>
                 <td><?= $m['kategori'] ?></td>
                 <td class="aksi">
                     <a href="<?= base_url('admin/menu/edit/' . $m['id']) ?>" class="edit">Edit</a>
-                    <a href="<?= base_url('admin/menu/hapus/' . $m['id']) ?>"
-                        class="hapus"
-                        onclick="return confirm('Yakin hapus?')">Hapus</a>
+                    <button type="button" class="hapus" data-id="<?= $m['id'] ?>" data-nama="<?= esc($m['nama_menu']) ?>">Hapus</button>
                 </td>
             </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
+
+<script>
+// ==================== TOAST NOTIFICATION ====================
+function showToast(type, message) {
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = 'position:fixed; top:80px; right:20px; z-index:99999;';
+        document.body.appendChild(container);
+    }
+    
+    const toast = document.createElement('div');
+    const colors = {
+        success: 'background: #d4edda; color: #155724; border-left: 4px solid #28a745;',
+        error: 'background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545;',
+        info: 'background: #cce5ff; color: #004085; border-left: 4px solid #17a2b8;'
+    };
+    
+    toast.style.cssText = `
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideIn 0.3s ease;
+        min-width: 200px;
+        max-width: 400px;
+        ${colors[type] || colors.info}
+    `;
+    toast.innerHTML = message;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(50px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// ==================== HAPUS MENU ====================
+document.querySelectorAll('.hapus').forEach(button => {
+    button.addEventListener('click', function() {
+        const id = this.dataset.id;
+        const nama = this.dataset.nama;
+        
+        if (confirm(`⚠️ Yakin ingin menghapus menu "${nama}"?`)) {
+            // Redirect ke URL hapus
+            window.location.href = '<?= base_url('admin/menu/hapus') ?>/' + id;
+        }
+    });
+});
+
+// Cek jika ada flash message dari session
+<?php if (session()->getFlashdata('success')): ?>
+    showToast('success', '✅ <?= session()->getFlashdata('success') ?>');
+<?php endif; ?>
+
+<?php if (session()->getFlashdata('error')): ?>
+    showToast('error', '❌ <?= session()->getFlashdata('error') ?>');
+<?php endif; ?>
+</script>
 
 <?= $this->endSection() ?>

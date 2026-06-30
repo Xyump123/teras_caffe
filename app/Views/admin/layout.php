@@ -4,6 +4,12 @@
 <head>
     <title><?= $title ?? 'Admin Panel' ?> - Teras Caffe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    
+    <!-- CSRF Token untuk AJAX -->
+    <meta name="csrf-token" content="<?= csrf_hash() ?>">
+    <meta name="csrf-name" content="<?= csrf_token() ?>">
+    
     <link rel="icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
     <link rel="shortcut icon" type="image/jpeg" href="<?= base_url('uploads/favicon.jpeg') ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -23,6 +29,10 @@
             color: white;
             display: flex;
             flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
         .sidebar h2 {
             text-align: center;
@@ -49,6 +59,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
         .header {
             background: white;
@@ -57,6 +68,8 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .header h3 { margin: 0; font-weight: 600; color: #3b2a21; }
         .notification-bell {
@@ -83,22 +96,27 @@
             position: absolute;
             top: 55px;
             right: 20px;
-            width: 320px;
+            width: 340px;
+            max-width: 90vw;
             background: white;
             border-radius: 10px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
             z-index: 100000;
             display: none;
+            max-height: 500px;
+            overflow: hidden;
         }
         .notification-header {
             padding: 12px 15px;
             border-bottom: 1px solid #eee;
             font-weight: 600;
+            background: #f8f9fa;
         }
-        .notification-list { max-height: 350px; overflow-y: auto; }
+        .notification-list { max-height: 400px; overflow-y: auto; }
         .notification-item {
             padding: 12px 15px;
             border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
         }
         .notification-item:hover { background: #f9f9f9; }
         .notification-item strong { color: #8B6914; }
@@ -146,10 +164,46 @@
         }
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
+            50% { transform: scale(1.3); }
             100% { transform: scale(1); }
         }
         .pulse { animation: pulse 0.5s ease; }
+        
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 99999;
+        }
+        .toast {
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+            min-width: 200px;
+            max-width: 400px;
+        }
+        .toast.success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .toast.error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .toast.info { background: #cce5ff; color: #004085; border-left: 4px solid #17a2b8; }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; }
+            .header { padding: 15px; }
+            .content { padding: 15px; }
+            .notification-dropdown { right: 10px; width: 300px; }
+        }
+        @media (max-width: 576px) {
+            .sidebar { display: none; }
+            .header h3 { font-size: 16px; }
+        }
     </style>
 </head>
 
@@ -174,7 +228,7 @@
                 <div class="notification-dropdown" id="notificationDropdown">
                     <div class="notification-header"><i class="fa fa-bell"></i> Notifikasi Pesanan</div>
                     <div class="notification-list" id="notificationList">
-                        <div class="notification-empty">Tidak ada pesanan baru</div>
+                        <div class="notification-empty">Memuat notifikasi...</div>
                     </div>
                 </div>
                 <div style="text-align:right;">
@@ -200,11 +254,14 @@
         <div class="footer">© <?= date('Y') ?> Teras Caffe - Admin Panel</div>
     </div>
 
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
         function toggleDropdown() {
             let dropdown = document.getElementById("dropdownProfile");
             dropdown.style.display = dropdown.style.display === "none" ? "block" : "none";
         }
+
         document.addEventListener('click', function(event) {
             let dropdown = document.getElementById("dropdownProfile");
             let img = document.querySelector('.user-area img');
@@ -218,82 +275,197 @@
             }
         });
 
-        // ==================== NOTIFICATION SYSTEM ====================
-        // Gunakan sessionStorage untuk menyimpan ID pesanan yang sudah diberi notifikasi suara
-        let lastNotifiedIds = JSON.parse(sessionStorage.getItem('notified_ids') || '[]');
+        function showToast(type, message) {
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.style.cssText = 'position:fixed; top:80px; right:20px; z-index:99999;';
+                document.body.appendChild(container);
+            }
 
-        // ========== SUARA NOTIFIKASI (MP3 DARI FOLDER public/sounds/) ==========
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'background: #d4edda; color: #155724; border-left: 4px solid #28a745;',
+                error: 'background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545;',
+                info: 'background: #cce5ff; color: #004085; border-left: 4px solid #17a2b8;'
+            };
+
+            toast.style.cssText = `
+                padding: 12px 20px;
+                margin-bottom: 10px;
+                border-radius: 8px;
+                font-size: 13px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease;
+                min-width: 200px;
+                max-width: 400px;
+                ${colors[type] || colors.info}
+            `;
+            toast.innerHTML = message;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(50px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        let lastNotifiedIds = JSON.parse(localStorage.getItem('teras_notified_ids') || '[]');
+        let isFirstLoad = true;
+        let audioContext = null;
+
         function playBeep() {
-            let audio = new Audio('<?= base_url("sounds/notification.mp3") ?>');
-            audio.volume = 0.5;
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log('Audio error:', e));
+            try {
+                const audioUrl = '<?= base_url("sounds/notification.mp3") ?>';
+                let audio = new Audio(audioUrl);
+                audio.volume = 0.7;
+                audio.play().catch(function(e) {
+                    playBeepFallback();
+                });
+            } catch(e) {
+                playBeepFallback();
+            }
+        }
+
+        function playBeepFallback() {
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                const notes = [800, 1000, 800];
+                notes.forEach((freq, index) => {
+                    setTimeout(() => {
+                        try {
+                            const oscillator = audioContext.createOscillator();
+                            const gainNode = audioContext.createGain();
+                            oscillator.connect(gainNode);
+                            gainNode.connect(audioContext.destination);
+                            oscillator.frequency.value = freq;
+                            oscillator.type = 'sine';
+                            gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+                            oscillator.start(audioContext.currentTime);
+                            oscillator.stop(audioContext.currentTime + 0.12);
+                        } catch(e) {}
+                    }, index * 150);
+                });
+            } catch(e) {}
         }
 
         function cekPesananBaru() {
-            fetch('<?= base_url("admin/transaksi/cek-pesanan-baru") ?>', {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            const timestamp = new Date().getTime();
+            const baseUrl = '<?= base_url() ?>';
+            
+            fetch(baseUrl + 'admin/transaksi/cek-pesanan-baru?_=' + timestamp, {
+                method: 'GET',
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     const count = data.total_baru;
                     const notificationCount = document.getElementById('notificationCount');
                     const notificationList = document.getElementById('notificationList');
-                    
+
                     if (count > 0) {
                         notificationCount.innerText = count;
                         notificationCount.style.display = 'inline-block';
+
                         const bell = document.querySelector('.notification-bell i');
                         bell.classList.add('pulse');
                         setTimeout(() => bell.classList.remove('pulse'), 500);
-                        
+
                         let html = '';
                         let hasNew = false;
-                        
+
                         data.pesanan.forEach(p => {
-                            // Cek apakah pesanan ini sudah pernah diberi notifikasi suara
                             if (!lastNotifiedIds.includes(p.id)) {
                                 hasNew = true;
                                 lastNotifiedIds.push(p.id);
+                                localStorage.setItem('teras_notified_ids', JSON.stringify(lastNotifiedIds));
                             }
-                            html += `<div class="notification-item">
+
+                            const statusLabel = p.status === 'pending' ? 'Menunggu Bayar' : 'Menunggu Konfirmasi';
+                            const statusClass = p.status === 'pending' ? 'pending' : 'menunggu_konfirmasi';
+
+                            html += `<div class="notification-item" onclick="window.location.href='<?= base_url('admin/transaksi/detail') ?>/${p.id}'">
                                 <strong>#${p.id}</strong> - Meja ${p.meja}<br>
                                 <small>Total: Rp ${Number(p.total).toLocaleString('id-ID')}</small><br>
-                                <small>Status: ${p.status === 'pending' ? 'Menunggu Bayar' : 'Menunggu Konfirmasi'}</small>
-                                <small> - ${p.total_item} item</small><br>
-                                <a href="<?= base_url('admin/transaksi/detail') ?>/${p.id}" style="color: #8B6914;">Lihat Detail →</a>
+                                <small><span class="badge ${statusClass}">${statusLabel}</span></small>
+                                <small> - ${p.total_item} item</small>
                             </div>`;
                         });
-                        notificationList.innerHTML = html;
-                        
-                        // Simpan ID yang sudah dinotifikasi ke sessionStorage
-                        sessionStorage.setItem('notified_ids', JSON.stringify(lastNotifiedIds));
-                        
-                        // Mainkan suara HANYA JIKA ada pesanan baru (belum pernah dinotifikasi)
-                        if (hasNew) {
+
+                        if (html) {
+                            notificationList.innerHTML = html;
+                        }
+
+                        if (hasNew && !isFirstLoad) {
                             playBeep();
+                            showToast('info', '🔔 Ada pesanan baru!');
                             console.log('🔔 Ada pesanan baru!');
                         }
                     } else {
                         notificationCount.style.display = 'none';
-                        notificationList.innerHTML = '<div class="notification-empty">Tidak ada pesanan baru</div>';
+                        if (isFirstLoad) {
+                            notificationList.innerHTML = '<div class="notification-empty">Tidak ada pesanan baru</div>';
+                        }
                     }
                 }
-            }).catch(error => console.error('Error:', error));
+            }).catch(error => {
+                console.error('❌ Error checking notifications:', error);
+                const notificationList = document.getElementById('notificationList');
+                if (notificationList) {
+                    notificationList.innerHTML = '<div class="notification-empty" style="color:red;">⚠️ Gagal terhubung ke server</div>';
+                }
+            });
         }
 
         document.getElementById('notificationBell').addEventListener('click', function(e) {
             e.stopPropagation();
             const dropdown = document.getElementById('notificationDropdown');
-            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                dropdown.style.display = 'block';
+                cekPesananBaru();
+            } else {
+                dropdown.style.display = 'none';
+            }
         });
 
-        // Cek pesanan setiap 3 detik (TIDAK dipanggil saat load untuk menghindari suara tidak perlu)
-        setInterval(cekPesananBaru, 3000);
-        
-        // Hapus atau comment baris di bawah agar suara tidak muncul saat halaman pertama dimuat
-        // cekPesananBaru();  // ← TIDAK DIPANGGIL SAAT LOAD
+        setTimeout(function() {
+            isFirstLoad = false;
+            cekPesananBaru();
+            setInterval(cekPesananBaru, 5000);
+        }, 3000);
+
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden && !isFirstLoad) {
+                cekPesananBaru();
+            }
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            .badge.pending { background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+            .badge.menunggu_konfirmasi { background: #cce5ff; color: #004085; padding: 2px 8px; border-radius: 4px; font-size: 11px; }
+        `;
+        document.head.appendChild(style);
+
+        console.log('✅ Notification system initialized');
+        console.log('🔊 Sound file path:', '<?= base_url("sounds/notification.mp3") ?>');
+        console.log('🔔 Checking for new orders every 5 seconds...');
     </script>
 </body>
 </html>
