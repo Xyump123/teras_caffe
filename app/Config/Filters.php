@@ -23,7 +23,7 @@ class Filters extends BaseConfig
     public array $globals = [
         'before' => [
             'cors',
-            'csrf',
+
         ],
         'after' => [
             'toolbar',

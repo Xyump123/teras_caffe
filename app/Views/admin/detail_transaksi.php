@@ -56,6 +56,7 @@
         align-items: center;
         gap: 8px;
         margin-left: 10px;
+        text-decoration: none;
     }
 
     .btn-print:hover {
@@ -66,6 +67,18 @@
     .action-buttons {
         display: flex;
         gap: 10px;
+    }
+
+    .warning-print {
+        background: #fff3cd;
+        color: #856404;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: 10px;
     }
 
     .info-table {
@@ -103,6 +116,9 @@
         font-weight: 500;
     }
 
+    /* ============================================================
+       WARNA STATUS
+       ============================================================ */
     .badge-status {
         display: inline-block;
         padding: 4px 12px;
@@ -117,8 +133,8 @@
     }
 
     .badge-menunggu_konfirmasi {
-        background: #fff3cd;
-        color: #856404;
+        background: #cce5ff;
+        color: #004085;
     }
 
     .badge-pending {
@@ -191,7 +207,6 @@
         font-size: 14px;
     }
 
-    /* ========== STYLE KHUSUS UNTUK PRINT ========== */
     @media print {
         .sidebar, .top-bar, .header, .btn-back, .btn-print, .action-buttons, .footer {
             display: none !important;
@@ -258,17 +273,21 @@
         <h3>Detail Transaksi #<?= $transaksi['id'] ?></h3>
         <div class="action-buttons">
             <a href="<?= base_url('admin/transaksi') ?>" class="btn-back">← Kembali</a>
-            <a href="<?= base_url('admin/transaksi/print/'.$transaksi['id']) ?>"
-   target="_blank"
-   class="btn-print">
-    <i class="fa fa-print"></i> Cetak Struk
-</a>
+            
+            <?php if ($transaksi['status'] == 'lunas'): ?>
+                <a href="<?= base_url('admin/transaksi/print/'.$transaksi['id']) ?>" target="_blank" class="btn-print">
+                    <i class="fa fa-print"></i> Cetak Struk
+                </a>
+            <?php else: ?>
+                <span class="warning-print">
+                    <i class="fa fa-info-circle"></i> 
+                    Struk hanya dapat dicetak jika status <strong>LUNAS</strong>
+                </span>
+            <?php endif; ?>
         </div>
     </div>
 
-    <!-- AREA YANG AKAN DICETAK -->
     <div id="printArea">
-        <!-- Header untuk print (hanya muncul saat print) -->
         <div class="print-header" style="display: none;">
             <div class="invoice-title">☕ TERAS CAFFE</div>
             <div class="invoice-subtitle">Jl. Contoh No. 123, Kota</div>
@@ -276,7 +295,6 @@
             <div class="invoice-subtitle">===================================</div>
         </div>
 
-        <!-- Informasi Transaksi -->
         <table class="info-table">
             <tr>
                 <td>Nomor Meja</td>
@@ -331,7 +349,14 @@
                      <tr>
                          <td style="text-align: left;"><strong><?= esc($d['nama_menu']) ?></strong></td>
                          <td><?= $d['qty'] ?></td>
-                         <td><?= $d['level_pedas'] ? "🌶️ Level {$d['level_pedas']}" : '🌶 Tidak Pedas' ?></td>
+                         <td>
+                             <?php if (!empty($d['level_pedas']) && $d['level_pedas'] > 0): ?>
+                                 🌶️ Level <?= $d['level_pedas'] ?> 
+                                 <?= str_repeat('🌶', $d['level_pedas']) ?>
+                             <?php else: ?>
+                                 <span style="color: #999;">🌶 Tidak Pedas</span>
+                             <?php endif; ?>
+                         </td>
                          <td>Rp <?= number_format($d['harga'], 0, ',', '.') ?></td>
                          <td><strong>Rp <?= number_format($d['subtotal'], 0, ',', '.') ?></strong></td>
                      </tr>
@@ -348,7 +373,6 @@
              <h3>TOTAL: <span>Rp <?= number_format($transaksi['total'], 0, ',', '.') ?></span></h3>
          </div>
 
-         <!-- Footer untuk print -->
          <div class="print-footer" style="display: none;">
              <div>===================================</div>
              <div>Terima kasih telah memesan di Teras Caffe</div>
@@ -358,7 +382,6 @@
  </div>
 
  <script>
-     // Override print untuk menampilkan header dan footer yang disembunyikan
      window.onbeforeprint = function() {
          var headers = document.querySelectorAll('.print-header');
          var footers = document.querySelectorAll('.print-footer');

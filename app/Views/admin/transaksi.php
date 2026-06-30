@@ -81,13 +81,37 @@
         font-weight: bold;
         display: inline-block;
     }
-    .badge.pending { background: #fff3cd; color: #856404; }
-    .badge.menunggu_konfirmasi { background: #cce5ff; color: #004085; }
-    .badge.lunas { background: #d4edda; color: #155724; }
-    .badge.qris { background: #cce5ff; color: #004085; }
-    .badge.cash { background: #d4edda; color: #155724; }
-    .badge.kasir { background: #ffe0e0; color: #8a1f1f; }
-    .badge.meja { background: #e2e3ff; color: #383d8a; }
+    /* ============================================================
+       WARNA STATUS
+       ============================================================ */
+    .badge.pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .badge.menunggu_konfirmasi {
+        background: #cce5ff;
+        color: #004085;
+    }
+    .badge.lunas {
+        background: #d4edda;
+        color: #155724;
+    }
+    .badge.qris {
+        background: #cce5ff;
+        color: #004085;
+    }
+    .badge.cash {
+        background: #d4edda;
+        color: #155724;
+    }
+    .badge.kasir {
+        background: #ffe0e0;
+        color: #8a1f1f;
+    }
+    .badge.meja {
+        background: #e2e3ff;
+        color: #383d8a;
+    }
     @keyframes highlightNew {
         0% { background-color: #d4edda; }
         100% { background-color: transparent; }
@@ -116,7 +140,11 @@
                         <td><span class="badge <?= strtolower($t['tipe_pembayaran'] ?? 'meja') ?>"><?= strtoupper($t['tipe_pembayaran'] ?? 'MEJA') ?></span></td>
                         <td><span class="badge <?= strtolower($t['metode_pembayaran'] ?? 'cash') ?>"><?= strtoupper($t['metode_pembayaran'] ?? 'CASH') ?></span></td>
                         <td>Rp <?= number_format($t['total'], 0, ',', '.') ?></td>
-                        <td><span class="badge <?= strtolower($t['status']) ?>"><?= strtoupper($t['status']) ?></span></td>
+                        <td>
+                            <span class="badge <?= strtolower($t['status']) ?>">
+                                <?= strtoupper($t['status']) ?>
+                            </span>
+                        </td>
                         <td><?= date('d-m-Y H:i', strtotime($t['created_at'])) ?></td>
                         <td>
                             <a href="<?= base_url('admin/transaksi/detail/' . $t['id']) ?>" class="btn-detail">Detail</a>
@@ -142,7 +170,6 @@ function getCsrfToken() {
     if (meta) {
         return meta.getAttribute('content');
     }
-    // Fallback: ambil dari cookie
     const name = '<?= csrf_token() ?>';
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {
@@ -185,10 +212,6 @@ async function konfirmasiHandler(e) {
         const csrfName = getCsrfName();
         const csrfToken = getCsrfToken();
         
-        console.log('CSRF Name:', csrfName);
-        console.log('CSRF Token:', csrfToken);
-        
-        // Kirim CSRF token di body dan header
         const postData = {};
         postData[csrfName] = csrfToken;
         
@@ -198,7 +221,7 @@ async function konfirmasiHandler(e) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Content-Type': 'application/json',
                 'Cache-Control': 'no-cache',
-                'X-CSRF-TOKEN': csrfToken // Kirim juga di header
+                'X-CSRF-TOKEN': csrfToken
             },
             credentials: 'same-origin',
             body: JSON.stringify(postData)
@@ -357,8 +380,6 @@ async function cekDanRefresh() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Transaksi page loaded');
     console.log('Base URL:', '<?= base_url() ?>');
-    console.log('CSRF Token:', getCsrfToken());
-    console.log('CSRF Name:', getCsrfName());
     attachKonfirmasiEvents();
     
     setInterval(cekDanRefresh, 5000);

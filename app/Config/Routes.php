@@ -28,6 +28,7 @@ $routes->get('menu/keranjang', 'Menu\Keranjang::lihat');
 $routes->get('menu/keranjang/tambah/(:num)/(:num)', 'Menu\Keranjang::tambahQty/$1/$2');
 $routes->get('menu/keranjang/kurang/(:num)/(:num)', 'Menu\Keranjang::kurangQty/$1/$2');
 $routes->get('menu/keranjang/hapus/(:num)/(:num)', 'Menu\Keranjang::hapusItem/$1/$2');
+$routes->post('menu/keranjang/update-level-ajax', 'Menu\Keranjang::updateLevelAjax');
 
 //------------------------------------------------------------------------------
 // Checkout & Pembayaran
@@ -43,7 +44,6 @@ $routes->get('menu/sukses/(:num)', 'Menu\Checkout::sukses/$1');
 //------------------------------------------------------------------------------
 // AUTH (Login/Logout)
 //------------------------------------------------------------------------------
-// PERBAIKAN: Gunakan huruf kecil 'admin' untuk konsistensi
 $routes->get('admin/login', 'Admin\Auth::login');
 $routes->post('admin/loginProcess', 'Admin\Auth::loginProcess');
 $routes->get('admin/logout', 'Admin\Auth::logout');

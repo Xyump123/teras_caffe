@@ -15,6 +15,9 @@ class Keranjang extends BaseController
         $this->db = \Config\Database::connect();
     }
 
+    // ============================================================
+    // TAMBAH KE KERANJANG
+    // ============================================================
     public function tambah()
     {
         $keranjangModel = new KeranjangModel();
@@ -55,7 +58,7 @@ class Keranjang extends BaseController
 
             $keranjangModel->update($cek['id'], [
                 'qty' => $qtyBaru,
-                'level_pedas' => $level_pedas
+                'level_pedas' => (int)$level_pedas
             ]);
         } else {
             $keranjangModel->insert([
@@ -64,13 +67,16 @@ class Keranjang extends BaseController
                 'harga'     => $menu['harga'],
                 'qty'       => 1,
                 'meja'      => $meja,
-                'level_pedas' => $level_pedas
+                'level_pedas' => (int)$level_pedas
             ]);
         }
 
         return redirect()->to('/menu?meja=' . $meja)->with('success', $menu['nama_menu'] . ' ditambahkan');
     }
 
+    // ============================================================
+    // LIHAT KERANJANG
+    // ============================================================
     public function lihat()
     {
         $meja = $this->request->getGet('meja');
@@ -94,6 +100,9 @@ class Keranjang extends BaseController
         ]);
     }
 
+    // ============================================================
+    // TAMBAH QTY
+    // ============================================================
     public function tambahQty($id, $meja)
     {
         $keranjangModel = new KeranjangModel();
@@ -120,13 +129,16 @@ class Keranjang extends BaseController
 
             $keranjangModel->update($id, [
                 'qty' => $qtyBaru,
-                'level_pedas' => $item['level_pedas']
+                'level_pedas' => $item['level_pedas'] ?? 0
             ]);
         }
 
         return redirect()->to('/menu/keranjang?meja=' . $meja);
     }
 
+    // ============================================================
+    // KURANG QTY
+    // ============================================================
     public function kurangQty($id, $meja)
     {
         $keranjangModel = new KeranjangModel();
@@ -140,7 +152,7 @@ class Keranjang extends BaseController
             if ($item['qty'] > 1) {
                 $keranjangModel->update($id, [
                     'qty' => $item['qty'] - 1,
-                    'level_pedas' => $item['level_pedas']
+                    'level_pedas' => $item['level_pedas'] ?? 0
                 ]);
             } else {
                 $keranjangModel->delete($id);
@@ -150,6 +162,68 @@ class Keranjang extends BaseController
         return redirect()->to('/menu/keranjang?meja=' . $meja);
     }
 
+    // ============================================================
+    // UPDATE LEVEL PEDAS DARI KERANJANG (AJAX) - TERIMA JSON + CSRF
+    // ============================================================
+    public function updateLevelAjax()
+    {
+        // Ambil data dari JSON body
+        $json = $this->request->getJSON();
+        
+        $id = $json->id ?? null;
+        $level = $json->level ?? 0;
+
+        // Log untuk debug
+        log_message('debug', 'UPDATE LEVEL AJAX - ID: ' . $id . ', Level: ' . $level);
+
+        // Validasi ID
+        if (empty($id)) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'ID tidak ditemukan'
+            ]);
+        }
+
+        // Validasi level (0-5)
+        $level = (int)$level;
+        if ($level < 0 || $level > 5) {
+            $level = 0;
+        }
+
+        $keranjangModel = new KeranjangModel();
+        
+        // Cek apakah data ada
+        $cek = $keranjangModel->find($id);
+        if (!$cek) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Data keranjang tidak ditemukan'
+            ]);
+        }
+
+        // Update level pedas
+        $result = $keranjangModel->update($id, [
+            'level_pedas' => $level
+        ]);
+
+        log_message('debug', 'UPDATE LEVEL RESULT - ID: ' . $id . ', Result: ' . ($result ? 'SUCCESS' : 'FAILED'));
+
+        if ($result) {
+            return $this->response->setJSON([
+                'success' => true,
+                'message' => 'Level pedas berhasil diupdate'
+            ]);
+        } else {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Gagal update level pedas'
+            ]);
+        }
+    }
+
+    // ============================================================
+    // HAPUS ITEM
+    // ============================================================
     public function hapusItem($id, $meja)
     {
         $keranjangModel = new KeranjangModel();

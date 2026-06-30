@@ -17,6 +17,8 @@ class CSRF extends BaseConfig
         'admin/transaksi/konfirmasi-ajax/*',
         'admin/transaksi/cek-pesanan-baru',
         'admin/transaksi/get-transaksi-data',
+        'menu/keranjang/update-level-ajax',
+        'menu/struk',
         'api/*'
     ];
 }

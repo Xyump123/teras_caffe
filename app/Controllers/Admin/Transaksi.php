@@ -111,7 +111,6 @@ class Transaksi extends BaseController
     {
         $this->checkLogin();
 
-        // Ambil semua transaksi dengan status pending atau menunggu_konfirmasi
         $pesananBaru = $this->db->table('transaksi')
             ->select('transaksi.*, (SELECT COUNT(*) FROM detail_transaksi WHERE detail_transaksi.id_transaksi = transaksi.id) as total_item')
             ->whereIn('transaksi.status', ['pending', 'menunggu_konfirmasi'])
@@ -119,7 +118,6 @@ class Transaksi extends BaseController
             ->get()
             ->getResultArray();
 
-        // Log untuk debugging
         log_message('debug', 'Total pesanan pending/menunggu: ' . count($pesananBaru));
 
         return $this->response->setJSON([
@@ -134,10 +132,6 @@ class Transaksi extends BaseController
     {
         $this->checkLogin();
 
-        // Log untuk debugging
-        log_message('debug', 'Konfirmasi AJAX dipanggil untuk ID: ' . $id);
-
-        // Mulai transaction untuk keamanan
         $this->db->transStart();
 
         try {
@@ -469,6 +463,9 @@ class Transaksi extends BaseController
         return redirect()->to('/admin/transaksi')->with('success', 'Transaksi berhasil diupdate');
     }
     
+    // ============================================================
+    // PRINT STRUK - HANYA UNTUK STATUS LUNAS
+    // ============================================================
     public function print($id)
     {
         $this->checkLogin();
@@ -479,7 +476,14 @@ class Transaksi extends BaseController
             ->getRowArray();
 
         if (!$data['transaksi']) {
-            return redirect()->to('/admin/transaksi');
+            return redirect()->to('/admin/transaksi')->with('error', 'Transaksi tidak ditemukan');
+        }
+
+        // ============================================================
+        // CEK STATUS - HANYA LUNAS YANG BISA CETAK
+        // ============================================================
+        if ($data['transaksi']['status'] != 'lunas') {
+            return redirect()->to('/admin/transaksi')->with('error', 'Struk hanya dapat dicetak untuk transaksi dengan status LUNAS');
         }
 
         $data['detail'] = $this->db->table('detail_transaksi')

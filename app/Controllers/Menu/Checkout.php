@@ -15,11 +15,11 @@ class Checkout extends BaseController
 
     public function struk()
     {
+        // Ambil data dari POST
         $meja   = $this->request->getPost('meja');
         $metode = strtolower($this->request->getPost('metode_bayar'));
         $tipe   = $this->request->getPost('tipe_pembayaran');
 
-        // Jika tipe_pembayaran tidak dikirim, set default ke 'kasir'
         if (empty($tipe)) {
             $tipe = 'kasir';
         }
@@ -39,7 +39,7 @@ class Checkout extends BaseController
                 ->with('error', 'Keranjang kosong');
         }
 
-        // ==================== VALIDASI STOK SEBELUM CHECKOUT ====================
+        // Validasi stok
         foreach ($keranjang as $k) {
             $menu = $this->db->table('menu')
                 ->where('id', $k['id_menu'])
@@ -51,13 +51,11 @@ class Checkout extends BaseController
                     ->with('error', 'Menu tidak ditemukan');
             }
             
-            // Cek qty melebihi stok
             if ($k['qty'] > $menu['stok']) {
                 return redirect()->to('/menu/keranjang?meja=' . $meja)
                     ->with('error', 'Stok ' . $menu['nama_menu'] . ' tidak cukup. Sisa: ' . $menu['stok']);
             }
             
-            // Cek qty melebihi batas maksimal 30
             if ($k['qty'] > 30) {
                 return redirect()->to('/menu/keranjang?meja=' . $meja)
                     ->with('error', 'Maksimal pemesanan ' . $menu['nama_menu'] . ' adalah 30');
@@ -81,6 +79,7 @@ class Checkout extends BaseController
 
         foreach ($keranjang as $k) {
             $level = $this->request->getPost('level_' . $k['id']);
+            $level = $level ?? $k['level_pedas'] ?? 0;
 
             $this->db->table('detail_transaksi')->insert([
                 'id_transaksi' => $id_transaksi,
@@ -98,7 +97,7 @@ class Checkout extends BaseController
             ->get()
             ->getResultArray();
 
-        // Hapus keranjang setelah checkout
+        // Hapus keranjang
         $this->db->table('keranjang')
             ->where('meja', $meja)
             ->delete();

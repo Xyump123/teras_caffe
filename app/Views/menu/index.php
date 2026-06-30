@@ -5,6 +5,11 @@
     <title>Menu Teras Caffe</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- CSRF Token untuk AJAX -->
+    <meta name="csrf-token" content="<?= csrf_hash() ?>">
+    <meta name="csrf-name" content="<?= csrf_token() ?>">
+    
     <style>
         * { box-sizing: border-box; }
         body {
@@ -194,6 +199,32 @@
             .menu-container { grid-template-columns: repeat(2, 1fr); }
             .card img { height: 110px; }
         }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99999;
+        }
+        .toast {
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: slideIn 0.3s ease;
+            min-width: 200px;
+            max-width: 400px;
+        }
+        .toast.success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .toast.error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+        .toast.info { background: #cce5ff; color: #004085; border-left: 4px solid #17a2b8; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
@@ -228,20 +259,20 @@
                                 <div class="nama-menu"><?= $m['nama_menu'] ?></div>
                                 <div class="harga">Rp <?= number_format($m['harga'], 0, ',', '.') ?></div>
                                 
-                                <?php if ($m['stok'] > 0 && $m['ada_level'] == 1): ?>
-                                    <!-- LEVEL PEDAS CONTROL (hanya untuk menu yang memiliki level) -->
+                                <?php if ($m['stok'] > 0 && ($m['ada_level'] ?? 0) == 1): ?>
+                                    <!-- LEVEL PEDAS CONTROL -->
                                     <div class="level-control">
-                                        <button type="button" class="level-btn minus" onclick="changeLevel(this, -1)">-</button>
+                                        <button type="button" class="level-btn minus" onclick="changeLevel(<?= $m['id'] ?>, -1)">-</button>
                                         <div class="level-value" id="level-<?= $m['id'] ?>">
                                             <i class="fas fa-pepper-hot"></i> <span id="level-val-<?= $m['id'] ?>">0</span>
                                         </div>
-                                        <button type="button" class="level-btn plus" onclick="changeLevel(this, 1)">+</button>
+                                        <button type="button" class="level-btn plus" onclick="changeLevel(<?= $m['id'] ?>, 1)">+</button>
                                     </div>
                                 <?php endif; ?>
                             </div>
                             
                             <?php if ($m['stok'] > 0): ?>
-                                <form action="<?= base_url('/menu/tambah') ?>" method="post" class="order-form" data-menu-id="<?= $m['id'] ?>">
+                                <form action="<?= base_url('/menu/tambah') ?>" method="post" class="order-form">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="id_menu" value="<?= $m['id'] ?>">
                                     <input type="hidden" name="meja" value="<?= $meja ?>">
@@ -258,52 +289,136 @@
         <?php endforeach; ?>
     </div>
 
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
-        function changeLevel(btn, delta) {
-            const menuCard = btn.closest('.card');
-            const menuId = menuCard.querySelector('.order-form')?.dataset.menuId;
+        // ============================================================
+        // TOAST NOTIFICATION
+        // ============================================================
+        function showToast(type, message) {
+            let container = document.getElementById('toastContainer');
+            if (!container) {
+                container = document.createElement('div');
+                container.id = 'toastContainer';
+                container.style.cssText = 'position:fixed; top:20px; right:20px; z-index:99999;';
+                document.body.appendChild(container);
+            }
             
-            if (!menuId) return;
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'background: #d4edda; color: #155724; border-left: 4px solid #28a745;',
+                error: 'background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545;',
+                info: 'background: #cce5ff; color: #004085; border-left: 4px solid #17a2b8;'
+            };
             
-            const levelSpan = document.getElementById(`level-val-${menuId}`);
-            const levelInput = document.getElementById(`level-input-${menuId}`);
+            toast.style.cssText = `
+                padding: 12px 20px;
+                margin-bottom: 10px;
+                border-radius: 8px;
+                font-size: 13px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                animation: slideIn 0.3s ease;
+                min-width: 200px;
+                max-width: 400px;
+                ${colors[type] || colors.info}
+            `;
+            toast.innerHTML = message;
             
-            let currentLevel = parseInt(levelSpan.innerText) || 0;
-            let newLevel = currentLevel + delta;
+            container.appendChild(toast);
             
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(50px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ============================================================
+        // LEVEL PEDAS CONTROL
+        // ============================================================
+        function changeLevel(menuId, delta) {
+            // Ambil element span dan input
+            var levelSpan = document.getElementById('level-val-' + menuId);
+            var levelInput = document.getElementById('level-input-' + menuId);
+            
+            // Validasi element
+            if (!levelSpan || !levelInput) {
+                console.error('Element tidak ditemukan untuk menu ID:', menuId);
+                return;
+            }
+            
+            // Hitung level baru
+            var currentLevel = parseInt(levelSpan.innerText) || 0;
+            var newLevel = currentLevel + delta;
+            
+            // Batasi level 0-5
             if (newLevel < 0) newLevel = 0;
             if (newLevel > 5) newLevel = 5;
             
+            // Update tampilan
             levelSpan.innerText = newLevel;
             levelInput.value = newLevel;
             
-            const levelIcon = document.querySelector(`#level-${menuId} i`);
-            if (levelIcon) {
-                if (newLevel === 0) {
-                    levelIcon.style.color = '#6c757d';
-                } else if (newLevel <= 2) {
-                    levelIcon.style.color = '#28a745';
-                } else if (newLevel <= 4) {
-                    levelIcon.style.color = '#fd7e14';
-                } else {
-                    levelIcon.style.color = '#dc3545';
+            // Log untuk debug
+            console.log('Level pedas untuk menu ' + menuId + ':', newLevel);
+            
+            // Update icon color berdasarkan level
+            var levelDiv = document.getElementById('level-' + menuId);
+            if (levelDiv) {
+                var icon = levelDiv.querySelector('i');
+                if (icon) {
+                    if (newLevel === 0) {
+                        icon.style.color = '#6c757d';
+                    } else if (newLevel <= 2) {
+                        icon.style.color = '#28a745';
+                    } else if (newLevel <= 4) {
+                        icon.style.color = '#fd7e14';
+                    } else {
+                        icon.style.color = '#dc3545';
+                    }
                 }
             }
             
-            const minusBtn = btn.parentElement.querySelector('.level-btn.minus');
-            const plusBtn = btn.parentElement.querySelector('.level-btn.plus');
-            if (minusBtn) minusBtn.disabled = (newLevel <= 0);
-            if (plusBtn) plusBtn.disabled = (newLevel >= 5);
+            // Update button states
+            var card = document.querySelector('.card');
+            if (card) {
+                var control = card.querySelector('.level-control');
+                if (control) {
+                    var minusBtn = control.querySelector('.level-btn.minus');
+                    var plusBtn = control.querySelector('.level-btn.plus');
+                    if (minusBtn) minusBtn.disabled = (newLevel <= 0);
+                    if (plusBtn) plusBtn.disabled = (newLevel >= 5);
+                }
+            }
         }
         
+        // ============================================================
+        // INIT - Set default level control saat halaman dimuat
+        // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.level-control').forEach(control => {
-                const minusBtn = control.querySelector('.level-btn.minus');
-                const plusBtn = control.querySelector('.level-btn.plus');
+            // Set semua button minus disabled (level 0)
+            document.querySelectorAll('.level-control').forEach(function(control) {
+                var minusBtn = control.querySelector('.level-btn.minus');
+                var plusBtn = control.querySelector('.level-btn.plus');
                 if (minusBtn) minusBtn.disabled = true;
                 if (plusBtn) plusBtn.disabled = false;
             });
+            
+            console.log('Menu page loaded successfully');
         });
+
+        // ============================================================
+        // FLASH MESSAGE
+        // ============================================================
+        <?php if (session()->getFlashdata('success')): ?>
+            showToast('success', '✅ <?= session()->getFlashdata('success') ?>');
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+            showToast('error', '❌ <?= session()->getFlashdata('error') ?>');
+        <?php endif; ?>
     </script>
+
 </body>
 </html>
